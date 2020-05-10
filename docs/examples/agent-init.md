@@ -1,6 +1,6 @@
 # Initialize the Agent
 
-See all configuration options [here](https://github.com/philkra/elastic-apm-php-agent/blob/master/docs/config.md).
+See all configuration options [here](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/config.md).
 
 ## With minimal Config
 ```php

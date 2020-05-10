@@ -4,10 +4,10 @@ Below is an example to add spans for MySQL, Redis and generic request wraped by 
 
 ## Screenshots
 **Transactions Dashboard showing the Spans**
-![Dashboard](https://github.com/philkra/elastic-apm-php-agent/blob/master/docs/examples/blob/span_overview.png "Spans Dashboard")
+![Dashboard](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/examples/blob/span_overview.png "Spans Dashboard")
 
 **Stacktrace of a Span**
-![Stacktrace](https://github.com/philkra/elastic-apm-php-agent/blob/master/docs/examples/blob/span_stacktrace.png "Span Stacktrace")
+![Stacktrace](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/examples/blob/span_stacktrace.png "Span Stacktrace")
 
 ## Example Code
 ```php
