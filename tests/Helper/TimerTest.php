@@ -1,20 +1,20 @@
 <?php
-namespace PhilKra\Tests\Helper;
+namespace Nipwaayoni\Tests\Helper;
 
-use PhilKra\Exception\Timer\AlreadyRunningException;
-use \PhilKra\Helper\Timer;
-use PhilKra\Tests\TestCase;
+use Nipwaayoni\Exception\Timer\AlreadyRunningException;
+use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Tests\TestCase;
 
 /**
- * Test Case for @see \PhilKra\Helper\Timer
+ * Test Case for @see \Nipwaayoni\Helper\Timer
  */
 final class TimerTest extends TestCase {
 
   /**
-   * @covers \PhilKra\Helper\Timer::start
-   * @covers \PhilKra\Helper\Timer::stop
-   * @covers \PhilKra\Helper\Timer::getDuration
-   * @covers \PhilKra\Helper\Timer::toMicro
+   * @covers \Nipwaayoni\Helper\Timer::start
+   * @covers \Nipwaayoni\Helper\Timer::stop
+   * @covers \Nipwaayoni\Helper\Timer::getDuration
+   * @covers \Nipwaayoni\Helper\Timer::toMicro
    */
   public function testCanBeStartedAndStoppedWithDuration() {
     $timer = new Timer();
@@ -28,10 +28,10 @@ final class TimerTest extends TestCase {
   }
 
     /**
-     * @covers \PhilKra\Helper\Timer::start
-     * @covers \PhilKra\Helper\Timer::stop
-     * @covers \PhilKra\Helper\Timer::getDuration
-     * @covers \PhilKra\Helper\Timer::toMicro
+     * @covers \Nipwaayoni\Helper\Timer::start
+     * @covers \Nipwaayoni\Helper\Timer::stop
+     * @covers \Nipwaayoni\Helper\Timer::getDuration
+     * @covers \Nipwaayoni\Helper\Timer::toMicro
      */
     public function testCanCalculateDurationInMilliseconds() {
         $timer = new Timer();
@@ -47,11 +47,11 @@ final class TimerTest extends TestCase {
   /**
    * @depends testCanBeStartedAndStoppedWithDuration
    *
-   * @covers \PhilKra\Helper\Timer::start
-   * @covers \PhilKra\Helper\Timer::stop
-   * @covers \PhilKra\Helper\Timer::getDuration
-   * @covers \PhilKra\Helper\Timer::getElapsed
-   * @covers \PhilKra\Helper\Timer::toMicro
+   * @covers \Nipwaayoni\Helper\Timer::start
+   * @covers \Nipwaayoni\Helper\Timer::stop
+   * @covers \Nipwaayoni\Helper\Timer::getDuration
+   * @covers \Nipwaayoni\Helper\Timer::getElapsed
+   * @covers \Nipwaayoni\Helper\Timer::toMicro
    */
   public function testGetElapsedDurationWithoutError() {
     $timer = new Timer();
@@ -68,14 +68,14 @@ final class TimerTest extends TestCase {
   /**
    * @depends testCanBeStartedAndStoppedWithDuration
    *
-   * @covers \PhilKra\Helper\Timer::start
-   * @covers \PhilKra\Helper\Timer::getDuration
+   * @covers \Nipwaayoni\Helper\Timer::start
+   * @covers \Nipwaayoni\Helper\Timer::getDuration
    */
   public function testCanBeStartedWithForcingDurationException() {
     $timer = new Timer();
     $timer->start();
 
-    $this->expectException( \PhilKra\Exception\Timer\NotStoppedException::class );
+    $this->expectException( \Nipwaayoni\Exception\Timer\NotStoppedException::class );
 
     $timer->getDuration();
   }
@@ -83,19 +83,19 @@ final class TimerTest extends TestCase {
   /**
    * @depends testCanBeStartedWithForcingDurationException
    *
-   * @covers \PhilKra\Helper\Timer::stop
+   * @covers \Nipwaayoni\Helper\Timer::stop
    */
   public function testCannotBeStoppedWithoutStart() {
     $timer = new Timer();
 
-    $this->expectException( \PhilKra\Exception\Timer\NotStartedException::class );
+    $this->expectException( \Nipwaayoni\Exception\Timer\NotStartedException::class );
 
     $timer->stop();
   }
 
     /**
-     * @covers \PhilKra\Helper\Timer::start
-     * @covers \PhilKra\Helper\Timer::getDurationInMilliseconds
+     * @covers \Nipwaayoni\Helper\Timer::start
+     * @covers \Nipwaayoni\Helper\Timer::getDurationInMilliseconds
      */
     public function testCanBeStartedWithExplicitStartTime() {
         $timer = new Timer(microtime(true) - .5); // Start timer 500 milliseconds ago
@@ -112,7 +112,7 @@ final class TimerTest extends TestCase {
     }
 
     /**
-     * @covers \PhilKra\Helper\Timer::start
+     * @covers \Nipwaayoni\Helper\Timer::start
      */
     public function testCannotBeStartedIfAlreadyRunning() {
         $timer = new Timer(microtime(true));

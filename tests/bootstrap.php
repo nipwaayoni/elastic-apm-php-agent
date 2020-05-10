@@ -1,4 +1,4 @@
 <?php
-namespace PhilKra\Tests {
+namespace Nipwaayoni\Tests {
     require __DIR__ . '/../vendor/autoload.php';
 }

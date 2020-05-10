@@ -33,5 +33,5 @@ $config = [
         'proxy'  => 'tcp://localhost:8125'
     ],
 ];
-$agent = new \PhilKra\Agent($config);
+$agent = new \Nipwaayoni\Agent($config);
 ```

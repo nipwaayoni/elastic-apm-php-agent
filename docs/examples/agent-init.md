@@ -4,13 +4,13 @@ See all configuration options [here](https://github.com/philkra/elastic-apm-php-
 
 ## With minimal Config
 ```php
-$agent = new \PhilKra\Agent( [ 'appName' => 'demo' ] );
+$agent = new \Nipwaayoni\Agent( [ 'appName' => 'demo' ] );
 ```
 
 ## With elaborate Config
 When creating the agent, you can directly inject shared contexts such as user, tags and custom.
 ```php
-$agent = new \PhilKra\Agent( [ 'appName' => 'with-custom-context' ], [
+$agent = new \Nipwaayoni\Agent( [ 'appName' => 'with-custom-context' ], [
   'user' => [
     'id'    => 12345,
     'email' => 'email@acme.com',

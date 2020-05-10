@@ -1,5 +1,5 @@
 <?php
-namespace PhilKra\Exception\Timer;
+namespace Nipwaayoni\Exception\Timer;
 
 /**
  * Trying to stop a Timer that has not been started

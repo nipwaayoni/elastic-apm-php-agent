@@ -1,8 +1,8 @@
 <?php
 
-namespace PhilKra\Helper;
+namespace Nipwaayoni\Helper;
 
-use PhilKra\Exception\InvalidTraceContextHeaderException;
+use Nipwaayoni\Exception\InvalidTraceContextHeaderException;
 
 class DistributedTracing
 {

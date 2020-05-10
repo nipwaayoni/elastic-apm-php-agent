@@ -1,9 +1,9 @@
 <?php
 
-namespace PhilKra\Stores;
+namespace Nipwaayoni\Stores;
 
-use PhilKra\Events\Transaction;
-use PhilKra\Exception\Transaction\DuplicateTransactionNameException;
+use Nipwaayoni\Events\Transaction;
+use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
 
 /**
  *
@@ -15,9 +15,9 @@ class TransactionsStore extends Store
     /**
      * Register a Transaction
      *
-     * @throws \PhilKra\Exception\Transaction\DuplicateTransactionNameException
+     * @throws \Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException
      *
-     * @param \PhilKra\Events\Transaction $transaction
+     * @param \Nipwaayoni\Events\Transaction $transaction
      *
      * @return void
      */
@@ -39,7 +39,7 @@ class TransactionsStore extends Store
      *
      * @param final string $name
      *
-     * @return mixed: \PhilKra\Events\Transaction | null
+     * @return mixed: \Nipwaayoni\Events\Transaction | null
      */
     public function fetch(string $name)
     {

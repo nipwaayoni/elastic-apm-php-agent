@@ -1,8 +1,8 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
-use PhilKra\Helper\Encoding;
+use Nipwaayoni\Helper\Encoding;
 
 /**
  *

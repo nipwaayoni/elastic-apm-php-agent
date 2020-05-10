@@ -1,6 +1,6 @@
 <phpunit bootstrap="./tests/bootstrap.php"
   stopOnFailure="true"
-  stopOnError="true"
+  stopOnError="false"
   colors="false"
   verbose="true"
   processIsolation="false"

@@ -1,9 +1,9 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
-use PhilKra\Helper\Timer;
-use PhilKra\Helper\Encoding;
+use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Helper\Encoding;
 
 /**
  *
@@ -22,7 +22,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     private $name;
 
     /**
-     * @var \PhilKra\Helper\Timer
+     * @var \Nipwaayoni\Helper\Timer
      */
     private $timer;
 

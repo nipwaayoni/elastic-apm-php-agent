@@ -1,19 +1,19 @@
 <?php
 
-namespace PhilKra;
+namespace Nipwaayoni;
 
-use PhilKra\Events\DefaultEventFactory;
-use PhilKra\Events\EventFactoryInterface;
-use PhilKra\Stores\TransactionsStore;
-use PhilKra\Events\EventBean;
-use PhilKra\Events\Error;
-use PhilKra\Events\Transaction;
-use PhilKra\Events\Metadata;
-use PhilKra\Helper\Timer;
-use PhilKra\Helper\Config;
-use PhilKra\Middleware\Connector;
-use PhilKra\Exception\Transaction\DuplicateTransactionNameException;
-use PhilKra\Exception\Transaction\UnknownTransactionException;
+use Nipwaayoni\Events\DefaultEventFactory;
+use Nipwaayoni\Events\EventFactoryInterface;
+use Nipwaayoni\Stores\TransactionsStore;
+use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Events\Error;
+use Nipwaayoni\Events\Transaction;
+use Nipwaayoni\Events\Metadata;
+use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Middleware\Connector;
+use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
+use Nipwaayoni\Exception\Transaction\UnknownTransactionException;
 
 /**
  *
@@ -42,21 +42,21 @@ class Agent
     /**
      * Config Store
      *
-     * @var \PhilKra\Helper\Config
+     * @var \Nipwaayoni\Helper\Config
      */
     private $config;
 
     /**
      * Transactions Store
      *
-     * @var \PhilKra\Stores\TransactionsStore
+     * @var \Nipwaayoni\Stores\TransactionsStore
      */
     private $transactionsStore;
 
     /**
      * Apm Timer
      *
-     * @var \PhilKra\Helper\Timer
+     * @var \Nipwaayoni\Helper\Timer
      */
     private $timer;
 
@@ -147,7 +147,7 @@ class Agent
     /**
      * Start the Transaction capturing
      *
-     * @throws \PhilKra\Exception\Transaction\DuplicateTransactionNameException
+     * @throws \Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException
      *
      * @param string $name
      * @param array  $context
@@ -174,7 +174,7 @@ class Agent
     /**
      * Stop the Transaction
      *
-     * @throws \PhilKra\Exception\Transaction\UnknownTransactionException
+     * @throws \Nipwaayoni\Exception\Transaction\UnknownTransactionException
      *
      * @param string $name
      * @param array $meta, Def: []
@@ -191,7 +191,7 @@ class Agent
     /**
      * Get a Transaction
      *
-     * @throws \PhilKra\Exception\Transaction\UnknownTransactionException
+     * @throws \Nipwaayoni\Exception\Transaction\UnknownTransactionException
      *
      * @param string $name
      *
@@ -234,9 +234,9 @@ class Agent
     /**
      * Get the Agent Config
      *
-     * @return \PhilKra\Helper\Config
+     * @return \Nipwaayoni\Helper\Config
      */
-    public function getConfig() : \PhilKra\Helper\Config
+    public function getConfig() : \Nipwaayoni\Helper\Config
     {
         return $this->config;
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace PhilKra\Middleware;
+namespace Nipwaayoni\Middleware;
 
-use PhilKra\Agent;
-use PhilKra\Events\EventBean;
-use PhilKra\Stores\TransactionsStore;
+use Nipwaayoni\Agent;
+use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Stores\TransactionsStore;
 use GuzzleHttp\Client;
 
 /**
@@ -17,7 +17,7 @@ class Connector
     /**
      * Agent Config
      *
-     * @var \PhilKra\Helper\Config
+     * @var \Nipwaayoni\Helper\Config
      */
     private $config;
 
@@ -32,9 +32,9 @@ class Connector
     private $payload = [];
 
     /**
-     * @param \PhilKra\Helper\Config $config
+     * @param \Nipwaayoni\Helper\Config $config
      */
-    public function __construct(\PhilKra\Helper\Config $config)
+    public function __construct(\Nipwaayoni\Helper\Config $config)
     {
         $this->config = $config;
         $this->configureHttpClient();

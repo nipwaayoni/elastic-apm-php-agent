@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Exception;
+namespace Nipwaayoni\Exception;
 
 /**
  * Application Tear Up has missing App Name in Config
