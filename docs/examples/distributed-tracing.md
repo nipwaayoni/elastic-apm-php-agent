@@ -7,7 +7,7 @@ This example illustrates the forward propagtion of the tracing Id, by showing ho
 **TL:DR** Passing the distributed tracing id to another service, you need to add the header `elastic-apm-traceparent` with the value of `getDistributedTracing()` of a `Span` or a `Transaction`.
 
 ## Screenshots
-![Dashboard](https://github.com/philkra/elastic-apm-php-agent/blob/master/docs/examples/blob/dt_dashboard.png "Distributed Tracing Dashboard")
+![Dashboard](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/examples/blob/dt_dashboard.png "Distributed Tracing Dashboard")
 
 ## Example Code
 ```php
