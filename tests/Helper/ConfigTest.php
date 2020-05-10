@@ -1,19 +1,19 @@
 <?php
-namespace PhilKra\Tests\Helper;
+namespace Nipwaayoni\Tests\Helper;
 
-use \PhilKra\Agent;
-use PhilKra\Tests\TestCase;
+use Nipwaayoni\Agent;
+use Nipwaayoni\Tests\TestCase;
 
 /**
- * Test Case for @see \PhilKra\Helper\Config
+ * Test Case for @see \Nipwaayoni\Helper\Config
  */
 final class ConfigTest extends TestCase {
 
   /**
-   * @covers \PhilKra\Helper\Config::__construct
-   * @covers \PhilKra\Agent::getConfig
-   * @covers \PhilKra\Helper\Config::getDefaultConfig
-   * @covers \PhilKra\Helper\Config::asArray
+   * @covers \Nipwaayoni\Helper\Config::__construct
+   * @covers \Nipwaayoni\Agent::getConfig
+   * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
+   * @covers \Nipwaayoni\Helper\Config::asArray
    */
   public function testControlDefaultConfig() {
     $appName = sprintf( 'app_name_%d', rand( 10, 99 ) );
@@ -51,10 +51,10 @@ final class ConfigTest extends TestCase {
   /**
    * @depends testControlDefaultConfig
    *
-   * @covers \PhilKra\Helper\Config::__construct
-   * @covers \PhilKra\Agent::getConfig
-   * @covers \PhilKra\Helper\Config::getDefaultConfig
-   * @covers \PhilKra\Helper\Config::asArray
+   * @covers \Nipwaayoni\Helper\Config::__construct
+   * @covers \Nipwaayoni\Agent::getConfig
+   * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
+   * @covers \Nipwaayoni\Helper\Config::asArray
    */
   public function testControlInjectedConfig() {
     $init = [
@@ -80,10 +80,10 @@ final class ConfigTest extends TestCase {
   /**
    * @depends testControlInjectedConfig
    *
-   * @covers \PhilKra\Helper\Config::__construct
-   * @covers \PhilKra\Agent::getConfig
-   * @covers \PhilKra\Helper\Config::getDefaultConfig
-   * @covers \PhilKra\Helper\Config::get
+   * @covers \Nipwaayoni\Helper\Config::__construct
+   * @covers \Nipwaayoni\Agent::getConfig
+   * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
+   * @covers \Nipwaayoni\Helper\Config::get
    */
   public function testGetConfig() {
     $init = [
@@ -98,10 +98,10 @@ final class ConfigTest extends TestCase {
     /**
      * @depends testControlDefaultConfig
      *
-     * @covers \PhilKra\Helper\Config::__construct
-     * @covers \PhilKra\Agent::getConfig
-     * @covers \PhilKra\Helper\Config::getDefaultConfig
-     * @covers \PhilKra\Helper\Config::asArray
+     * @covers \Nipwaayoni\Helper\Config::__construct
+     * @covers \Nipwaayoni\Agent::getConfig
+     * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
+     * @covers \Nipwaayoni\Helper\Config::asArray
      */
     public function testTrimElasticServerUrl() {
         $init = [

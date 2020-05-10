@@ -6,7 +6,7 @@
  * Time: 15:46
  */
 
-namespace PhilKra\Exception;
+namespace Nipwaayoni\Exception;
 
 class InvalidTraceContextHeaderException extends \Exception
 {

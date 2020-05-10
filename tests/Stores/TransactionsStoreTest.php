@@ -1,18 +1,18 @@
 <?php
-namespace PhilKra\Tests\Stores;
+namespace Nipwaayoni\Tests\Stores;
 
-use \PhilKra\Stores\TransactionsStore;
-use \PhilKra\Events\Transaction;
-use PhilKra\Tests\TestCase;
+use Nipwaayoni\Stores\TransactionsStore;
+use Nipwaayoni\Events\Transaction;
+use Nipwaayoni\Tests\TestCase;
 
 /**
- * Test Case for @see \PhilKra\Stores\TransactionsStore
+ * Test Case for @see \Nipwaayoni\Stores\TransactionsStore
  */
 final class TransactionsStoreTest extends TestCase {
 
   /**
-   * @covers \PhilKra\Stores\TransactionsStore::register
-   * @covers \PhilKra\Stores\TransactionsStore::get
+   * @covers \Nipwaayoni\Stores\TransactionsStore::register
+   * @covers \Nipwaayoni\Stores\TransactionsStore::get
    */
   public function testTransactionRegistrationAndFetch() {
     $store = new TransactionsStore();
@@ -37,14 +37,14 @@ final class TransactionsStoreTest extends TestCase {
   /**
    * @depends testTransactionRegistrationAndFetch
    *
-   * @covers \PhilKra\Stores\TransactionsStore::register
+   * @covers \Nipwaayoni\Stores\TransactionsStore::register
    */
   public function testDuplicateTransactionRegistration() {
     $store = new TransactionsStore();
     $name  = 'test';
     $trx   = new Transaction( $name, [] );
 
-    $this->expectException( \PhilKra\Exception\Transaction\DuplicateTransactionNameException::class );
+    $this->expectException( \Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException::class );
 
     // Store the Transaction again to force an Exception
     $store->register( $trx );
@@ -54,7 +54,7 @@ final class TransactionsStoreTest extends TestCase {
   /**
    * @depends testTransactionRegistrationAndFetch
    *
-   * @covers \PhilKra\Stores\TransactionsStore::get
+   * @covers \Nipwaayoni\Stores\TransactionsStore::get
    */
   public function testFetchUnknownTransaction() {
     $store = new TransactionsStore();

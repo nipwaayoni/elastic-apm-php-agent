@@ -1,10 +1,10 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
-use PhilKra\Helper\Encoding;
-use PhilKra\Helper\Timer;
-use PhilKra\Traits\Events\Stacktrace;
+use Nipwaayoni\Helper\Encoding;
+use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Traits\Events\Stacktrace;
 
 /**
  *
@@ -23,7 +23,7 @@ class Span extends TraceableEvent implements \JsonSerializable
     private $name;
 
     /**
-     * @var \PhilKra\Helper\Timer
+     * @var \Nipwaayoni\Helper\Timer
      */
     private $timer;
 

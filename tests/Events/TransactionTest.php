@@ -1,19 +1,19 @@
 <?php
-namespace PhilKra\Tests\Events;
+namespace Nipwaayoni\Tests\Events;
 
-use \PhilKra\Events\Transaction;
-use PhilKra\Tests\TestCase;
+use Nipwaayoni\Events\Transaction;
+use Nipwaayoni\Tests\TestCase;
 
 /**
- * Test Case for @see \PhilKra\Events\Transaction
+ * Test Case for @see \Nipwaayoni\Events\Transaction
  */
 final class TransactionTest extends TestCase {
 
     /**
-     * @covers \PhilKra\Events\EventBean::getId
-     * @covers \PhilKra\Events\EventBean::getTraceId
-     * @covers \PhilKra\Events\Transaction::getTransactionName
-     * @covers \PhilKra\Events\Transaction::setTransactionName
+     * @covers \Nipwaayoni\Events\EventBean::getId
+     * @covers \Nipwaayoni\Events\EventBean::getTraceId
+     * @covers \Nipwaayoni\Events\Transaction::getTransactionName
+     * @covers \Nipwaayoni\Events\Transaction::setTransactionName
      */
     public function testParentConstructor() {
         $name = 'testerus-grandes';
@@ -31,9 +31,9 @@ final class TransactionTest extends TestCase {
     /**
      * @depends testParentConstructor
      *
-     * @covers \PhilKra\Events\EventBean::setParent
-     * @covers \PhilKra\Events\EventBean::getTraceId
-     * @covers \PhilKra\Events\EventBean::ensureGetTraceId
+     * @covers \Nipwaayoni\Events\EventBean::setParent
+     * @covers \Nipwaayoni\Events\EventBean::getTraceId
+     * @covers \Nipwaayoni\Events\EventBean::ensureGetTraceId
      */
     public function testParentReference() {
         $parent = new Transaction('parent', []);

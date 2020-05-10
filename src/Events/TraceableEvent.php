@@ -1,9 +1,9 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
-use PhilKra\Exception\InvalidTraceContextHeaderException;
-use PhilKra\Helper\DistributedTracing;
+use Nipwaayoni\Exception\InvalidTraceContextHeaderException;
+use Nipwaayoni\Helper\DistributedTracing;
 
 /**
  *

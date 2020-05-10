@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Tests;
+namespace Nipwaayoni\Tests;
 
 class PHPUnitUtils
 {

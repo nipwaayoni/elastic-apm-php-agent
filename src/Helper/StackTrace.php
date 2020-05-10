@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Helper;
+namespace Nipwaayoni\Helper;
 
 /**
  *

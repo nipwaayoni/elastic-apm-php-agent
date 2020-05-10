@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Helper;
+namespace Nipwaayoni\Helper;
 
 /*
  * Functions to convert values for transmission to ElasticSearch.

@@ -12,7 +12,7 @@ Below is an example to add spans for MySQL, Redis and generic request wraped by 
 ## Example Code
 ```php
 // create the agent
-$agent = new \PhilKra\Agent(['appName' => 'examples']);
+$agent = new \Nipwaayoni\Agent(['appName' => 'examples']);
 
 $agent = new Agent($config);
 

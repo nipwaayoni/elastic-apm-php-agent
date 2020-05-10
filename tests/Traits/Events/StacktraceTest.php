@@ -1,13 +1,13 @@
 <?php
-namespace PhilKra\Tests\Traits\Events;
+namespace Nipwaayoni\Tests\Traits\Events;
 
-use \PhilKra\Traits\Events\Stacktrace;
+use Nipwaayoni\Traits\Events\Stacktrace;
 use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
-use PhilKra\Tests\PHPUnitUtils;
+use Nipwaayoni\Tests\PHPUnitUtils;
 
 /**
- * Test Case for @see \PhilKra\Traits\Events\Stacktrace
+ * Test Case for @see \Nipwaayoni\Traits\Events\Stacktrace
  */
 final class StacktraceTest extends TestCase {
 
@@ -25,7 +25,7 @@ final class StacktraceTest extends TestCase {
     }
 
     /**
-     * @covers \PhilKra\Traits\Events\Stacktrace::getDebugBacktrace
+     * @covers \Nipwaayoni\Traits\Events\Stacktrace::getDebugBacktrace
      */
     public function testEntry()
     {
@@ -54,7 +54,7 @@ final class StacktraceTest extends TestCase {
         $this->assertEquals('StacktraceTest.php', $result[1]['filename']);
         $this->assertEquals('callMethod', $result[1]['function']);
         $this->assertEquals(33, $result[1]['lineno']);
-        $this->assertEquals('PhilKra\Tests\PHPUnitUtils', $result[1]['module']);
+        $this->assertEquals('Nipwaayoni\Tests\PHPUnitUtils', $result[1]['module']);
     }
 
 }
