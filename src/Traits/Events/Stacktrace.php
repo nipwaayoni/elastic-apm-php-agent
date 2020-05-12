@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Traits\Events;
+namespace Nipwaayoni\Traits\Events;
 
 /**
  * Get the Stacktrace from debug_backtrace

@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Exception\Timer;
+namespace Nipwaayoni\Exception\Timer;
 
 use Exception;
 

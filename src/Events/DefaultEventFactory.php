@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
 use Throwable;
 

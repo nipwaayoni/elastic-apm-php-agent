@@ -1,10 +1,10 @@
 <?php
 
-namespace PhilKra\Helper;
+namespace Nipwaayoni\Helper;
 
-use PhilKra\Exception\Timer\AlreadyRunningException;
-use PhilKra\Exception\Timer\NotStartedException;
-use PhilKra\Exception\Timer\NotStoppedException;
+use Nipwaayoni\Exception\Timer\AlreadyRunningException;
+use Nipwaayoni\Exception\Timer\NotStartedException;
+use Nipwaayoni\Exception\Timer\NotStoppedException;
 
 /**
  * Timer for Duration tracing

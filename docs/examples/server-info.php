@@ -6,7 +6,7 @@
 //
 require __DIR__ . '/vendor/autoload.php';
 
-use PhilKra\Agent;
+use Nipwaayoni\Agent;
 
 $config = [
     'appName' => 'examples',

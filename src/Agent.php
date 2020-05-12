@@ -1,20 +1,20 @@
 <?php
 
-namespace PhilKra;
+namespace Nipwaayoni;
 
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
-use PhilKra\Events\DefaultEventFactory;
-use PhilKra\Events\EventBean;
-use PhilKra\Events\EventFactoryInterface;
-use PhilKra\Events\Metadata;
-use PhilKra\Events\Transaction;
-use PhilKra\Exception\Transaction\DuplicateTransactionNameException;
-use PhilKra\Exception\Transaction\UnknownTransactionException;
-use PhilKra\Helper\Config;
-use PhilKra\Helper\Timer;
-use PhilKra\Middleware\Connector;
-use PhilKra\Stores\TransactionsStore;
+use Nipwaayoni\Events\DefaultEventFactory;
+use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Events\EventFactoryInterface;
+use Nipwaayoni\Events\Metadata;
+use Nipwaayoni\Events\Transaction;
+use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
+use Nipwaayoni\Exception\Transaction\UnknownTransactionException;
+use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Middleware\Connector;
+use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -198,7 +198,7 @@ class Agent
      * Stop the Transaction
      *
      * @param string $name
-     * @param array $meta , Def: []
+     * @param array $meta, Def: []
      *
      * @return void
      * @throws UnknownTransactionException

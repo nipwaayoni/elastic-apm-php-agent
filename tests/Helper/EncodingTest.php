@@ -1,16 +1,16 @@
 <?php
-namespace PhilKra\Tests\Helper;
+namespace Nipwaayoni\Tests\Helper;
 
-use \PhilKra\Helper\Encoding;
-use PhilKra\Tests\TestCase;
+use Nipwaayoni\Helper\Encoding;
+use Nipwaayoni\Tests\TestCase;
 
 /**
- * Test Case for @see \PhilKra\Helper\Encoding
+ * Test Case for @see \Nipwaayoni\Helper\Encoding
  */
 final class EncodingTest extends TestCase {
 
     /**
-     * @covers \PhilKra\Helper\Encoding::keywordField
+     * @covers \Nipwaayoni\Helper\Encoding::keywordField
      */
     public function testShortInput() {
 
@@ -21,7 +21,7 @@ final class EncodingTest extends TestCase {
     }
 
     /**
-     * @covers \PhilKra\Helper\Encoding::keywordField
+     * @covers \Nipwaayoni\Helper\Encoding::keywordField
      */
     public function testLongInput() {
 
@@ -33,7 +33,7 @@ final class EncodingTest extends TestCase {
     }
 
     /**
-     * @covers \PhilKra\Helper\Encoding::keywordField
+     * @covers \Nipwaayoni\Helper\Encoding::keywordField
      */
     public function testLongMultibyteInput() {
 

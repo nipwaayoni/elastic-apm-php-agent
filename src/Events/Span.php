@@ -1,11 +1,11 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
 use JsonSerializable;
-use PhilKra\Helper\Encoding;
-use PhilKra\Helper\Timer;
-use PhilKra\Traits\Events\Stacktrace;
+use Nipwaayoni\Helper\Encoding;
+use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Traits\Events\Stacktrace;
 
 /**
  *

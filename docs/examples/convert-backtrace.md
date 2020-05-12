@@ -13,10 +13,10 @@ $spanSt->setDebugBacktrace();
 
 ## Example Code
 ```php
-use PhilKra\Helper\StackTrace;
+use Nipwaayoni\Helper\StackTrace;
 
 // create the agent
-$agent = new \PhilKra\Agent(['appName' => 'examples']);
+$agent = new \Nipwaayoni\Agent(['appName' => 'examples']);
 
 $agent = new Agent($config);
 

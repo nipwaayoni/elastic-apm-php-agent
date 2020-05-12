@@ -1,10 +1,10 @@
 <?php
 
-namespace PhilKra\Middleware;
+namespace Nipwaayoni\Middleware;
 
-use PhilKra\Agent;
-use PhilKra\Events\EventBean;
-use PhilKra\Helper\Config;
+use Nipwaayoni\Agent;
+use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Helper\Config;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;

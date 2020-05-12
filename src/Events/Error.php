@@ -1,10 +1,10 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
 use JsonSerializable;
-use PhilKra\Helper\Encoding;
-use PhilKra\Traits\Events\Stacktrace;
+use Nipwaayoni\Helper\Encoding;
+use Nipwaayoni\Traits\Events\Stacktrace;
 use Throwable;
 
 /**

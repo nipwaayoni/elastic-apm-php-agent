@@ -1,11 +1,11 @@
 <?php
 
-namespace PhilKra\Events;
+namespace Nipwaayoni\Events;
 
 use JsonSerializable;
-use PhilKra\Agent;
-use PhilKra\Helper\Config;
-use PhilKra\Helper\Encoding;
+use Nipwaayoni\Agent;
+use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Helper\Encoding;
 
 /**
  *

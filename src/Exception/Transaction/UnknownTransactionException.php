@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Exception\Transaction;
+namespace Nipwaayoni\Exception\Transaction;
 
 use Exception;
 

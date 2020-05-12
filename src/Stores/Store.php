@@ -1,6 +1,6 @@
 <?php
 
-namespace PhilKra\Stores;
+namespace Nipwaayoni\Stores;
 
 use JsonSerializable;
 
@@ -14,14 +14,14 @@ class Store implements JsonSerializable
     /**
      * Set of Events
      *
-     * @var array of \PhilKra\Events\EventBean
+     * @var array of \Nipwaayoni\Events\EventBean
      */
     protected $store = [];
 
     /**
      * Get all Registered Errors
      *
-     * @return array of \PhilKra\Events\EventBean
+     * @return array of \Nipwaayoni\Events\EventBean
      */
     public function list(): array
     {
