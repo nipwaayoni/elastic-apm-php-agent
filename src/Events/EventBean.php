@@ -271,7 +271,6 @@ class EventBean
                 'remote_address' => $remote_address,
                 'encrypted'      => isset($_SERVER['HTTPS'])
             ],
-            'response' => $this->contexts['response'],
             'url'          => [
                 'protocol' => $http_or_https,
                 'hostname' => Encoding::keywordField($_SERVER['SERVER_NAME'] ?? ''),
