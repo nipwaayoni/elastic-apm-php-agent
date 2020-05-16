@@ -1,9 +1,16 @@
 # Elastic APM: PHP Agent
 
+[![Latest Stable Version](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/v)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
+[![Total Downloads](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/downloads)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
+[![Latest Unstable Version](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/v/unstable)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
 [![Build Status](https://travis-ci.com/nipwaayoni/elastic-apm-php-agent.svg?branch=master)](https://travis-ci.org/nipwaayoni/elastic-apm-php-agent)
-[![Total Downloads](https://img.shields.io/packagist/dt/nipwaayoni/elastic-apm-php-agent.svg?style=flat)](https://packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
+[![License](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/license)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
 
-This is a community PHP agent for Elastic.co's [APM](https://www.elastic.co/solutions/apm) solution, supporting the `v2` Intake API. Please note: This agent is not officially supported by [Elastic](https://www.elastic.co/).
+This is a community PHP agent for Elastic.co's [APM](https://www.elastic.co/solutions/apm) solution, supporting the `v2` Intake API. 
+Please note: This agent is not officially supported by [Elastic](https://www.elastic.co/).
+
+This package is a continuation of the excellent work done by [philkra](https://github.com/philkra) at
+[philkra/elastic-apm-php-agent](https://github.com/philkra/elastic-apm-php-agent).
 
 ## Documentation
 * [Installation](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/install.md)
@@ -28,9 +35,8 @@ vendor/bin/phpunit
 ```
 
 ## Contributors
-A big thank you goes out to every contributor of this repo, special thanks goes out to:
+
+A big thank you goes out to every [contributor](https://github.com/nipwaayoni/elastic-apm-php-agent/graphs/contributors) 
+of this repo, special thanks goes out to:
+
 * [philkra](https://github.com/philkra)
-* [georgeboot](https://github.com/georgeboot)
-* [alash3al](https://github.com/alash3al)
-* [thinkspill](https://github.com/thinkspill)
-* [YuZhenXie](https://github.com/YuZhenXie)
