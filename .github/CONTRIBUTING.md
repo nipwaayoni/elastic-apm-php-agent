@@ -10,4 +10,4 @@ This document is a work in progress. Check back for changes.
 
 ## Code of Conduct
 
-Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+Please read and follow our [Code of Conduct](../CODE_OF_CONDUCT.md).
