@@ -5,11 +5,9 @@
     "require" : {
         "php" : ">= 7.1",
         "guzzlehttp/guzzle": "6.*",
+        "ralouphie/getallheaders": "3.*",
         "ext-curl" : "*",
         "ext-json": "*"
-    },
-    "require-dev" : {
-        "phpunit/phpunit" : "^7.5"
     },
     "autoload" : {
         "psr-4" : {
@@ -26,18 +24,12 @@
     },
     "authors" : [
         {
-            "name" : "Philip Krauss",
-            "email" : "philip@philipkrauss.at",
-            "homepage" : "https://github.com/philkra"
-        },
-        {
-            "name" : "George Boot",
-            "email": "george@entryninja.com"
-        },
-        {
-            "name" : "Mohamed Al Ashaal",
-            "email" : "mohamed.alashaal@speakol.com",
-            "homepage" : "https://github.com/speakol-ads"
+            "name" : "Dirk Tepe",
+            "email" : "dstepe@gmail.com",
+            "homepage" : "https://github.com/dstepe"
         }
-    ]
+    ],
+    "scripts": {
+        "tests": "\"tools/phpunit\" tests/"
+    }
 }
