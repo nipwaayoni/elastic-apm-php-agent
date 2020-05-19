@@ -30,6 +30,8 @@
         }
     ],
     "scripts": {
-        "tests": "\"tools/phpunit\" tests/"
+        "fix": "\"./tools/php-cs-fixer\" --config=config/php-cs-fixer.php fix src/ tests/",
+        "ci:tests": "\"tools/phpunit\" tests/",
+        "ci:fixer": "\"./tools/php-cs-fixer\" --config=config/php-cs-fixer.php fix --dry-run -v --show-progress=dots --diff-format=udiff src/ tests/"
     }
 }

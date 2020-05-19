@@ -29,7 +29,7 @@ class Metricset extends EventBean implements \JsonSerializable
     public function __construct(array $set, array $tags = [])
     {
         parent::__construct([]);
-        foreach($set as $k => $v) {
+        foreach ($set as $k => $v) {
             $this->samples[$k] = ['value' => $v];
         }
         $this->tags = $tags;
@@ -42,7 +42,7 @@ class Metricset extends EventBean implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return [
             'metricset' => [
@@ -52,5 +52,4 @@ class Metricset extends EventBean implements \JsonSerializable
             ]
         ];
     }
-
 }

@@ -7,7 +7,8 @@ namespace Nipwaayoni\Traits\Events;
  *
  * @link https://github.com/philkra/elastic-apm-php-agent/pull/112
  */
-trait Stacktrace {
+trait Stacktrace
+{
 
     /**
      * Creates a backtrace, converts it to a stacktrace and sets the Stacktrace for the span
@@ -26,11 +27,11 @@ trait Stacktrace {
      *
      * @return array
      */
-    protected function getDebugBacktrace(int $limit) : array
+    protected function getDebugBacktrace(int $limit): array
     {
         $traces = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $limit);
         for ($it = 1; $it < count($traces); $it++) {
-            if(isset($traces[$it]['file']) === true) {
+            if (isset($traces[$it]['file']) === true) {
                 $backtrace[] = [
                     'abs_path' => $traces[$it]['file'],
                     'filename' => basename($traces[$it]['file']),
@@ -44,5 +45,4 @@ trait Stacktrace {
 
         return $backtrace;
     }
-
 }

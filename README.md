@@ -29,12 +29,11 @@ This package is a continuation of the excellent work done by [philkra](https://g
 * [Distributed Tracing](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/examples/distributed-tracing.md)
 * [Converting debug_backtrace to a stack trace](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/examples/convert-backtrace.md)
 
-## Tests
-```bash
-vendor/bin/phpunit
-```
+## Contributing
 
-## Contributors
+Contributions are welcome. Read the [contributing guide](.github/CONTRIBUTING.md) to get started.
+
+### Contributors
 
 A big thank you goes out to every [contributor](https://github.com/nipwaayoni/elastic-apm-php-agent/graphs/contributors) 
 of this repo, special thanks goes out to:

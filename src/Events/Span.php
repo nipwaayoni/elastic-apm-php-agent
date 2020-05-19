@@ -87,7 +87,7 @@ class Span extends TraceableEvent implements \JsonSerializable
     *
     * @return string
     */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -131,7 +131,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return [
             'span' => [

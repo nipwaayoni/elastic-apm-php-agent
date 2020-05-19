@@ -65,7 +65,7 @@ class DistributedTracing
     /**
      * @return string
      */
-    public function getTraceFlags() : string
+    public function getTraceFlags(): string
     {
         return $this->traceFlags;
     }
@@ -87,9 +87,9 @@ class DistributedTracing
      *
      * @return bool
      */
-    public static function isValidHeader(string $header) : bool
+    public static function isValidHeader(string $header): bool
     {
-        return preg_match('/^'.self::VERSION.'-[\da-f]{32}-[\da-f]{16}-[\da-f]{2}$/', $header) === 1;
+        return preg_match('/^' . self::VERSION . '-[\da-f]{32}-[\da-f]{16}-[\da-f]{2}$/', $header) === 1;
     }
 
     /**

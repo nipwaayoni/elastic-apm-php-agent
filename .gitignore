@@ -6,3 +6,4 @@ composer.phar
 .idea
 .phpunit.result.cache
 tools/*.phar
+.php_cs.cache

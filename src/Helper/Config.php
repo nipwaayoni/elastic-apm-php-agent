@@ -29,7 +29,7 @@ class Config
 
         // Register Merged Config
         $this->config = array_merge($this->getDefaultConfig(), $config);
-        $this->config['serverUrl'] = rtrim ($this->config['serverUrl'], "/");
+        $this->config['serverUrl'] = rtrim($this->config['serverUrl'], "/");
     }
 
     /**
@@ -50,7 +50,7 @@ class Config
      *
      * @return array
      */
-    public function asArray() : array
+    public function asArray(): array
     {
         return $this->config;
     }
@@ -62,7 +62,7 @@ class Config
      *
      * @return array
      */
-    private function getDefaultConfig() : array
+    private function getDefaultConfig(): array
     {
         return [
             'serverUrl'      => 'http://127.0.0.1:8200',

@@ -1,4 +1,5 @@
 <?php
+
 namespace Nipwaayoni\Tests\Traits\Events;
 
 use Nipwaayoni\Traits\Events\Stacktrace;
@@ -9,7 +10,8 @@ use Nipwaayoni\Tests\PHPUnitUtils;
 /**
  * Test Case for @see \Nipwaayoni\Traits\Events\Stacktrace
  */
-final class StacktraceTest extends TestCase {
+final class StacktraceTest extends TestCase
+{
 
     /** @var Stacktrace|PHPUnit_Framework_MockObject_MockObject */
     private $stacktraceMock;
@@ -53,8 +55,7 @@ final class StacktraceTest extends TestCase {
         $this->assertStringEndsWith('tests/Traits/Events/StacktraceTest.php', $result[1]['abs_path']);
         $this->assertEquals('StacktraceTest.php', $result[1]['filename']);
         $this->assertEquals('callMethod', $result[1]['function']);
-        $this->assertEquals(33, $result[1]['lineno']);
+        $this->assertEquals(35, $result[1]['lineno']);
         $this->assertEquals('Nipwaayoni\Tests\PHPUnitUtils', $result[1]['module']);
     }
-
 }
