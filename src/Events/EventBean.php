@@ -28,7 +28,6 @@ class EventBean
 
     /**
      * Id of the whole trace forest and is used to uniquely identify a distributed trace through a system
-     *
      * @link https://www.w3.org/TR/trace-context/#trace-id
      *
      * @var string
@@ -42,7 +41,7 @@ class EventBean
      *
      * @var string
      */
-    private $parentId = null;
+    private $parentId;
 
     /**
      * Error occurred on Timestamp
@@ -102,32 +101,6 @@ class EventBean
         if ($parent !== null) {
             $this->setParent($parent);
         }
-    }
-
-    /**
-     * Generate random bits in hexadecimal representation
-     *
-     * @param int $bits
-     *
-     * @return string
-     * @throws Exception
-     */
-    final protected function generateRandomBitsInHex(int $bits): string
-    {
-        return bin2hex(random_bytes($bits / 8));
-    }
-
-    /**
-     * Set the Parent Id and Trace Id based on the Parent Event
-     *
-     * @link https://www.elastic.co/guide/en/apm/server/current/transaction-api.html
-     *
-     * @param EventBean $parent
-     */
-    public function setParent(EventBean $parent)
-    {
-        $this->setParentId($parent->getId());
-        $this->setTraceId($parent->getTraceId());
     }
 
     /**
@@ -201,6 +174,19 @@ class EventBean
     }
 
     /**
+     * Set the Parent Id and Trace Id based on the Parent Event
+     *
+     * @link https://www.elastic.co/guide/en/apm/server/current/transaction-api.html
+     *
+     * @param EventBean $parent
+     */
+    public function setParent(EventBean $parent)
+    {
+        $this->setParentId($parent->getId());
+        $this->setTraceId($parent->getTraceId());
+    }
+
+    /**
      * Set the Transaction Meta data
      *
      * @param array $meta
@@ -263,26 +249,6 @@ class EventBean
     }
 
     /**
-     * Get Type defined in Meta
-     *
-     * @return string
-     */
-    final protected function getMetaType(): string
-    {
-        return $this->meta['type'];
-    }
-
-    /**
-     * Get the Result of the Event from the Meta store
-     *
-     * @return string
-     */
-    final protected function getMetaResult(): string
-    {
-        return (string)$this->meta['result'];
-    }
-
-    /**
      * Generate request data
      *
      * @return array
@@ -324,6 +290,38 @@ class EventBean
     }
 
     /**
+     * Generate random bits in hexadecimal representation
+     *
+     * @param int $bits
+     * @return string
+     * @throws Exception
+     */
+    final protected function generateRandomBitsInHex(int $bits): string
+    {
+        return bin2hex(random_bytes($bits / 8));
+    }
+
+    /**
+     * Get Type defined in Meta
+     *
+     * @return string
+     */
+    final protected function getMetaType(): string
+    {
+        return $this->meta['type'];
+    }
+
+    /**
+     * Get the Result of the Event from the Meta store
+     *
+     * @return string
+     */
+    final protected function getMetaResult(): string
+    {
+        return (string)$this->meta['result'];
+    }
+
+    /**
      * Get the Environment Variables
      *
      * @link http://php.net/manual/en/reserved.variables.server.php
@@ -353,7 +351,6 @@ class EventBean
     final protected function getCookies(): array
     {
         $cookieMask = $this->contexts['cookies'] ?? [];
-
         return empty($cookieMask)
             ? $_COOKIE
             : array_intersect_key($_COOKIE, array_flip($cookieMask));
