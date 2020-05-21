@@ -18,4 +18,4 @@ $agent = new Agent($config);
 $info = $agent->info();
 
 var_dump($info->getStatusCode());
-var_dump($info->getBody());
+var_dump($info->getBody()->getContents());

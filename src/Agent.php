@@ -14,6 +14,12 @@ use Nipwaayoni\Helper\Config;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
 use Nipwaayoni\Exception\Transaction\UnknownTransactionException;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
 
 /**
  *
@@ -90,10 +96,21 @@ class Agent
      *
      * @return void
      */
-    public function __construct(array $config, array $sharedContext = [], EventFactoryInterface $eventFactory = null, TransactionsStore $transactionsStore = null)
-    {
+    public function __construct(
+        array $config,
+        array $sharedContext = [],
+        EventFactoryInterface $eventFactory = null,
+        TransactionsStore $transactionsStore = null,
+        ClientInterface $client = null,
+        RequestFactoryInterface $requestFactory = null,
+        StreamFactoryInterface $streamFactory = null
+    ) {
         // Init Agent Config
         $this->config = new Config($config);
+
+        $client = $client ?: HttpClientDiscovery::find();
+        $requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
+        $streamFactory = $streamFactory ?: Psr17FactoryDiscovery::findStreamFactory();
 
         // Use the custom event factory or create a default one
         $this->eventFactory = $eventFactory ?? new DefaultEventFactory();
@@ -114,7 +131,7 @@ class Agent
         $this->transactionsStore = $transactionsStore ?? new TransactionsStore();
 
         // Init the Transport "Layer"
-        $this->connector = new Connector($this->config);
+        $this->connector = new Connector($client, $requestFactory, $streamFactory, $this->config);
         $this->connector->putEvent(new Metadata([], $this->config));
 
         // Start Global Agent Timer
@@ -139,7 +156,7 @@ class Agent
      *
      * @return Response
      */
-    public function info(): \GuzzleHttp\Psr7\Response
+    public function info(): ResponseInterface
     {
         return $this->connector->getInfo();
     }
