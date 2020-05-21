@@ -13,7 +13,6 @@ use Nipwaayoni\Helper\DistributedTracing;
  */
 class TraceableEvent extends EventBean
 {
-
     /**
      * Create the Transaction
      *
@@ -24,6 +23,16 @@ class TraceableEvent extends EventBean
     {
         parent::__construct($contexts);
         $this->setTraceContext();
+    }
+
+    /**
+     * Get the Distributed Tracing Value of this Event
+     *
+     * @return string
+     */
+    public function getDistributedTracing(): string
+    {
+        return (new DistributedTracing($this->getTraceId(), $this->getParentId()))->__toString();
     }
 
     /**
@@ -48,15 +57,4 @@ class TraceableEvent extends EventBean
             $this->setTraceId(self::generateRandomBitsInHex(self::TRACE_ID_BITS));
         }
     }
-
-    /**
-     * Get the Distributed Tracing Value of this Event
-     *
-     * @return string
-     */
-    public function getDistributedTracing(): string
-    {
-        return (new DistributedTracing($this->getTraceId(), $this->getParentId()))->__toString();
-    }
-
 }

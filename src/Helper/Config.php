@@ -33,6 +33,29 @@ class Config
     }
 
     /**
+     * Get Config Value
+     *
+     * @param string $key
+     * @param mixed $default
+     *
+     * @return mixed: value | null
+     */
+    public function get(string $key, $default = null)
+    {
+        return ($this->config[$key]) ?? $default;
+    }
+
+    /**
+     * Get the all Config Set as array
+     *
+     * @return array
+     */
+    public function asArray(): array
+    {
+        return $this->config;
+    }
+
+    /**
      * Get the Default Config of the Agent
      *
      * @link https://github.com/philkra/elastic-apm-php-agent/issues/55
@@ -54,28 +77,5 @@ class Config
             'environment' => 'development',
             'backtraceLimit' => 0,
         ];
-    }
-
-    /**
-     * Get Config Value
-     *
-     * @param string $key
-     * @param mixed $default
-     *
-     * @return mixed: value | null
-     */
-    public function get(string $key, $default = null)
-    {
-        return ($this->config[$key]) ?? $default;
-    }
-
-    /**
-     * Get the all Config Set as array
-     *
-     * @return array
-     */
-    public function asArray(): array
-    {
-        return $this->config;
     }
 }

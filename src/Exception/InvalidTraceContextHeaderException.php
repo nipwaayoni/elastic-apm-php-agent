@@ -12,5 +12,4 @@ use Exception;
 
 class InvalidTraceContextHeaderException extends Exception
 {
-
 }

@@ -161,16 +161,6 @@ class EventBean
     }
 
     /**
-     * Get the Parent Id
-     *
-     * @return string
-     */
-    final public function getParentId(): ?string
-    {
-        return $this->parentId;
-    }
-
-    /**
      * Set the Parent Id
      *
      * @param string $parentId
@@ -178,6 +168,16 @@ class EventBean
     final public function setParentId(string $parentId)
     {
         $this->parentId = $parentId;
+    }
+
+    /**
+     * Get the Parent Id
+     *
+     * @return string
+     */
+    final public function getParentId(): ?string
+    {
+        return $this->parentId;
     }
 
     /**
@@ -283,37 +283,6 @@ class EventBean
     }
 
     /**
-     * Get the Events Context
-     *
-     * @link https://www.elastic.co/guide/en/apm/server/current/transaction-api.html#transaction-context-schema
-     *
-     * @return array
-     */
-    final protected function getContext(): array
-    {
-        $context = [
-            'request' => empty($this->contexts['request']) ? $this->generateRequest() : $this->contexts['request'],
-        ];
-
-        // Add User Context
-        if (empty($this->contexts['user']) === false) {
-            $context['user'] = $this->contexts['user'];
-        }
-
-        // Add Custom Context
-        if (empty($this->contexts['custom']) === false) {
-            $context['custom'] = $this->contexts['custom'];
-        }
-
-        // Add Tags Context
-        if (empty($this->contexts['tags']) === false) {
-            $context['tags'] = $this->contexts['tags'];
-        }
-
-        return $context;
-    }
-
-    /**
      * Generate request data
      *
      * @return array
@@ -337,7 +306,6 @@ class EventBean
                 'remote_address' => $remote_address,
                 'encrypted' => isset($_SERVER['HTTPS']),
             ],
-            'response' => $this->contexts['response'],
             'url' => [
                 'protocol' => $http_or_https,
                 'hostname' => Encoding::keywordField($_SERVER['SERVER_NAME'] ?? ''),
@@ -353,21 +321,6 @@ class EventBean
             'env' => (object)$this->getEnv(),
             'cookies' => (object)$this->getCookies(),
         ];
-    }
-
-    /**
-     * Get the cookie header
-     *
-     * @link https://github.com/philkra/elastic-apm-php-agent/issues/30
-     *
-     * @return string
-     */
-    final protected function getCookieHeader(string $cookieHeader): string
-    {
-        $cookieMask = $this->contexts['cookies'] ?? [];
-
-        // Returns an empty string if cookies are masked.
-        return empty($cookieMask) ? $cookieHeader : '';
     }
 
     /**
@@ -404,5 +357,52 @@ class EventBean
         return empty($cookieMask)
             ? $_COOKIE
             : array_intersect_key($_COOKIE, array_flip($cookieMask));
+    }
+
+    /**
+     * Get the cookie header
+     *
+     * @link https://github.com/philkra/elastic-apm-php-agent/issues/30
+     *
+     * @return string
+     */
+    final protected function getCookieHeader(string $cookieHeader): string
+    {
+        $cookieMask = $this->contexts['cookies'] ?? [];
+
+        // Returns an empty string if cookies are masked.
+        return empty($cookieMask) ? $cookieHeader : '';
+    }
+
+    /**
+     * Get the Events Context
+     *
+     * @link https://www.elastic.co/guide/en/apm/server/current/transaction-api.html#transaction-context-schema
+     *
+     * @return array
+     */
+    final protected function getContext(): array
+    {
+        $context = [
+            'request' => empty($this->contexts['request']) ? $this->generateRequest() : $this->contexts['request'],
+            'response' => $this->contexts['response']
+        ];
+
+        // Add User Context
+        if (empty($this->contexts['user']) === false) {
+            $context['user'] = $this->contexts['user'];
+        }
+
+        // Add Custom Context
+        if (empty($this->contexts['custom']) === false) {
+            $context['custom'] = $this->contexts['custom'];
+        }
+
+        // Add Tags Context
+        if (empty($this->contexts['tags']) === false) {
+            $context['tags'] = $this->contexts['tags'];
+        }
+
+        return $context;
     }
 }

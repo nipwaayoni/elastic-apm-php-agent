@@ -145,6 +145,16 @@ class Agent
     }
 
     /**
+     * Event Factory
+     *
+     * @return EventFactoryInterface
+     */
+    public function factory(): EventFactoryInterface
+    {
+        return $this->eventFactory;
+    }
+
+    /**
      * Query the Info endpoint of the APM Server
      *
      * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
@@ -182,16 +192,6 @@ class Agent
         }
 
         return $transaction;
-    }
-
-    /**
-     * Event Factory
-     *
-     * @return EventFactoryInterface
-     */
-    public function factory(): EventFactoryInterface
-    {
-        return $this->eventFactory;
     }
 
     /**
@@ -265,16 +265,6 @@ class Agent
     }
 
     /**
-     * Flush the Queue Payload
-     *
-     * @link https://www.php.net/manual/en/language.oop5.decon.php#object.destruct
-     */
-    function __destruct()
-    {
-        $this->send();
-    }
-
-    /**
      * Send Data to APM Service
      *
      * @link https://github.com/philkra/elastic-apm-laravel/issues/22
@@ -304,5 +294,15 @@ class Agent
         $this->transactionsStore->reset();
 
         return $this->connector->commit();
+    }
+
+    /**
+     * Flush the Queue Payload
+     *
+     * @link https://www.php.net/manual/en/language.oop5.decon.php#object.destruct
+     */
+    public function __destruct()
+    {
+        $this->send();
     }
 }

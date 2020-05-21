@@ -84,6 +84,16 @@ class Span extends TraceableEvent implements JsonSerializable
     }
 
     /**
+    * Get the Event Name
+    *
+    * @return string
+    */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * Set the Span's Type
      *
      * @param string $action
@@ -140,15 +150,5 @@ class Span extends TraceableEvent implements JsonSerializable
                 'timestamp' => $this->getTimestamp(),
             ],
         ];
-    }
-
-    /**
-     * Get the Event Name
-     *
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
     }
 }

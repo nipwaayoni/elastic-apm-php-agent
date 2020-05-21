@@ -1,4 +1,5 @@
 <?php
+
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\Transaction;
@@ -7,7 +8,8 @@ use Nipwaayoni\Tests\TestCase;
 /**
  * Test Case for @see \Nipwaayoni\Events\Transaction
  */
-final class TransactionTest extends TestCase {
+final class TransactionTest extends TestCase
+{
 
     /**
      * @covers \Nipwaayoni\Events\EventBean::getId
@@ -15,7 +17,8 @@ final class TransactionTest extends TestCase {
      * @covers \Nipwaayoni\Events\Transaction::getTransactionName
      * @covers \Nipwaayoni\Events\Transaction::setTransactionName
      */
-    public function testParentConstructor() {
+    public function testParentConstructor()
+    {
         $name = 'testerus-grandes';
         $transaction = new Transaction($name, []);
 
@@ -35,7 +38,8 @@ final class TransactionTest extends TestCase {
      * @covers \Nipwaayoni\Events\EventBean::getTraceId
      * @covers \Nipwaayoni\Events\EventBean::ensureGetTraceId
      */
-    public function testParentReference() {
+    public function testParentReference()
+    {
         $parent = new Transaction('parent', []);
         $child  = new Transaction('child', []);
         $child->setParent($parent);
@@ -47,5 +51,4 @@ final class TransactionTest extends TestCase {
         $this->assertEquals($arr['transaction']['trace_id'], $parent->getTraceId());
         $this->assertEquals($child->getTraceId(), $parent->getTraceId());
     }
-
 }

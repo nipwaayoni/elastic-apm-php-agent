@@ -57,18 +57,6 @@ class Transaction extends TraceableEvent implements JsonSerializable
     }
 
     /**
-     * Set the Transaction Name
-     *
-     * @param string $name
-     *
-     * @return void
-     */
-    public function setTransactionName(string $name)
-    {
-        $this->name = $name;
-    }
-
-    /**
      * Start the Transaction
      *
      * @return void
@@ -94,6 +82,28 @@ class Transaction extends TraceableEvent implements JsonSerializable
         $this->summary['duration'] = $duration ?? round($this->timer->getDurationInMilliseconds(), 3);
         $this->summary['headers'] = (function_exists('xdebug_get_headers') === true) ? xdebug_get_headers() : [];
         $this->summary['backtrace'] = debug_backtrace($this->backtraceLimit);
+    }
+
+    /**
+    * Set the Transaction Name
+    *
+    * @param string $name
+    *
+    * @return void
+    */
+    public function setTransactionName(string $name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+    * Get the Transaction Name
+    *
+    * @return string
+    */
+    public function getTransactionName(): string
+    {
+        return $this->name;
     }
 
     /**
@@ -144,15 +154,5 @@ class Transaction extends TraceableEvent implements JsonSerializable
                 ],
             ],
         ];
-    }
-
-    /**
-     * Get the Transaction Name
-     *
-     * @return string
-     */
-    public function getTransactionName(): string
-    {
-        return $this->name;
     }
 }

@@ -108,5 +108,4 @@ class Error extends EventBean implements JsonSerializable
 
         return $stacktrace;
     }
-
 }

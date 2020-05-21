@@ -69,5 +69,4 @@ class Metadata extends EventBean implements JsonSerializable
             ],
         ];
     }
-
 }

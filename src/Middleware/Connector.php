@@ -104,6 +104,21 @@ class Connector
     }
 
     /**
+     * Get the Server Informations
+     *
+     * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
+     *
+     * @return Response
+     */
+    public function getInfo(): \GuzzleHttp\Psr7\Response
+    {
+        return $this->client->get(
+            $this->config->get('serverUrl'),
+            ['headers' => $this->getRequestHeaders(),]
+        );
+    }
+
+    /**
      * Get the Endpoint URI of the APM Server
      *
      * @return string
@@ -147,25 +162,5 @@ class Connector
         }
 
         return $headers;
-    }
-
-    /**
-     * Get the Server Informations
-     *
-     * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
-     *
-     * @return ResponseInterface
-     * @throws ClientExceptionInterface
-     */
-    public function getInfo(): ResponseInterface
-    {
-        $request = $this->populateRequestWithHeaders(
-            $this->requestFactory->createRequest(
-                'GET',
-                $this->config->get('serverUrl')
-            )
-        );
-
-        return $this->client->sendRequest($request);
     }
 }

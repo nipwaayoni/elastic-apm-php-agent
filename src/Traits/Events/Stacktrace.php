@@ -9,7 +9,6 @@ namespace Nipwaayoni\Traits\Events;
  */
 trait Stacktrace
 {
-
     /**
      * Creates a backtrace, converts it to a stacktrace and sets the Stacktrace for the span
      *
@@ -30,7 +29,8 @@ trait Stacktrace
     protected function getDebugBacktrace(int $limit): array
     {
         $traces = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, $limit);
-        for ($it = 1; $it < count($traces); $it++) {
+        $itMax = count($traces);
+        for ($it = 1; $it < $itMax; $it++) {
             if (isset($traces[$it]['file']) === true) {
                 $backtrace[] = [
                     'abs_path' => $traces[$it]['file'],
@@ -45,5 +45,4 @@ trait Stacktrace
 
         return $backtrace;
     }
-
 }

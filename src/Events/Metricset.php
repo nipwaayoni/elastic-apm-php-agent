@@ -54,5 +54,4 @@ class Metricset extends EventBean implements JsonSerializable
             ],
         ];
     }
-
 }
