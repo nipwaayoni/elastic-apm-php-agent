@@ -100,7 +100,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     *
     * @return string
     */
-    public function getTransactionName() : string
+    public function getTransactionName(): string
     {
         return $this->name;
     }
@@ -110,7 +110,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     *
     * @return array
     */
-    public function getSummary() : array
+    public function getSummary(): array
     {
         return $this->summary;
     }
@@ -133,7 +133,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return [
             'transaction' => [

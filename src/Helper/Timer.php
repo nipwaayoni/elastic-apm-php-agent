@@ -41,7 +41,7 @@ class Timer
         if (null !== $this->startedOn) {
             throw new AlreadyRunningException();
         }
-        
+
         $this->startedOn = microtime(true);
     }
 
@@ -68,7 +68,7 @@ class Timer
      *
      * @return float
      */
-    public function getDuration() : float
+    public function getDuration(): float
     {
         if ($this->stoppedOn === null) {
             throw new NotStoppedException();
@@ -84,7 +84,7 @@ class Timer
      *
      * @return float
      */
-    public function getDurationInMilliseconds() : float
+    public function getDurationInMilliseconds(): float
     {
         if ($this->stoppedOn === null) {
             throw new NotStoppedException();
@@ -100,7 +100,7 @@ class Timer
      *
      * @return float
      */
-    public function getElapsed() : float
+    public function getElapsed(): float
     {
         if ($this->startedOn === null) {
             throw new NotStartedException();
@@ -118,7 +118,7 @@ class Timer
      *
      * @return float
      */
-    public function getElapsedInMilliseconds() : float
+    public function getElapsedInMilliseconds(): float
     {
         if ($this->startedOn === null) {
             throw new NotStartedException();
@@ -136,7 +136,7 @@ class Timer
      *
      * @return float
      */
-    private function toMicro(float $num) : float
+    private function toMicro(float $num): float
     {
         return $num * 1000000;
     }
@@ -148,7 +148,7 @@ class Timer
      *
      * @return float
      */
-    private function toMilli(float $num) : float
+    private function toMilli(float $num): float
     {
         return $num * 1000;
     }

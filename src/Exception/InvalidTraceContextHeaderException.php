@@ -10,5 +10,4 @@ namespace Nipwaayoni\Exception;
 
 class InvalidTraceContextHeaderException extends \Exception
 {
-
 }

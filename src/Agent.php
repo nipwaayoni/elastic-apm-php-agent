@@ -127,7 +127,7 @@ class Agent
      *
      * @return EventFactoryInterface
      */
-    public function factory() : EventFactoryInterface
+    public function factory(): EventFactoryInterface
     {
         return $this->eventFactory;
     }
@@ -139,7 +139,7 @@ class Agent
      *
      * @return Response
      */
-    public function info() : \GuzzleHttp\Psr7\Response
+    public function info(): \GuzzleHttp\Psr7\Response
     {
         return $this->connector->getInfo();
     }
@@ -236,7 +236,7 @@ class Agent
      *
      * @return \Nipwaayoni\Helper\Config
      */
-    public function getConfig() : \Nipwaayoni\Helper\Config
+    public function getConfig(): \Nipwaayoni\Helper\Config
     {
         return $this->config;
     }
@@ -249,7 +249,7 @@ class Agent
      *
      * @return bool
      */
-    public function send() : bool
+    public function send(): bool
     {
         // Is the Agent enabled ?
         if ($this->config->get('active') === false) {
@@ -259,12 +259,12 @@ class Agent
 
         // Put the preceding Metadata
         // TODO -- add context ?
-        if($this->connector->isPayloadSet() === false) {
+        if ($this->connector->isPayloadSet() === false) {
             $this->putEvent(new Metadata([], $this->config));
         }
 
         // Start Payload commitment
-        foreach($this->transactionsStore->list() as $event) {
+        foreach ($this->transactionsStore->list() as $event) {
             $this->connector->putEvent($event);
         }
         $this->transactionsStore->reset();
@@ -276,8 +276,8 @@ class Agent
      *
      * @link https://www.php.net/manual/en/language.oop5.decon.php#object.destruct
      */
-    function __destruct() {
+    public function __destruct()
+    {
         $this->send();
     }
-
 }

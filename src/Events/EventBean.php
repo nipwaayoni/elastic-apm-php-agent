@@ -107,7 +107,7 @@ class EventBean
      *
      * @return string
      */
-    public function getId() : string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -117,7 +117,7 @@ class EventBean
      *
      * @return string $traceId
      */
-    public function getTraceId() : ?string
+    public function getTraceId(): ?string
     {
         return $this->traceId;
     }
@@ -147,7 +147,7 @@ class EventBean
      *
      * @return string
      */
-    final public function getParentId() : ?string
+    final public function getParentId(): ?string
     {
         return $this->parentId;
     }
@@ -167,7 +167,7 @@ class EventBean
      *
      * @return int
      */
-    public function getTimestamp() : int
+    public function getTimestamp(): int
     {
         return $this->timestamp;
     }
@@ -305,7 +305,7 @@ class EventBean
      *
      * @return string
      */
-    final protected function getMetaType() : string
+    final protected function getMetaType(): string
     {
         return $this->meta['type'];
     }
@@ -315,7 +315,7 @@ class EventBean
      *
      * @return string
      */
-    final protected function getMetaResult() : string
+    final protected function getMetaResult(): string
     {
         return (string)$this->meta['result'];
     }
@@ -329,7 +329,7 @@ class EventBean
      *
      * @return array
      */
-    final protected function getEnv() : array
+    final protected function getEnv(): array
     {
         $envMask = $this->contexts['env'];
         $env = empty($envMask)
@@ -347,7 +347,7 @@ class EventBean
      *
      * @return array
      */
-    final protected function getCookies() : array
+    final protected function getCookies(): array
     {
         $cookieMask = $this->contexts['cookies'] ?? [];
         return empty($cookieMask)
@@ -362,7 +362,7 @@ class EventBean
      *
      * @return string
      */
-    final protected function getCookieHeader(string $cookieHeader) : string
+    final protected function getCookieHeader(string $cookieHeader): string
     {
         $cookieMask = $this->contexts['cookies'] ?? [];
 
@@ -377,7 +377,7 @@ class EventBean
      *
      * @return array
      */
-    final protected function getContext() : array
+    final protected function getContext(): array
     {
         $context = [
             'request' => empty($this->contexts['request']) ? $this->generateRequest() : $this->contexts['request'],

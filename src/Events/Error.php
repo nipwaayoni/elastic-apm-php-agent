@@ -40,7 +40,7 @@ class Error extends EventBean implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return [
             'error' => [
@@ -66,7 +66,7 @@ class Error extends EventBean implements \JsonSerializable
      *
      * @return array
      */
-    final private function mapStacktrace() : array
+    final private function mapStacktrace(): array
     {
         $stacktrace = [];
 
@@ -106,5 +106,4 @@ class Error extends EventBean implements \JsonSerializable
 
         return $stacktrace;
     }
-
 }

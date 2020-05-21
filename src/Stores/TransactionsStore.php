@@ -51,7 +51,7 @@ class TransactionsStore extends Store
      *
      * @return array
      */
-    public function jsonSerialize() : array
+    public function jsonSerialize(): array
     {
         return array_values($this->store);
     }

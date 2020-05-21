@@ -45,7 +45,7 @@ class Connector
      *
      * @return bool
      */
-    public function isPayloadSet() : bool
+    public function isPayloadSet(): bool
     {
         return (empty($this->payload) === false);
     }
@@ -79,10 +79,10 @@ class Connector
      *
      * @return bool
      */
-    public function commit() : bool
+    public function commit(): bool
     {
         $body = '';
-        foreach($this->payload as $line) {
+        foreach ($this->payload as $line) {
             $body .= $line . "\n";
         }
         $this->payload = [];
@@ -100,7 +100,7 @@ class Connector
      *
      * @return Response
      */
-    public function getInfo() : \GuzzleHttp\Psr7\Response
+    public function getInfo(): \GuzzleHttp\Psr7\Response
     {
         return $this->client->get(
             $this->config->get('serverUrl'),
@@ -115,7 +115,7 @@ class Connector
      *
      * @return string
      */
-    private function getEndpoint() : string
+    private function getEndpoint(): string
     {
         return sprintf('%s/intake/v2/events', $this->config->get('serverUrl'));
     }
@@ -125,7 +125,7 @@ class Connector
      *
      * @return array
      */
-    private function getRequestHeaders() : array
+    private function getRequestHeaders(): array
     {
         // Default Headers Set
         $headers = [
@@ -141,5 +141,4 @@ class Connector
 
         return $headers;
     }
-
 }

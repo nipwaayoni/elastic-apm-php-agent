@@ -35,5 +35,4 @@ final class DefaultEventFactory implements EventFactoryInterface
     {
         return new Metricset($set, $tags);
     }
-
 }

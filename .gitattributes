@@ -1,0 +1,8 @@
+/.github        export-ignore
+/config         export-ignore
+/phive.xml      export-ignore
+/tests          export-ignore
+/tools          export-ignore
+/tools/*        binary
+
+*.php diff=php

@@ -15,5 +15,4 @@ class PHPUnitUtils
         $method->setAccessible(true);
         return $method->invokeArgs($obj, $args);
     }
-
 }
