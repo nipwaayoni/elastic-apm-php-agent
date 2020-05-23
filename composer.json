@@ -16,6 +16,10 @@
         "php-http/guzzle6-adapter": "^2.0",
         "http-interop/http-factory-guzzle": "^1.0"
     },
+    "suggest": {
+        "php-http/guzzle6-adapter": "PSR-18 compatible Guzzle6 adapter",
+        "http-interop/http-factory-guzzle": "PSR-17 compatible factories for usage with PSR-18"
+    },
     "autoload" : {
         "psr-4" : {
             "Nipwaayoni\\": "src/"
