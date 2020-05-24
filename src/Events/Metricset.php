@@ -12,6 +12,7 @@ namespace Nipwaayoni\Events;
  */
 class Metricset extends EventBean implements \JsonSerializable
 {
+    protected $eventType = 'metricset';
     /**
      * @var array
      */
@@ -45,7 +46,7 @@ class Metricset extends EventBean implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'metricset' => [
+            $this->eventType => [
                 'samples'   => $this->samples,
 //                'tags'      => $this->tags,
                 'timestamp' => $this->getTimestamp(),

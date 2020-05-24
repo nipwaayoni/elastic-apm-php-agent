@@ -9,6 +9,9 @@
         "ext-curl" : "*",
         "ext-json": "*"
     },
+    "require-dev" : {
+        "justinrainbow/json-schema": "^5.2"
+    },
     "autoload" : {
         "psr-4" : {
             "Nipwaayoni\\": "src/"

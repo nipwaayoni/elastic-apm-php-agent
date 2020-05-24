@@ -22,6 +22,29 @@ composer ci:tests
 
 The workflow enforces passing tests, so make sure to check.
 
+## Schema Validation
+
+This package exists to push data to the APM service. The data emitted must adhere to the schema provided by the APM project. The APM projects makes the schema definition available for each release and we can use that to validate the data produced by this package.
+
+### Implement Schema Validation
+
+Your test class must extend `Nipwaayoni\Tests\SchemaTestCase` to perform schema validation. Implement the abstract methods as detailed in the associated PHPDoc blocks.
+
+The `testProducesValidJson()` provides the minimum test expected for validation. You should add more tests to cover any possible conditions which may alter the object structure resulting from the JSON serialization.
+
+### Add a New Schema Specification
+
+We will use version 7.8 for this example.
+
+1. Clone the [elastic/apm-server](https://github.com/elastic/apm-server) project
+2. Check out the desired version branch: `7.8`
+3. Create a new version directory in the project: `schema/apm-7.8/docs`
+4. Copy the spec directory to the new spec directory: `cp -r /path/to/apm-server/docs/spec /path/to/elastic-apm-php-agent/schema/apm-7.8/docs/spec`
+
+### Declare the New Version as Supported
+
+The `Nipwaayoni\Tests\SchemaTestCase::SUPPORTED_SCHEMA_VERSIONS` is an array of officially supported versions. Add the new version to that array, then locate and update all implementations of the `Nipwaayoni\Tests\SchemaTestCase::schemaVersionDataProvider()` data provider method to include the new version. 
+
 ## Code Style
 
 We prefer the [PSR-12](https://www.php-fig.org/psr/psr-12/) code style format for this project. The workflow executes a `php-cs-fixer` script to check the code style and will fail if violations are found. You can run the check yourself with `composer`:

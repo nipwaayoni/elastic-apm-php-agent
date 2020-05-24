@@ -17,6 +17,7 @@ class Span extends TraceableEvent implements \JsonSerializable
 {
     use Stacktrace;
 
+    protected $eventType = 'span';
     /**
      * @var string
      */
@@ -134,7 +135,7 @@ class Span extends TraceableEvent implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'span' => [
+            $this->eventType => [
                 'id'             => $this->getId(),
                 'transaction_id' => $this->getParentId(),
                 'trace_id'       => $this->getTraceId(),
