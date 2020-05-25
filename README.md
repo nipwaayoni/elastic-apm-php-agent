@@ -3,7 +3,7 @@
 [![Latest Stable Version](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/v)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
 [![Total Downloads](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/downloads)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
 [![Latest Unstable Version](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/v/unstable)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
-[![Build Status](https://github.com/nipwaayoni/elastic-apm-php-agent/workflows/CI/badge.svg)](https://github.com/nipwaayoni/elastic-apm-php-agent)
+[![Build Status](https://github.com/nipwaayoni/elastic-apm-php-agent/workflows/CI/badge.svg)](https://github.com/nipwaayoni/elastic-apm-php-agent/actions?query=workflow%3ACI)
 [![License](https://poser.pugx.org/nipwaayoni/elastic-apm-php-agent/license)](//packagist.org/packages/nipwaayoni/elastic-apm-php-agent)
 
 This is a community PHP agent for Elastic.co's [APM](https://www.elastic.co/solutions/apm) solution, supporting the `v2` Intake API. 
