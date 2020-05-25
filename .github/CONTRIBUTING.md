@@ -50,13 +50,13 @@ The `Nipwaayoni\Tests\SchemaTestCase::SUPPORTED_SCHEMA_VERSIONS` is an array of 
 We prefer the [PSR-12](https://www.php-fig.org/psr/psr-12/) code style format for this project. The workflow executes a `php-cs-fixer` script to check the code style and will fail if violations are found. You can run the check yourself with `composer`:
 
 ```bash
-composer ci:fixer
+composer ci:cs-check
 ```
 
 You can also have `php-cs-fixer` apply fixes for you using:
 
 ```bash
-composer fix
+composer cs-fix
 ```
 
 The code style applies to the `src` and `tests` directories. 

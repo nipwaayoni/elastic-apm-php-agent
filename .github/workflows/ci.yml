@@ -63,7 +63,7 @@ jobs:
     strategy:
       matrix:
         command:
-          - fixer
+          - cs-check
         php-version:
           - 7.3
 
