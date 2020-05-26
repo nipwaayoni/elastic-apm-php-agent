@@ -64,7 +64,6 @@ final class TransactionTest extends SchemaTestCase
      *
      * @covers \Nipwaayoni\Events\EventBean::setParent
      * @covers \Nipwaayoni\Events\EventBean::getTraceId
-     * @covers \Nipwaayoni\Events\EventBean::ensureGetTraceId
      */
     public function testParentReference()
     {
