@@ -14,7 +14,7 @@ final class TransactionsStoreTest extends TestCase
 
   /**
    * @covers \Nipwaayoni\Stores\TransactionsStore::register
-   * @covers \Nipwaayoni\Stores\TransactionsStore::get
+   * @covers \Nipwaayoni\Stores\TransactionsStore::fetch
    */
     public function testTransactionRegistrationAndFetch()
     {
@@ -58,7 +58,7 @@ final class TransactionsStoreTest extends TestCase
     /**
      * @depends testTransactionRegistrationAndFetch
      *
-     * @covers \Nipwaayoni\Stores\TransactionsStore::get
+     * @covers \Nipwaayoni\Stores\TransactionsStore::fetch
      */
     public function testFetchUnknownTransaction()
     {

@@ -9,6 +9,9 @@
         "ext-curl" : "*",
         "ext-json": "*"
     },
+    "require-dev" : {
+        "justinrainbow/json-schema": "^5.2"
+    },
     "autoload" : {
         "psr-4" : {
             "Nipwaayoni\\": "src/"
@@ -30,8 +33,8 @@
         }
     ],
     "scripts": {
-        "fix": "\"./tools/php-cs-fixer\" --config=config/php-cs-fixer.php fix src/ tests/",
+        "cs-fix": "\"./tools/php-cs-fixer\" --config=config/php-cs-fixer.php fix src/ tests/",
         "ci:tests": "\"tools/phpunit\" tests/",
-        "ci:fixer": "\"./tools/php-cs-fixer\" --config=config/php-cs-fixer.php fix --dry-run -v --show-progress=dots --diff-format=udiff src/ tests/"
+        "ci:cs-check": "\"./tools/php-cs-fixer\" --config=config/php-cs-fixer.php fix --dry-run -v --show-progress=dots --diff-format=udiff src/ tests/"
     }
 }

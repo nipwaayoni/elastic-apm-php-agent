@@ -19,6 +19,13 @@ class EventBean
         TRACE_ID_BITS = 128;
 
     /**
+     * Event Type
+     *
+     * @var string
+     */
+    protected $eventType = 'generic';
+
+    /**
      * Event Id
      *
      * @var string
@@ -100,6 +107,16 @@ class EventBean
         if ($parent !== null) {
             $this->setParent($parent);
         }
+    }
+
+    /**
+     * Get the Event Type
+     *
+     * @return string
+     */
+    public function getEventType(): string
+    {
+        return $this->eventType;
     }
 
     /**
@@ -392,6 +409,10 @@ class EventBean
         // Add Custom Context
         if (empty($this->contexts['custom']) === false) {
             $context['custom'] = $this->contexts['custom'];
+
+            if (empty($this->contexts['custom']['db']) === false) {
+                $context['db'] = $this->contexts['custom']['db'];
+            }
         }
 
         // Add Tags Context

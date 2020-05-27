@@ -3,13 +3,41 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\Transaction;
-use Nipwaayoni\Tests\TestCase;
+use Nipwaayoni\Tests\SchemaTestCase;
 
 /**
  * Test Case for @see \Nipwaayoni\Events\Transaction
  */
-final class TransactionTest extends TestCase
+final class TransactionTest extends SchemaTestCase
 {
+    public function schemaVersionDataProvider(): array
+    {
+        return [
+            // TODO add support for multiple schema versions
+            // '6.7 v1 transaction' => ['6.7', 'transactions/v1_transaction.json'],
+            '6.7 v2 transaction' => ['6.7', 'transactions/v2_transaction.json'],
+            '7.6' => ['7.6', 'transactions/transaction.json'],
+            '7.8' => ['7.8', 'transactions/transaction.json'],
+        ];
+    }
+
+    public function testTestsSupportedSchemaVersions(): void
+    {
+        $this->assertSupportedSchemasAreTested($this->findUntestedSupportedSchemaVersions());
+    }
+
+    /**
+     * @dataProvider schemaVersionDataProvider
+     * @param string $schemaVersion
+     * @param string $schemaFile
+     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     */
+    public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
+    {
+        $transaction = new Transaction('MyTransaction', []);
+
+        $this->validateObjectAgainstSchema($transaction, $schemaVersion, $schemaFile);
+    }
 
     /**
      * @covers \Nipwaayoni\Events\EventBean::getId
@@ -36,7 +64,6 @@ final class TransactionTest extends TestCase
      *
      * @covers \Nipwaayoni\Events\EventBean::setParent
      * @covers \Nipwaayoni\Events\EventBean::getTraceId
-     * @covers \Nipwaayoni\Events\EventBean::ensureGetTraceId
      */
     public function testParentReference()
     {

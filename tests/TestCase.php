@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: tepeds
- * Date: 2019-02-09
- * Time: 10:49
- */
 
 namespace Nipwaayoni\Tests;
 

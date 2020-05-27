@@ -16,6 +16,7 @@ class Error extends EventBean implements \JsonSerializable
 {
     use Stacktrace;
 
+    protected $eventType = 'error';
     /**
      * Error | Exception
      *
@@ -43,7 +44,7 @@ class Error extends EventBean implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'error' => [
+            $this->eventType => [
                 'id'             => $this->getId(),
                 'transaction_id' => $this->getParentId(),
                 'parent_id'      => $this->getParentId(),

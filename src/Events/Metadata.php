@@ -15,6 +15,7 @@ use Nipwaayoni\Helper\Encoding;
  */
 class Metadata extends EventBean implements \JsonSerializable
 {
+    protected $eventType = 'metadata';
 
     /**
      * @var Config
@@ -39,7 +40,7 @@ class Metadata extends EventBean implements \JsonSerializable
     final public function jsonSerialize(): array
     {
         return [
-            'metadata' => [
+            $this->eventType => [
                 'service' => [
                     'name'    => Encoding::keywordField($this->config->get('appName')),
                     'version' => Encoding::keywordField($this->config->get('appVersion')),

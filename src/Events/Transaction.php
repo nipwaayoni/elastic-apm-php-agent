@@ -14,6 +14,8 @@ use Nipwaayoni\Helper\Encoding;
  */
 class Transaction extends TraceableEvent implements \JsonSerializable
 {
+    protected $eventType = 'transaction';
+
     /**
      * Transaction Name
      *
@@ -136,7 +138,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'transaction' => [
+            $this->eventType => [
                 'trace_id'   => $this->getTraceId(),
                 'id'         => $this->getId(),
                 'parent_id'  => $this->getParentId(),
