@@ -409,6 +409,10 @@ class EventBean
         // Add Custom Context
         if (empty($this->contexts['custom']) === false) {
             $context['custom'] = $this->contexts['custom'];
+
+            if (empty($this->contexts['custom']['db']) === false) {
+                $context['db'] = $this->contexts['custom']['db'];
+            }
         }
 
         // Add Tags Context
