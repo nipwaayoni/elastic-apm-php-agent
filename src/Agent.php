@@ -270,14 +270,4 @@ class Agent
         $this->transactionsStore->reset();
         return $this->connector->commit();
     }
-
-    /**
-     * Flush the Queue Payload
-     *
-     * @link https://www.php.net/manual/en/language.oop5.decon.php#object.destruct
-     */
-    public function __destruct()
-    {
-        $this->send();
-    }
 }
