@@ -5,7 +5,12 @@ namespace Nipwaayoni\Middleware;
 use Nipwaayoni\Agent;
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Stores\TransactionsStore;
-use GuzzleHttp\Client;
+use Nipwaayoni\Helper\Config;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
  *
@@ -15,16 +20,24 @@ use GuzzleHttp\Client;
 class Connector
 {
     /**
-     * Agent Config
-     *
-     * @var \Nipwaayoni\Helper\Config
-     */
-    private $config;
-
-    /**
-     * @var \GuzzleHttp\Client
+     * @var ClientInterface
      */
     private $client;
+
+    /**
+     * @var RequestFactoryInterface
+     */
+    private $requestFactory;
+
+    /**
+     * @var StreamFactoryInterface
+     */
+    private $streamFactory;
+
+    /**
+     * @var Config
+     */
+    private $config;
 
     /**
      * @var array
@@ -32,12 +45,17 @@ class Connector
     private $payload = [];
 
     /**
-     * @param \Nipwaayoni\Helper\Config $config
+     * @param ClientInterface $client
+     * @param RequestFactoryInterface $requestFactory
+     * @param StreamFactoryInterface $streamFactory
+     * @param Config $config
      */
-    public function __construct(\Nipwaayoni\Helper\Config $config)
+    public function __construct(ClientInterface $client, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory, Config $config)
     {
+        $this->client = $client;
+        $this->requestFactory = $requestFactory;
+        $this->streamFactory = $streamFactory;
         $this->config = $config;
-        $this->configureHttpClient();
     }
 
     /**
@@ -51,23 +69,9 @@ class Connector
     }
 
     /**
-     * Create and configure the HTTP client
-     *
-     * @return void
-     */
-    private function configureHttpClient()
-    {
-        $httpClientDefaults = [
-            'timeout' => $this->config->get('timeout'),
-        ];
-
-        $httpClientConfig = $this->config->get('httpClient') ?? [];
-
-        $this->client = new Client(array_merge($httpClientDefaults, $httpClientConfig));
-    }
-
-    /**
      * Put Events to the Payload Queue
+     *
+     * @param EventBean $event
      */
     public function putEvent(EventBean $event)
     {
@@ -78,6 +82,7 @@ class Connector
      * Commit the Events to the APM server
      *
      * @return bool
+     * @throws ClientExceptionInterface
      */
     public function commit(): bool
     {
@@ -86,10 +91,15 @@ class Connector
             $body .= $line . "\n";
         }
         $this->payload = [];
-        $response = $this->client->post($this->getEndpoint(), [
-            'headers' => $this->getRequestHeaders(),
-            'body'    => $body,
-        ]);
+
+        $request = $this->requestFactory
+            ->createRequest('POST', $this->getEndpoint())
+            ->withBody($this->streamFactory->createStream($body));
+
+        $request = $this->populateRequestWithHeaders($request);
+
+        $response = $this->client->sendRequest($request);
+
         return ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300);
     }
 
@@ -118,6 +128,20 @@ class Connector
     private function getEndpoint(): string
     {
         return sprintf('%s/intake/v2/events', $this->config->get('serverUrl'));
+    }
+
+    /**
+     * @param RequestInterface $request
+     *
+     * @return RequestInterface
+     */
+    private function populateRequestWithHeaders(RequestInterface $request): RequestInterface
+    {
+        foreach ($this->getRequestHeaders() as $key => $value) {
+            $request = $request->withHeader($key, $value);
+        }
+
+        return $request;
     }
 
     /**

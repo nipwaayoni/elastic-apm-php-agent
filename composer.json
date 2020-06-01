@@ -4,10 +4,21 @@
     "license": "MIT",
     "require" : {
         "php" : ">= 7.1",
-        "guzzlehttp/guzzle": "6.*",
         "ralouphie/getallheaders": "3.*",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0",
+        "php-http/discovery": "^1.7",
         "ext-curl" : "*",
         "ext-json": "*"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-master",
+        "php-http/guzzle6-adapter": "^2.0",
+        "http-interop/http-factory-guzzle": "^1.0"
+    },
+    "suggest": {
+        "php-http/guzzle6-adapter": "PSR-18 compatible Guzzle6 adapter",
+        "http-interop/http-factory-guzzle": "PSR-17 compatible factories for usage with PSR-18"
     },
     "autoload" : {
         "psr-4" : {
