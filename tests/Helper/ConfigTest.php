@@ -3,6 +3,7 @@
 namespace Nipwaayoni\Tests\Helper;
 
 use Nipwaayoni\Agent;
+use Nipwaayoni\Helper\Config;
 use Nipwaayoni\Tests\TestCase;
 
 /**
@@ -20,7 +21,7 @@ final class ConfigTest extends TestCase
     public function testControlDefaultConfig()
     {
         $appName = sprintf('app_name_%d', rand(10, 99));
-        $agent = new Agent([ 'appName' => $appName, 'active' => false, ]);
+        $agent = new Agent(new Config([ 'appName' => $appName, 'active' => false, ]));
 
         // Control Default Config
         $config = $agent->getConfig()->asArray();
@@ -62,17 +63,17 @@ final class ConfigTest extends TestCase
     public function testControlInjectedConfig()
     {
         $init = [
-      'appName'       => sprintf('app_name_%d', rand(10, 99)),
-      'secretToken'   => hash('tiger128,3', time()),
-      'serverUrl'     => sprintf('https://node%d.domain.tld:%d', rand(10, 99), rand(1000, 9999)),
-      'appVersion'    => sprintf('%d.%d.42', rand(0, 3), rand(0, 10)),
-      'frameworkName' => uniqid(),
-      'timeout'       => rand(10, 20),
-      'hostname'      => sprintf('host_%d', rand(0, 9)),
-      'active'        => false,
-    ];
+            'appName'       => sprintf('app_name_%d', rand(10, 99)),
+            'secretToken'   => hash('tiger128,3', time()),
+            'serverUrl'     => sprintf('https://node%d.domain.tld:%d', rand(10, 99), rand(1000, 9999)),
+            'appVersion'    => sprintf('%d.%d.42', rand(0, 3), rand(0, 10)),
+            'frameworkName' => uniqid(),
+            'timeout'       => rand(10, 20),
+            'hostname'      => sprintf('host_%d', rand(0, 9)),
+            'active'        => false,
+        ];
 
-        $agent = new Agent($init);
+        $agent = new Agent(new Config($init));
 
         // Control Default Config
         $config = $agent->getConfig()->asArray();
@@ -92,11 +93,12 @@ final class ConfigTest extends TestCase
     public function testGetConfig()
     {
         $init = [
-      'appName' => sprintf('app_name_%d', rand(10, 99)),
-      'active'  => false,
-    ];
+            'appName' => sprintf('app_name_%d', rand(10, 99)),
+            'active'  => false,
+        ];
 
-        $agent = new Agent($init);
+        $agent = new Agent(new Config($init));
+
         $this->assertEquals($agent->getConfig()->get('appName'), $init['appName']);
     }
 
@@ -116,8 +118,9 @@ final class ConfigTest extends TestCase
             'active'  => false,
         ];
 
-        $agent = new Agent($init);
+        $agent = new Agent(new Config($init));
         $config = $agent->getConfig()->asArray();
+
         foreach ($init as $key => $value) {
             if ('serverUrl' === $key) {
                 $this->assertEquals('http://foo.bar', $config[$key]);

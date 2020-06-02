@@ -16,7 +16,10 @@ $config = [
     'appName'    => 'examples',
     'appVersion' => '1.0.0',
 ];
-$agent = new Agent($config);
+
+$agent = (new \Nipwaayoni\AgentBuilder())
+    ->withConfig(new \Nipwaayoni\Helper\Config($config))
+    ->make();
 
 // Wrap everything in a Parent transaction
 $parent = $agent->startTransaction('GET /data/12345');

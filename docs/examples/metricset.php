@@ -14,7 +14,10 @@ $config = [
     'appVersion' => '1.0.0-beta',
 ];
 
-$agent = new Agent($config);
+$agent = (new \Nipwaayoni\AgentBuilder())
+    ->withConfig(new \Nipwaayoni\Helper\Config($config))
+    ->make();
+
 $agent->putEvent($agent->factory()->newMetricset([
     'system.cpu.total.norm.pct' => min(sys_getloadavg()[0]/100, 1),
 ]));

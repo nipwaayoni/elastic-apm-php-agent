@@ -97,7 +97,7 @@ class Agent
      * @return void
      */
     public function __construct(
-        array $config,
+        Config $config,
         array $sharedContext = [],
         EventFactoryInterface $eventFactory = null,
         TransactionsStore $transactionsStore = null,
@@ -106,7 +106,7 @@ class Agent
         StreamFactoryInterface $streamFactory = null
     ) {
         // Init Agent Config
-        $this->config = new Config($config);
+        $this->config = $config;
 
         $client = $client ?: HttpClientDiscovery::find();
         $requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
