@@ -3,21 +3,35 @@
 
 namespace Nipwaayoni\Contexts;
 
-
 use Nipwaayoni\Exception\Contexts\UnsupportedContextKeyException;
 
 class ContextCollection
 {
-    private $allowed = [
-        'user',
-        'custom',
-        'tags',
-        'env',
-        'cookies',
+    private $metadata = [
+        'user' => [
+            'default' => [],
+            'mergeMethod' => 'array_replace_recursive',
+        ],
+        'custom' => [
+            'default' => [],
+            'mergeMethod' => 'array_replace_recursive',
+        ],
+        'tags' => [
+            'default' => [],
+            'mergeMethod' => 'array_replace_recursive',
+        ],
+        'env' => [
+            'default' => ['SERVER_SOFTWARE'],
+            'mergeMethod' => 'array_merge',
+        ],
+        'cookies' => [
+            'default' => [],
+            'mergeMethod' => 'array_merge',
+        ],
     ];
 
     private $contexts = [];
-    
+
     public function __construct(array $contexts)
     {
         $this->validateContexts($contexts);
@@ -26,7 +40,7 @@ class ContextCollection
 
     private function validateContexts(array $contexts): void
     {
-        $unknownKeys = array_diff(array_keys($contexts), $this->allowed);
+        $unknownKeys = array_diff(array_keys($contexts), $this->allowed());
 
         if (empty($unknownKeys)) {
             return;
@@ -35,10 +49,25 @@ class ContextCollection
         throw new UnsupportedContextKeyException(implode('|', $unknownKeys));
     }
 
+    private function allowed(): array
+    {
+        return array_keys($this->metadata);
+    }
+
+    private function default(string $key): array
+    {
+        return $this->metadata[$key]['default'];
+    }
+
+    private function mergeMethod(string $key): string
+    {
+        return $this->metadata[$key]['mergeMethod'];
+    }
+
     private function setContexts(array $contexts): void
     {
-        foreach ($this->allowed as $key) {
-            $this->contexts[$key] = $contexts[$key] ?? [];
+        foreach ($this->allowed() as $key) {
+            $this->contexts[$key] = $contexts[$key] ?? $this->default($key);
         }
     }
 
@@ -74,6 +103,14 @@ class ContextCollection
 
     public function merge(ContextCollection $context): self
     {
-        return new self(array_replace_recursive($this->contexts, $context->toArray()));
+        $newContextData = $context->toArray();
+        $mergedContextData = [];
+
+        foreach ($this->allowed() as $key) {
+            $mergeMethod = $this->mergeMethod($key);
+            $mergedContextData[$key] = $mergeMethod($this->contexts[$key], $newContextData[$key]);
+        }
+
+        return new self($mergedContextData);
     }
 }

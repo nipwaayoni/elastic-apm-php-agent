@@ -12,40 +12,39 @@ class ContextCollectionTest extends TestCase
         'user' => ['username' => 'bob'],
         'custom' => ['my-key' => 'some value'],
         'tags' => ['my-tag' => 'some value'],
-        'env' => ['my-env' => 'some value'],
-        'cookies' => ['my-cookie' => 'some value'],
+        'env' => ['ENV_TO_SEND'],
+        'cookies' => ['COOKIE_TO_SEND'],
     ];
 
-
-    public function testCreatesEmptySharedUserContextByDefault(): void
+    public function testCreatesExpectedSharedUserContextByDefault(): void
     {
         $collection = new ContextCollection([]);
 
         $this->assertEmpty($collection->user());
     }
 
-    public function testCreatesEmptySharedCustomContextByDefault(): void
+    public function testCreatesExpectedSharedCustomContextByDefault(): void
     {
         $collection = new ContextCollection([]);
 
         $this->assertEmpty($collection->custom());
     }
 
-    public function testCreatesEmptySharedTagsByDefault(): void
+    public function testCreatesExpectedSharedTagsByDefault(): void
     {
         $collection = new ContextCollection([]);
 
         $this->assertEmpty($collection->tags());
     }
 
-    public function testCreatesEmptySharedEnvByDefault(): void
+    public function testCreatesExpectedSharedEnvByDefault(): void
     {
         $collection = new ContextCollection([]);
 
-        $this->assertEmpty($collection->env());
+        $this->assertEquals(['SERVER_SOFTWARE'], $collection->env());
     }
 
-    public function testCreatesEmptySharedCookiesByDefault(): void
+    public function testCreatesExpectedSharedCookiesByDefault(): void
     {
         $collection = new ContextCollection([]);
 
@@ -102,6 +101,9 @@ class ContextCollectionTest extends TestCase
         $localContext = $collection->merge(new ContextCollection(['custom' => $additionalCustomContext]));
 
         $expectedContext = $this->data;
+        // Expect the default env to remain
+        $expectedContext['env'][] = 'SERVER_SOFTWARE';
+        // Expect our additional context to be merged
         $expectedContext['custom'] = array_merge($additionalCustomContext, $expectedContext['custom']);
 
         $this->assertEquals($expectedContext, $localContext->toArray());

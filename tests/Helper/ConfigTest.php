@@ -3,6 +3,7 @@
 namespace Nipwaayoni\Tests\Helper;
 
 use Nipwaayoni\Agent;
+use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Helper\Config;
 use Nipwaayoni\Tests\TestCase;
 
@@ -33,9 +34,6 @@ final class ConfigTest extends TestCase
         $this->assertArrayHasKey('active', $config);
         $this->assertArrayHasKey('timeout', $config);
         $this->assertArrayHasKey('appVersion', $config);
-        $this->assertArrayHasKey('env', $config);
-        $this->assertArrayHasKey('cookies', $config);
-        $this->assertArrayHasKey('httpClient', $config);
         $this->assertArrayHasKey('environment', $config);
         $this->assertArrayHasKey('backtraceLimit', $config);
 
@@ -45,9 +43,6 @@ final class ConfigTest extends TestCase
         $this->assertEquals($config['hostname'], gethostname());
         $this->assertFalse($config['active']);
         $this->assertEquals($config['timeout'], 10);
-        $this->assertEquals($config['env'], ['SERVER_SOFTWARE']);
-        $this->assertEquals($config['cookies'], []);
-        $this->assertEquals($config['httpClient'], []);
         $this->assertEquals($config['environment'], 'development');
         $this->assertEquals($config['backtraceLimit'], 0);
     }
@@ -128,5 +123,30 @@ final class ConfigTest extends TestCase
                 $this->assertEquals($config[$key], $init[$key], 'key: ' . $key);
             }
         }
+    }
+
+    /**
+     * @throws UnsupportedConfigurationValueException
+     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     *
+     * @dataProvider unsupportedConfigOptions
+     */
+    public function testThrowsExceptionIfUnsupportedOptionIsIncluded(string $option): void
+    {
+        $this->expectException(UnsupportedConfigurationValueException::class);
+
+        new Config([
+            'appName' => 'Test',
+            $option => ['name' => 'test'],
+        ]);
+    }
+
+    public function unsupportedConfigOptions(): array
+    {
+        return [
+            'environment' => ['env'],
+            'cookies' => ['cookies'],
+            'http client' => ['httpClient'],
+        ];
     }
 }
