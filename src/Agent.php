@@ -4,6 +4,7 @@ namespace Nipwaayoni;
 
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
+use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Stores\TransactionsStore;
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Events\Error;
@@ -98,7 +99,7 @@ class Agent
      */
     public function __construct(
         Config $config,
-        array $sharedContext = [],
+        ContextCollection $sharedContext = null,
         EventFactoryInterface $eventFactory = null,
         TransactionsStore $transactionsStore = null,
         ClientInterface $client = null,
@@ -108,24 +109,14 @@ class Agent
         // Init Agent Config
         $this->config = $config;
 
+        $this->sharedContext = $sharedContext ?? new ContextCollection([]);
+
         $client = $client ?: HttpClientDiscovery::find();
         $requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
         $streamFactory = $streamFactory ?: Psr17FactoryDiscovery::findStreamFactory();
 
         // Use the custom event factory or create a default one
         $this->eventFactory = $eventFactory ?? new DefaultEventFactory();
-
-        // Init the Shared Context
-        $this->sharedContext['user']   = $sharedContext['user'] ?? [];
-        $this->sharedContext['custom'] = $sharedContext['custom'] ?? [];
-        $this->sharedContext['tags']   = $sharedContext['tags'] ?? [];
-
-        // Let's misuse the context to pass the environment variable and cookies
-        // config to the EventBeans and the getContext method
-        // @see https://github.com/philkra/elastic-apm-php-agent/issues/27
-        // @see https://github.com/philkra/elastic-apm-php-agent/issues/30
-        $this->sharedContext['env'] = $this->config->get('env', []);
-        $this->sharedContext['cookies'] = $this->config->get('cookies', []);
 
         // Initialize Event Stores
         $this->transactionsStore = $transactionsStore ?? new TransactionsStore();
@@ -173,9 +164,11 @@ class Agent
      */
     public function startTransaction(string $name, array $context = [], float $start = null): Transaction
     {
+        $eventContext = $this->sharedContext->merge(new ContextCollection($context));
+
         // Create and Store Transaction
         $this->transactionsStore->register(
-            $this->factory()->newTransaction($name, array_replace_recursive($this->sharedContext, $context), $start)
+            $this->factory()->newTransaction($name, $eventContext->toArray(), $start)
         );
 
         // Start the Transaction
@@ -237,7 +230,9 @@ class Agent
      */
     public function captureThrowable(\Throwable $thrown, array $context = [], ?Transaction $parent = null)
     {
-        $this->putEvent($this->factory()->newError($thrown, array_replace_recursive($this->sharedContext, $context), $parent));
+        $eventContext = $this->sharedContext->merge(new ContextCollection($context));
+
+        $this->putEvent($this->factory()->newError($thrown, $eventContext->toArray(), $parent));
     }
 
     /**

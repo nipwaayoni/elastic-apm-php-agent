@@ -27,6 +27,8 @@ class Config
             throw new MissingAppNameException();
         }
 
+        // TODO throw exception if 'env' or 'cookies' are included
+
         // Register Merged Config
         $this->config = array_merge($this->getDefaultConfig(), $config);
         $this->config['serverUrl'] = rtrim($this->config['serverUrl'], "/");

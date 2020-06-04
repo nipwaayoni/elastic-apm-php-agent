@@ -5,6 +5,7 @@ namespace Nipwaayoni;
 
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
+use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
 use Nipwaayoni\Helper\Config;
@@ -85,19 +86,16 @@ class AgentBuilder
         );
     }
 
-    private function makeSharedContext(): array
+    private function makeSharedContext(): ContextCollection
     {
-        // Merge env and cookies into this to pass into EventBeans
-        // That should be refactored later, but this class will hopefully
-        // hid that change from consumers.
-        return array_merge(
+        return new ContextCollection(array_merge(
             $this->sharedContexts,
             [
                 'tags' => $this->tags,
                 'env' => $this->env,
                 'cookies' => $this->cookies,
             ]
-        );
+        ));
     }
 
     public function withConfigData(array $config): self
