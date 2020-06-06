@@ -4,6 +4,7 @@ namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Events\Span;
+use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Tests\SchemaTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -41,5 +42,20 @@ class SpanTest extends SchemaTestCase
         $span = new Span('MySpan', $parent);
 
         $this->validateObjectAgainstSchema($span, $schemaVersion, $schemaFile);
+    }
+
+    public function testUsesProvidedTimer(): void
+    {
+        /** @var EventBean|MockObject $parent */
+        $parent = $this->createMock(EventBean::class);
+        $parent->method('getId')->willReturn('123');
+        $parent->method('getTraceId')->willReturn('456');
+
+        $timer = $this->createMock(Timer::class);
+        $timer->expects($this->once())->method('stop');
+
+        $span = new Span('MySpan', $parent);
+        $span->startWithTimer($timer);
+        $span->stop();
     }
 }

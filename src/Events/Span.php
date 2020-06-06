@@ -56,6 +56,7 @@ class Span extends TraceableEvent implements \JsonSerializable
     {
         parent::__construct([]);
         $this->name  = trim($name);
+        // TODO refactor to have a TimerFactory or something to create different timer implementations
         $this->timer = new Timer();
         $this->setParent($parent);
     }
@@ -68,6 +69,14 @@ class Span extends TraceableEvent implements \JsonSerializable
     public function start()
     {
         $this->timer->start();
+    }
+
+    /**
+     * @param Timer $timer
+     */
+    public function startWithTimer(Timer $timer)
+    {
+        $this->timer = $timer;
     }
 
     /**
