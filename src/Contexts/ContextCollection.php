@@ -46,7 +46,7 @@ class ContextCollection
             return;
         }
 
-        throw new UnsupportedContextKeyException(implode('|', $unknownKeys));
+        throw new UnsupportedContextKeyException($unknownKeys);
     }
 
     private function allowed(): array
