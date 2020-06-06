@@ -13,7 +13,7 @@ Below is an example to add spans for MySQL, Redis and generic request wraped by 
 ```php
 // create the agent
 $agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new \Nipwaayoni\Helper\Config(['appName' => 'examples']))
+    ->withConfig(new Nipwaayoni\Config(['appName' => 'examples']))
     ->make();
 
 // Span

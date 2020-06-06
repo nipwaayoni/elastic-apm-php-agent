@@ -29,7 +29,7 @@ $agent->getTransaction( $trxName )->setTags( [ 'k1' => 'v1', 'k2' => 'v2' ] );
 This example illustrates how you can monitor a call to another web service.
 ```php
 $agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new \Nipwaayoni\Helper\Config(['appName' => 'examples']))
+    ->withConfig(new Nipwaayoni\Config(['appName' => 'examples']))
     ->make();
 
 $endpoint = 'https://acme.com/api/';

@@ -11,7 +11,7 @@ use Nipwaayoni\Events\Error;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Events\Metadata;
 use Nipwaayoni\Helper\Timer;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
 use Nipwaayoni\Exception\Transaction\UnknownTransactionException;
@@ -49,7 +49,7 @@ class Agent
     /**
      * Config Store
      *
-     * @var \Nipwaayoni\Helper\Config
+     * @var \Nipwaayoni\Config
      */
     private $config;
 
@@ -246,9 +246,9 @@ class Agent
     /**
      * Get the Agent Config
      *
-     * @return \Nipwaayoni\Helper\Config
+     * @return \Nipwaayoni\Config
      */
-    public function getConfig(): \Nipwaayoni\Helper\Config
+    public function getConfig(): \Nipwaayoni\Config
     {
         return $this->config;
     }

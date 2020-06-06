@@ -15,7 +15,7 @@ $config = [
 ];
 
 $agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new \Nipwaayoni\Helper\Config($config))
+    ->withConfig(new Nipwaayoni\Config($config))
     ->make();
 
 $agent->putEvent($agent->factory()->newMetricset([

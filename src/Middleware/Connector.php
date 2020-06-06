@@ -5,7 +5,7 @@ namespace Nipwaayoni\Middleware;
 use Nipwaayoni\Agent;
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Stores\TransactionsStore;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;

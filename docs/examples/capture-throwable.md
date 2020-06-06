@@ -11,7 +11,7 @@ $config = [
 ];
 
 $agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new \Nipwaayoni\Helper\Config($config))
+    ->withConfig(new Nipwaayoni\Config($config))
     ->make();
 
 // start a new transaction or use an existing one

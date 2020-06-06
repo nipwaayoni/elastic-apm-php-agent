@@ -4,7 +4,7 @@ namespace Nipwaayoni\Tests;
 
 use Nipwaayoni\Agent;
 use Nipwaayoni\AgentBuilder;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use PHPUnit\Framework\TestCase;
 
 class AgentBuilderTest extends TestCase

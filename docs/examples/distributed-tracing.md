@@ -18,7 +18,7 @@ $config = [
 ];
 
 $agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new \Nipwaayoni\Helper\Config($config))
+    ->withConfig(new Nipwaayoni\Config($config))
     ->make();
 
 // Wrap everything in a Parent transaction

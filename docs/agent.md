@@ -8,7 +8,7 @@ The `AgentBuilder` class provides methods to create a configured `Agent`. The ba
 
 ```php
 $builder = new \Nipwaayoni\AgentBuilder();
-$builder->withConfig(new \Nipwaayoni\Helper\Config([]));
+$builder->withConfig(new Nipwaayoni\Config([]));
 $agent = $builder->make();
 ```
 
@@ -42,7 +42,7 @@ This approach to building the `Agent` allows developers to easily inject desired
 An Agent object can created directly:
 
 ```php
-$agent = new \Nipwaayoni\Agent(new \Nipwaayoni\Helper\Config([]));
+$agent = new \Nipwaayoni\Agent(new Nipwaayoni\Config([]));
 ```
 
 Note 1: Previous versions of the Agent accepted an array of configuration values and created the `Config` object internally. That is no longer supported and you must now create the `Config` object and pass it into the constructor.

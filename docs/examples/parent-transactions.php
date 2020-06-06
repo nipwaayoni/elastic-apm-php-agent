@@ -12,7 +12,7 @@ $config = [
 ];
 
 $agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new \Nipwaayoni\Helper\Config($config))
+    ->withConfig(new Nipwaayoni\Config($config))
     ->make();
 
 // Start a new parent Transaction

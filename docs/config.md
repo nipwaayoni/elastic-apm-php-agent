@@ -22,7 +22,7 @@ withCookiesData(): Cookies to send to the APM Server, empty set sends all. Keys 
 ## Example
 
 ```php
-$config = new \Nipwaayoni\Helper\Config([
+$config = new Nipwaayoni\Config([
     'appName'     => 'My WebApp',
     'appVersion'  => '1.0.42',
     'serverUrl'   => 'http://apm-server.example.com',

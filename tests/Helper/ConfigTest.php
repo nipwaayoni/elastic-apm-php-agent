@@ -4,20 +4,20 @@ namespace Nipwaayoni\Tests\Helper;
 
 use Nipwaayoni\Agent;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use Nipwaayoni\Tests\TestCase;
 
 /**
- * Test Case for @see \Nipwaayoni\Helper\Config
+ * Test Case for @see \Nipwaayoni\Config
  */
 final class ConfigTest extends TestCase
 {
 
   /**
-   * @covers \Nipwaayoni\Helper\Config::__construct
+   * @covers \Nipwaayoni\Config::__construct
    * @covers \Nipwaayoni\Agent::getConfig
-   * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
-   * @covers \Nipwaayoni\Helper\Config::asArray
+   * @covers \Nipwaayoni\Config::getDefaultConfig
+   * @covers \Nipwaayoni\Config::asArray
    */
     public function testControlDefaultConfig()
     {
@@ -50,10 +50,10 @@ final class ConfigTest extends TestCase
     /**
      * @depends testControlDefaultConfig
      *
-     * @covers \Nipwaayoni\Helper\Config::__construct
+     * @covers \Nipwaayoni\Config::__construct
      * @covers \Nipwaayoni\Agent::getConfig
-     * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
-     * @covers \Nipwaayoni\Helper\Config::asArray
+     * @covers \Nipwaayoni\Config::getDefaultConfig
+     * @covers \Nipwaayoni\Config::asArray
      */
     public function testControlInjectedConfig()
     {
@@ -80,10 +80,10 @@ final class ConfigTest extends TestCase
     /**
      * @depends testControlInjectedConfig
      *
-     * @covers \Nipwaayoni\Helper\Config::__construct
+     * @covers \Nipwaayoni\Config::__construct
      * @covers \Nipwaayoni\Agent::getConfig
-     * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
-     * @covers \Nipwaayoni\Helper\Config::get
+     * @covers \Nipwaayoni\Config::getDefaultConfig
+     * @covers \Nipwaayoni\Config::get
      */
     public function testGetConfig()
     {
@@ -100,10 +100,10 @@ final class ConfigTest extends TestCase
     /**
      * @depends testControlDefaultConfig
      *
-     * @covers \Nipwaayoni\Helper\Config::__construct
+     * @covers \Nipwaayoni\Config::__construct
      * @covers \Nipwaayoni\Agent::getConfig
-     * @covers \Nipwaayoni\Helper\Config::getDefaultConfig
-     * @covers \Nipwaayoni\Helper\Config::asArray
+     * @covers \Nipwaayoni\Config::getDefaultConfig
+     * @covers \Nipwaayoni\Config::asArray
      */
     public function testTrimElasticServerUrl()
     {

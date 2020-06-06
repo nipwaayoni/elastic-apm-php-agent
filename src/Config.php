@@ -1,6 +1,6 @@
 <?php
 
-namespace Nipwaayoni\Helper;
+namespace Nipwaayoni;
 
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Exception\MissingAppNameException;

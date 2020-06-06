@@ -8,7 +8,7 @@ use Http\Discovery\Psr17FactoryDiscovery;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;

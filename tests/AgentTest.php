@@ -3,7 +3,7 @@
 namespace Nipwaayoni\Tests;
 
 use Nipwaayoni\Agent;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use Nipwaayoni\Stores\TransactionsStore;
 
 /**
