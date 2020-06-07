@@ -2,10 +2,12 @@
 
 namespace Nipwaayoni\Exception\Transaction;
 
+use Nipwaayoni\Exception\ElasticApmException;
+
 /**
  * Trying to register a already registered Transaction
  */
-class DuplicateTransactionNameException extends \Exception
+class DuplicateTransactionNameException extends ElasticApmException
 {
     public function __construct(string $message = '', int $code = 0, \Throwable $previous = null)
     {

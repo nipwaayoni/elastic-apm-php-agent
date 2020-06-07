@@ -2,7 +2,9 @@
 
 namespace Nipwaayoni\Exception\Helper;
 
-class UnsupportedConfigurationValueException extends \Exception
+use Nipwaayoni\Exception\ElasticApmException;
+
+class UnsupportedConfigurationValueException extends ElasticApmException
 {
     public function __construct(string $message = '', int $code = 0, \Throwable $previous = null)
     {
