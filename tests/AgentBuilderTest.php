@@ -20,7 +20,7 @@ class AgentBuilderTest extends TestCase
         $agent = (new AgentBuilder())
             ->withConfig(new Config(['appName' => 'test']))
             ->withTagData(['my-tag'])
-            ->make();
+            ->build();
 
         $this->assertInstanceOf(Agent::class, $agent);
     }

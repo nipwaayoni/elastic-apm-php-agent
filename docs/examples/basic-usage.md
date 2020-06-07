@@ -30,7 +30,7 @@ This example illustrates how you can monitor a call to another web service.
 ```php
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config(['appName' => 'examples']))
-    ->make();
+    ->build();
 
 $endpoint = 'https://acme.com/api/';
 $payload  = [ 'foo' => 'bar' ];

@@ -15,7 +15,7 @@ $config = [
 
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config($config))
-    ->make();
+    ->build();
 
 $info = $agent->info();
 

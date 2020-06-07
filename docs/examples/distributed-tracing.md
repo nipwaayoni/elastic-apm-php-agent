@@ -19,7 +19,7 @@ $config = [
 
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config($config))
-    ->make();
+    ->build();
 
 // Wrap everything in a Parent transaction
 $parent = $agent->startTransaction('GET /data/12345');

@@ -13,7 +13,7 @@ $config = [
 
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config($config))
-    ->make();
+    ->build();
 
 // Start a new parent Transaction
 $parent = $agent->startTransaction('GET /users');

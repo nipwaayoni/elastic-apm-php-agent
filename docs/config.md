@@ -34,7 +34,7 @@ $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig($config)
     ->withEnvData(['DOCUMENT_ROOT', 'REMOTE_ADDR', 'REMOTE_USER'])
     ->withCookieData(['my-cookie'])
-    ->make();
+    ->build();
 ```
 
 **Note** The HTTP client can no longer be configured through the `Config` object. If you need to customize the HTTP client, you must construct and inject your own implementation. See the [Agent](agent.md) documentation for details.

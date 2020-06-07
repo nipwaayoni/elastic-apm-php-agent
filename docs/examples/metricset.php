@@ -16,7 +16,7 @@ $config = [
 
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config($config))
-    ->make();
+    ->build();
 
 $agent->putEvent($agent->factory()->newMetricset([
     'system.cpu.total.norm.pct' => min(sys_getloadavg()[0]/100, 1),

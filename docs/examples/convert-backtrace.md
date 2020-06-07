@@ -18,7 +18,7 @@ use Nipwaayoni\Helper\StackTrace;
 // create the agent
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config(['appName' => 'examples']))
-    ->make();
+    ->build();
 
 // Span
 // start a new transaction

@@ -9,7 +9,7 @@ The `AgentBuilder` class provides methods to create a configured `Agent`. The ba
 ```php
 $builder = new \Nipwaayoni\AgentBuilder();
 $builder->withConfig(new Nipwaayoni\Config([]));
-$agent = $builder->make();
+$agent = $builder->build();
 ```
 
 The following methods are available to influence the `Agent` creation:

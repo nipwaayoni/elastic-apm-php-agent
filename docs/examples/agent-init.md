@@ -6,7 +6,7 @@ The `AgentBuilder` is used to set all `Agent` options and make the final `Agent`
 
 ```php
 // Minimal required usage
-$agent = (new \Nipwaayoni\AgentBuilder())->withConfig(new Config(['appName' => 'My Application']))->make();
+$agent = (new \Nipwaayoni\AgentBuilder())->withConfig(new Config(['appName' => 'My Application']))->build();
 
 // Setting more options
 $builder = new \Nipwaayoni\AgentBuilder();
@@ -21,7 +21,7 @@ $builder->withCustomContextData([
 $builder->withTagData([
         // ... more key-values
     ]);
-$agent = $builder->make();
+$agent = $builder->build();
 ```
 
 All `with` methods of the support fluent chaining, so the previous example could be written as:
@@ -39,7 +39,7 @@ $agent = (new \Nipwaayoni\AgentBuilder())
     ->withTagData([
         // ... more key-values
     ])
-    ->make();
+    ->build();
 ```
 
 This makes conditionally setting options easy:
@@ -55,7 +55,7 @@ if ($app->hasUser()) {
     ]);
 }
 
-$agent = $builder->make();
+$agent = $builder->build();
 ```
 
 You can also provide a customized HTTP client, for example, to disable certificate validation:
@@ -64,5 +64,5 @@ You can also provide a customized HTTP client, for example, to disable certifica
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config(['appName' => 'My Application']))
     ->withHttpClient(new \Http\Adapter\Guzzle6\Client(new \GuzzleHttp\Client(['verify' => false])))
-    ->make();
+    ->build();
 ```

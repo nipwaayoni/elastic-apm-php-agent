@@ -73,7 +73,7 @@ class AgentBuilder
         $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
     }
 
-    public function make(): Agent
+    public function build(): Agent
     {
         return new Agent(
             $this->config,

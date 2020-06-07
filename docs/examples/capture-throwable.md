@@ -12,7 +12,7 @@ $config = [
 
 $agent = (new \Nipwaayoni\AgentBuilder())
     ->withConfig(new Nipwaayoni\Config($config))
-    ->make();
+    ->build();
 
 // start a new transaction or use an existing one
 $transaction = $agent->startTransaction('Failing-Transaction');
