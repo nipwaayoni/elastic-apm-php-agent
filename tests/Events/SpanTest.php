@@ -10,6 +10,16 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class SpanTest extends SchemaTestCase
 {
+    /** @var Timer|MockObject  */
+    private $timer;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->timer = $this->createMock(Timer::class);
+    }
+
     public function schemaVersionDataProvider(): array
     {
         return [
@@ -44,18 +54,62 @@ class SpanTest extends SchemaTestCase
         $this->validateObjectAgainstSchema($span, $schemaVersion, $schemaFile);
     }
 
-    public function testUsesProvidedTimer(): void
+    /**
+     * @throws \Nipwaayoni\Exception\Timer\AlreadyRunningException
+     *
+     * @dataProvider spanStartTimes
+     */
+    public function testUsesCorrectStartTime(float $startTime = null): void
     {
         /** @var EventBean|MockObject $parent */
         $parent = $this->createMock(EventBean::class);
         $parent->method('getId')->willReturn('123');
         $parent->method('getTraceId')->willReturn('456');
 
-        $timer = $this->createMock(Timer::class);
-        $timer->expects($this->once())->method('stop');
+        $this->timer->expects($this->once())->method('stop');
 
-        $span = new Span('MySpan', $parent);
-        $span->startWithTimer($timer);
+        $span = $this->makeTestSpan('MySpan', $parent, $startTime);
+        $span->start($startTime);
         $span->stop();
+    }
+
+    public function spanStartTimes(): array
+    {
+        return [
+            'null start time' => [null],
+            'set start time' => [microtime(true)],
+        ];
+    }
+
+    private function makeTestSpan(string $name, EventBean $parent, float $expectedStart = null): Span
+    {
+        // The anonymous class does not have access to the members of the containing class, so give
+        // it a callable which will carry the necessary scope.
+        $timer = $this->timer;
+
+        $createTimer = function (float $start = null) use ($timer, $expectedStart) {
+            $this->assertEquals($expectedStart, $start);
+            return $timer;
+        };
+
+        return new class($name, $parent, $createTimer) extends Span {
+            /**
+             * @var callable
+             */
+            private $createTimerFunction;
+
+            public function __construct(string $name, EventBean $parent, callable $createTimerFunction)
+            {
+                parent::__construct($name, $parent);
+
+                $this->createTimerFunction = $createTimerFunction;
+            }
+
+            protected function createTimer(float $startTime = null): Timer
+            {
+                $function = $this->createTimerFunction;
+                return $function($startTime);
+            }
+        };
     }
 }
