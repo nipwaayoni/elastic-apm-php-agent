@@ -112,10 +112,12 @@ class Connector
      */
     public function getInfo(): \GuzzleHttp\Psr7\Response
     {
-        return $this->client->get(
-            $this->config->get('serverUrl'),
-            ['headers' => $this->getRequestHeaders(),]
-        );
+        $request = $this->requestFactory
+            ->createRequest('GET', $this->config->get('serverUrl'));
+
+        $request = $this->populateRequestWithHeaders($request);
+
+        return $this->client->sendRequest($request);
     }
 
     /**
