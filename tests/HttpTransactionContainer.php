@@ -3,7 +3,6 @@
 
 namespace Nipwaayoni\Tests;
 
-
 class HttpTransactionContainer implements \ArrayAccess, \Countable
 {
     /**

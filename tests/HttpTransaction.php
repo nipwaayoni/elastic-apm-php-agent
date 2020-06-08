@@ -3,7 +3,6 @@
 
 namespace Nipwaayoni\Tests;
 
-
 use Psr\Http\Message\RequestInterface;
 
 class HttpTransaction

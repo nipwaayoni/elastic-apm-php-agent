@@ -3,7 +3,6 @@
 
 namespace Nipwaayoni\Tests;
 
-
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
@@ -32,5 +31,4 @@ trait MakesHttpTransactions
         $client = new \GuzzleHttp\Client(['handler' => $handlerStack]);
         $this->client = new \Http\Adapter\Guzzle6\Client($client);
     }
-
 }
