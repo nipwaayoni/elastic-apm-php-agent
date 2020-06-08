@@ -18,9 +18,10 @@ class ConnectorTest extends TestCase
     /** @var Connector  */
     private $connector;
 
-    private $configData = [
+    private $defaultConfigData = [
         'appName' => 'test',
         'serverUrl' => 'http://apm.example.com:8200',
+        'secretToken' => 'abc123',
     ];
 
     /** @var Config  */
@@ -35,11 +36,13 @@ class ConnectorTest extends TestCase
     {
         parent::setUp();
 
-        $this->config = new Config($this->configData);
+        $this->updateConfig();
 
         $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
         $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
     }
+
+    // TODO Requests to APM are the most important function of this package, we need more test coverage here
 
     public function testGetsInfoFromServerUrl(): void
     {
@@ -53,9 +56,10 @@ class ConnectorTest extends TestCase
 
         $this->connector = new Connector($this->client, $this->requestFactory, $this->streamFactory, $this->config);
 
+        // Response assertions
         $response = $this->connector->getInfo();
 
-        // Response assertions
+        $this->assertEquals(200, $response->getStatusCode());
 
         // Transaction Assertions
         $this->assertCount(1, $this->container);
@@ -63,6 +67,12 @@ class ConnectorTest extends TestCase
         // Request Assertions
         $request = $this->container[0]->request();
 
-        $this->assertEquals($this->configData['serverUrl'], $request->getUri());
+        $this->assertEquals($this->defaultConfigData['serverUrl'], $request->getUri());
+        $this->assertEquals('Bearer ' . $this->defaultConfigData['secretToken'], $request->getHeader('Authorization')[0]);
+    }
+
+    private function updateConfig(array $configData = []): void
+    {
+        $this->config = new Config(array_merge($this->defaultConfigData, $configData));
     }
 }
