@@ -4,6 +4,7 @@ namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Events\Span;
+use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Tests\SchemaTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -13,9 +14,17 @@ class SpanTest extends SchemaTestCase
     /** @var Timer|MockObject  */
     private $timer;
 
+    /** @var EventBean|MockObject  */
+    private $parent;
+
     public function setUp(): void
     {
         parent::setUp();
+
+        /** @var EventBean|MockObject $parent */
+        $this->parent = $this->createMock(EventBean::class);
+        $this->parent->method('getId')->willReturn('123');
+        $this->parent->method('getTraceId')->willReturn('456');
 
         $this->timer = $this->createMock(Timer::class);
     }
@@ -44,14 +53,19 @@ class SpanTest extends SchemaTestCase
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
-        /** @var EventBean|MockObject $parent */
-        $parent = $this->createMock(EventBean::class);
-        $parent->method('getId')->willReturn('123');
-        $parent->method('getTraceId')->willReturn('456');
-
-        $span = new Span('MySpan', $parent);
+        $span = new Span('MySpan', $this->parent);
 
         $this->validateObjectAgainstSchema($span, $schemaVersion, $schemaFile);
+    }
+
+    public function testCanOnlyBeStartedOnce(): void
+    {
+        $span = new Span('MySpan', $this->parent);
+        $span->start();
+
+        $this->expectException(AlreadyStartedException::class);
+
+        $span->start();
     }
 
     /**
@@ -61,14 +75,9 @@ class SpanTest extends SchemaTestCase
      */
     public function testUsesCorrectStartTime(float $startTime = null): void
     {
-        /** @var EventBean|MockObject $parent */
-        $parent = $this->createMock(EventBean::class);
-        $parent->method('getId')->willReturn('123');
-        $parent->method('getTraceId')->willReturn('456');
-
         $this->timer->expects($this->once())->method('stop');
 
-        $span = $this->makeTestSpan('MySpan', $parent, $startTime);
+        $span = $this->makeTestSpan('MySpan', $this->parent, $startTime);
         $span->start($startTime);
         $span->stop();
     }

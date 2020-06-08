@@ -2,6 +2,7 @@
 
 namespace Nipwaayoni\Events;
 
+use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Encoding;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Traits\Events\Stacktrace;
@@ -68,6 +69,10 @@ class Span extends TraceableEvent implements \JsonSerializable
      */
     public function start(float $startTime = null)
     {
+        if (null !== $this->timer) {
+            throw new AlreadyStartedException();
+        }
+
         $this->timer = $this->createTimer($startTime);
     }
 
