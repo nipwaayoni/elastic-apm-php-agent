@@ -19,6 +19,7 @@ use Psr\Http\Message\StreamFactoryInterface;
  */
 class Connector
 {
+    public const APM_V2_ENDPOINT = 'intake/v2/events';
     /**
      * @var ClientInterface
      */
@@ -129,7 +130,7 @@ class Connector
      */
     private function getEndpoint(): string
     {
-        return sprintf('%s/intake/v2/events', $this->config->get('serverUrl'));
+        return sprintf('%s/%s', $this->config->get('serverUrl'), self::APM_V2_ENDPOINT);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Nipwaayoni\Tests\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Nipwaayoni\Config;
+use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Tests\MakesHttpTransactions;
 use PHPUnit\Framework\TestCase;
@@ -56,9 +57,9 @@ class ConnectorTest extends TestCase
 
         $this->connector = new Connector($this->client, $this->requestFactory, $this->streamFactory, $this->config);
 
-        // Response assertions
         $response = $this->connector->getInfo();
 
+        // Response assertions
         $this->assertEquals(200, $response->getStatusCode());
 
         // Transaction Assertions
@@ -69,6 +70,32 @@ class ConnectorTest extends TestCase
 
         $this->assertEquals($this->defaultConfigData['serverUrl'], $request->getUri());
         $this->assertEquals('Bearer ' . $this->defaultConfigData['secretToken'], $request->getHeader('Authorization')[0]);
+    }
+
+    public function testSendsEventsToServerUrl(): void
+    {
+        $this->prepareClientWithResponses(new Response(202, []));
+
+        $this->connector = new Connector($this->client, $this->requestFactory, $this->streamFactory, $this->config);
+
+        $this->connector->putEvent(new Transaction('TestTransaction', []));
+        $isSuccess = $this->connector->commit();
+
+        // Response assertions
+        $this->asserttrue($isSuccess);
+
+        // Transaction Assertions
+        $this->assertCount(1, $this->container);
+
+        // Request Assertions
+        $request = $this->container[0]->request();
+
+        $this->assertStringContainsStringIgnoringCase(Connector::APM_V2_ENDPOINT, $request->getUri());
+        $this->assertEquals('Bearer ' . $this->defaultConfigData['secretToken'], $request->getHeader('Authorization')[0]);
+
+        $payload = json_decode($request->getBody()->getContents(), true);
+
+        $this->assertEquals('TestTransaction', $payload['transaction']['name']);
     }
 
     private function updateConfig(array $configData = []): void
