@@ -13,7 +13,9 @@ $config = [
     'appVersion' => '1.0.0-beta',
 ];
 
-$agent = new Agent($config);
+$agent = (new \Nipwaayoni\AgentBuilder())
+    ->withConfig(new Nipwaayoni\Config($config))
+    ->build();
 
 $info = $agent->info();
 

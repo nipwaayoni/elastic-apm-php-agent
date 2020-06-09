@@ -3,7 +3,7 @@
 namespace Nipwaayoni\Events;
 
 use Nipwaayoni\Agent;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use Nipwaayoni\Helper\Encoding;
 
 /**
