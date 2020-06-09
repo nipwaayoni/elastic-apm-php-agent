@@ -5,6 +5,7 @@ namespace Nipwaayoni\Events;
 use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Encoding;
 use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Traits\Events\Stacktrace;
 
 /**
@@ -50,14 +51,21 @@ class Span extends TraceableEvent implements \JsonSerializable
     private $stacktrace = [];
 
     /**
+     * @var TimerFactory
+     */
+    private $timerFactory;
+
+    /**
      * @param string $name
      * @param EventBean $parent
+     * @param TimerFactory|null $timerFactory
      */
-    public function __construct(string $name, EventBean $parent)
+    public function __construct(string $name, EventBean $parent, TimerFactory $timerFactory = null)
     {
         parent::__construct([]);
         $this->name  = trim($name);
         $this->setParent($parent);
+        $this->timerFactory = $timerFactory ?? new TimerFactory();
     }
 
     /**
@@ -73,12 +81,11 @@ class Span extends TraceableEvent implements \JsonSerializable
             throw new AlreadyStartedException();
         }
 
-        $this->timer = $this->createTimer($startTime);
-    }
-
-    protected function createTimer(float $startTime = null): Timer
-    {
-        return new Timer($startTime);
+        $this->timer = $this->timerFactory->newTimer($startTime);
+        if ($this->timer->isNotStarted()) {
+            $this->timer->start();
+        }
+        $this->timestamp = (int) round($this->timer->getStartTime() * 1000000);
     }
 
     /**

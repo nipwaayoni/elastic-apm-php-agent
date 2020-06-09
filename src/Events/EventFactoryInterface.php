@@ -22,7 +22,7 @@ interface EventFactoryInterface
      *
      * @return Transaction
      */
-    public function newTransaction(string $name, array $contexts, float $start = null): Transaction;
+    public function newTransaction(string $name, array $contexts): Transaction;
 
     /**
      * Creates a new Span

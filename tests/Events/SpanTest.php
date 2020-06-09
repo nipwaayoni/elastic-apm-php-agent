@@ -6,27 +6,46 @@ use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Events\Span;
 use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Tests\SchemaTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class SpanTest extends SchemaTestCase
 {
+    /** @var Span  */
+    private $span;
+
     /** @var Timer|MockObject  */
     private $timer;
 
+    /** @var TimerFactory|MockObject  */
+    private $timerFactory;
+
     /** @var EventBean|MockObject  */
     private $parent;
+
+    /** @var float */
+    private $timestamp;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        /** @var EventBean|MockObject $parent */
+        $this->timestamp = microtime(true);
+        $this->timer = $this->createMock(Timer::class);
+        $this->timer->method('getStartTime')
+            ->willReturnCallback(function () {
+                return $this->timestamp;
+            });
+
+        $this->timerFactory = $this->createMock(TimerFactory::class);
+        $this->timerFactory->method('newtimer')->willReturn($this->timer);
+
         $this->parent = $this->createMock(EventBean::class);
         $this->parent->method('getId')->willReturn('123');
         $this->parent->method('getTraceId')->willReturn('456');
 
-        $this->timer = $this->createMock(Timer::class);
+        $this->span = new Span('MySpan', $this->parent, $this->timerFactory);
     }
 
     public function schemaVersionDataProvider(): array
@@ -53,19 +72,42 @@ class SpanTest extends SchemaTestCase
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
-        $span = new Span('MySpan', $this->parent);
-
-        $this->validateObjectAgainstSchema($span, $schemaVersion, $schemaFile);
+        $this->validateObjectAgainstSchema($this->span, $schemaVersion, $schemaFile);
     }
 
     public function testCanOnlyBeStartedOnce(): void
     {
-        $span = new Span('MySpan', $this->parent);
-        $span->start();
+        $this->span->start();
 
         $this->expectException(AlreadyStartedException::class);
 
-        $span->start();
+        $this->span->start();
+    }
+
+    /**
+     * @param float|null $startTime
+     * @throws \Nipwaayoni\Exception\Timer\AlreadyRunningException
+     * @dataProvider spanStartTimes
+     */
+    public function testPresentsCorrectTimestampAndDurationInJson(float $startTime = null): void
+    {
+        $this->timestamp = 1591785019.5996;
+        $duration = 2.34;
+
+        $this->timer->expects($this->once())->method('getDurationInMilliseconds')
+            ->willReturn($duration);
+
+        $this->timerFactory->expects($this->once())->method('newTimer')
+            ->with($this->equalTo($startTime))
+            ->willReturn($this->timer);
+
+        $this->span->start($startTime);
+        $this->span->stop();
+
+        $payload = json_decode(json_encode($this->span), true);
+
+        $this->assertEquals((int) round($this->timestamp * 1000000), $payload['span']['timestamp']);
+        $this->assertEquals($duration, $payload['span']['duration']);
     }
 
     /**
@@ -73,13 +115,14 @@ class SpanTest extends SchemaTestCase
      *
      * @dataProvider spanStartTimes
      */
-    public function testUsesCorrectStartTime(float $startTime = null): void
+    public function testUsesCorrectStartTimeForTimer(float $startTime = null): void
     {
-        $this->timer->expects($this->once())->method('stop');
+        $this->timerFactory->expects($this->once())->method('newTimer')
+            ->with($this->equalTo($startTime))
+            ->willReturn($this->timer);
 
-        $span = $this->makeTestSpan('MySpan', $this->parent, $startTime);
-        $span->start($startTime);
-        $span->stop();
+        $this->span->start($startTime);
+        $this->span->stop();
     }
 
     public function spanStartTimes(): array
@@ -88,37 +131,5 @@ class SpanTest extends SchemaTestCase
             'null start time' => [null],
             'set start time' => [microtime(true)],
         ];
-    }
-
-    private function makeTestSpan(string $name, EventBean $parent, float $expectedStart = null): Span
-    {
-        // The anonymous class does not have access to the members of the containing class, so give
-        // it a callable which will carry the necessary scope.
-        $timer = $this->timer;
-
-        $createTimer = function (float $start = null) use ($timer, $expectedStart) {
-            $this->assertEquals($expectedStart, $start);
-            return $timer;
-        };
-
-        return new class($name, $parent, $createTimer) extends Span {
-            /**
-             * @var callable
-             */
-            private $createTimerFunction;
-
-            public function __construct(string $name, EventBean $parent, callable $createTimerFunction)
-            {
-                parent::__construct($name, $parent);
-
-                $this->createTimerFunction = $createTimerFunction;
-            }
-
-            protected function createTimer(float $startTime = null): Timer
-            {
-                $function = $this->createTimerFunction;
-                return $function($startTime);
-            }
-        };
     }
 }

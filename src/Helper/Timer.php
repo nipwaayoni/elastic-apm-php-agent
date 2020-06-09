@@ -31,6 +31,22 @@ class Timer
     }
 
     /**
+     * @return bool
+     */
+    public function isStarted(): bool
+    {
+        return null !== $this->startedOn;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotStarted(): bool
+    {
+        return null === $this->startedOn;
+    }
+
+    /**
      * Start the Timer
      *
      * @return void
@@ -59,6 +75,11 @@ class Timer
         }
 
         $this->stoppedOn = microtime(true);
+    }
+
+    public function getStartTime(): float
+    {
+        return $this->startedOn;
     }
 
     /**
