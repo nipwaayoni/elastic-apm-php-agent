@@ -82,7 +82,7 @@ class ConnectorTest extends TestCase
         $isSuccess = $this->connector->commit();
 
         // Response assertions
-        $this->asserttrue($isSuccess);
+        $this->assertTrue($isSuccess);
 
         // Transaction Assertions
         $this->assertCount(1, $this->container);
