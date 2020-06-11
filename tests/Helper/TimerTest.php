@@ -129,4 +129,29 @@ final class TimerTest extends TestCase
         $this->expectException(AlreadyRunningException::class);
         $timer->start();
     }
+
+    public function testReturnsStartTime(): void
+    {
+        $startTime = microtime(true);
+        $timer = new Timer($startTime);
+
+        $this->assertEquals($startTime, $timer->getStartTime());
+    }
+
+    public function testCanAssertIfTimerIsStarted(): void
+    {
+        $timer = new Timer();
+
+        $this->assertFalse($timer->isStarted());
+        $this->assertTrue($timer->isNotStarted());
+    }
+
+    public function testCanAssertIfTimerIsNotStarted(): void
+    {
+        $timer = new Timer();
+        $timer->start();
+
+        $this->assertTrue($timer->isStarted());
+        $this->assertFalse($timer->isNotStarted());
+    }
 }

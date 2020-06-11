@@ -155,12 +155,11 @@ class Agent
     /**
      * Start the Transaction capturing
      *
-     * @throws \Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException
-     *
      * @param string $name
-     * @param array  $context
-     *
+     * @param array $context
+     * @param float|null $start
      * @return Transaction
+     * @throws DuplicateTransactionNameException
      */
     public function startTransaction(string $name, array $context = [], float $start = null): Transaction
     {
@@ -168,15 +167,13 @@ class Agent
 
         // Create and Store Transaction
         $this->transactionsStore->register(
-            $this->factory()->newTransaction($name, $eventContext->toArray(), $start)
+            $this->factory()->newTransaction($name, $eventContext->toArray())
         );
 
         // Start the Transaction
         $transaction = $this->transactionsStore->fetch($name);
 
-        if (null === $start) {
-            $transaction->start();
-        }
+        $transaction->start($start);
 
         return $transaction;
     }

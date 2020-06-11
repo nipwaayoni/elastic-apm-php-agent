@@ -54,7 +54,7 @@ class EventBean
      *
      * @var int
      */
-    private $timestamp;
+    protected $timestamp;
 
     /**
      * Event Metadata
