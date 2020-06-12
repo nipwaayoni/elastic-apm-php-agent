@@ -9,6 +9,7 @@ use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
 use Nipwaayoni\Config;
+use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -46,6 +47,9 @@ class AgentBuilder
     /** @var StreamFactoryInterface */
     private $streamFactory;
 
+    /** @var Connector */
+    private $connector;
+
     public function __construct()
     {
         $this->init();
@@ -71,6 +75,9 @@ class AgentBuilder
         $this->httpClient = HttpClientDiscovery::find();
         $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
         $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
+
+        $this->connector = new Connector($this->httpClient, $this->requestFactory, $this->streamFactory, $this->config);
+
     }
 
     public function build(): Agent
@@ -78,11 +85,9 @@ class AgentBuilder
         return new Agent(
             $this->config,
             $this->makeSharedContext(),
+            $this->connector,
             $this->eventFactory,
-            $this->transactionStore,
-            $this->httpClient,
-            $this->requestFactory,
-            $this->streamFactory
+            $this->transactionStore
         );
     }
 

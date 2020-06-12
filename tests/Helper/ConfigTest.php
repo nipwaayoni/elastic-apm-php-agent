@@ -22,10 +22,7 @@ final class ConfigTest extends TestCase
     public function testControlDefaultConfig()
     {
         $appName = sprintf('app_name_%d', rand(10, 99));
-        $agent = new Agent(new Config([ 'appName' => $appName, 'active' => false, ]));
-
-        // Control Default Config
-        $config = $agent->getConfig()->asArray();
+        $config = (new Config([ 'appName' => $appName, 'active' => false, ]))->asArray();
 
         $this->assertArrayHasKey('appName', $config);
         $this->assertArrayHasKey('secretToken', $config);
@@ -68,10 +65,8 @@ final class ConfigTest extends TestCase
             'active'        => false,
         ];
 
-        $agent = new Agent(new Config($init));
+        $config = (new Config($init))->asArray();
 
-        // Control Default Config
-        $config = $agent->getConfig()->asArray();
         foreach ($init as $key => $value) {
             $this->assertEquals($config[$key], $init[$key], 'key: ' . $key);
         }
@@ -92,9 +87,9 @@ final class ConfigTest extends TestCase
             'active'  => false,
         ];
 
-        $agent = new Agent(new Config($init));
+        $config = new Config($init);
 
-        $this->assertEquals($agent->getConfig()->get('appName'), $init['appName']);
+        $this->assertEquals($config->get('appName'), $init['appName']);
     }
 
     /**
@@ -113,8 +108,7 @@ final class ConfigTest extends TestCase
             'active'  => false,
         ];
 
-        $agent = new Agent(new Config($init));
-        $config = $agent->getConfig()->asArray();
+        $config = (new Config($init))->asArray();
 
         foreach ($init as $key => $value) {
             if ('serverUrl' === $key) {
