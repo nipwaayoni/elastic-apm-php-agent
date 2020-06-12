@@ -3,12 +3,9 @@
 
 namespace Nipwaayoni;
 
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
-use Nipwaayoni\Config;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientInterface;
@@ -47,9 +44,6 @@ class AgentBuilder
     /** @var StreamFactoryInterface */
     private $streamFactory;
 
-    /** @var Connector */
-    private $connector;
-
     public function __construct()
     {
         $this->init();
@@ -57,8 +51,6 @@ class AgentBuilder
 
     private function init(): void
     {
-        $this->config = new Config(['appName' => 'APM Agent']);
-
         $this->sharedContexts = [
             'user' => [],
             'custom' => [],
@@ -69,25 +61,26 @@ class AgentBuilder
         $this->env = [];
 
         $this->cookies = [];
-
-        $this->eventFactory = new DefaultEventFactory();
-        $this->transactionStore = new TransactionsStore();
-        $this->httpClient = HttpClientDiscovery::find();
-        $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
-        $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
-
-        $this->connector = new Connector($this->httpClient, $this->requestFactory, $this->streamFactory, $this->config);
-
     }
 
     public function build(): Agent
     {
+        $config = $this->config ?? new Config(['appName' => 'APM Agent']);
+
+        $connector = new Connector(
+            $config->get('serverUrl'),
+            $config->get('secretToken'),
+            $this->httpClient,
+            $this->requestFactory,
+            $this->streamFactory
+        );
+
         return new Agent(
-            $this->config,
+            $config,
             $this->makeSharedContext(),
-            $this->connector,
-            $this->eventFactory,
-            $this->transactionStore
+            $connector,
+            $this->eventFactory ?? new DefaultEventFactory(),
+            $this->transactionStore ?? new TransactionsStore()
         );
     }
 
