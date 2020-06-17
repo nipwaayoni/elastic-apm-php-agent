@@ -15,9 +15,9 @@ final class DefaultEventFactory implements EventFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function newTransaction(string $name, array $contexts, float $start = null): Transaction
+    public function newTransaction(string $name, array $contexts): Transaction
     {
-        return new Transaction($name, $contexts, $start);
+        return new Transaction($name, $contexts);
     }
 
     /**

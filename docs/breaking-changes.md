@@ -9,3 +9,5 @@
 * The second argument to the `Agent` constructor must now be a `ContextCollection` object rather than an array of context values.
 * The `Config` class no longer accepts `httpClient`, `env` or `cookies` keys and will cause an `UnsupportedConfigurationValueException` if given.
 * Specifying environment variable and HTTP cookie names to include in APM events must now be done through a `ContextCollection` object or through the `AgentBuilder` class.
+* `Transaction` class constructors no longer accept a start time. You must now pass the start time to the `Transaction::start()` method consistent with `Span` objects.
+* The `EventFactoryInterface::newTransaction` method signature has changed to remove the `$start` argument.
