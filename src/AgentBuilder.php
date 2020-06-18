@@ -3,12 +3,10 @@
 
 namespace Nipwaayoni;
 
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
-use Nipwaayoni\Config;
+use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -53,8 +51,6 @@ class AgentBuilder
 
     private function init(): void
     {
-        $this->config = new Config(['appName' => 'APM Agent']);
-
         $this->sharedContexts = [
             'user' => [],
             'custom' => [],
@@ -65,24 +61,26 @@ class AgentBuilder
         $this->env = [];
 
         $this->cookies = [];
-
-        $this->eventFactory = new DefaultEventFactory();
-        $this->transactionStore = new TransactionsStore();
-        $this->httpClient = HttpClientDiscovery::find();
-        $this->requestFactory = Psr17FactoryDiscovery::findRequestFactory();
-        $this->streamFactory = Psr17FactoryDiscovery::findStreamFactory();
     }
 
     public function build(): Agent
     {
-        return new Agent(
-            $this->config,
-            $this->makeSharedContext(),
-            $this->eventFactory,
-            $this->transactionStore,
+        $config = $this->config ?? new Config(['appName' => 'APM Agent']);
+
+        $connector = new Connector(
+            $config->get('serverUrl'),
+            $config->get('secretToken'),
             $this->httpClient,
             $this->requestFactory,
             $this->streamFactory
+        );
+
+        return new Agent(
+            $config,
+            $this->makeSharedContext(),
+            $connector,
+            $this->eventFactory ?? new DefaultEventFactory(),
+            $this->transactionStore ?? new TransactionsStore()
         );
     }
 

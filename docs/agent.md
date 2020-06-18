@@ -39,13 +39,14 @@ This approach to building the `Agent` allows developers to easily inject desired
 
 ## Direct Creation (Deprecated)
 
-An Agent object can created directly:
+An Agent object can created directly if necessary. Note that the constructor parameters have changed and are also now required. The `Agent` now relies on the caller to provide component implementations. We strongly recommend using the `AgentBuilder` for this purpose. The following example shows how to create an `Agent`:
 
 ```php
-$agent = new \Nipwaayoni\Agent(new Nipwaayoni\Config([]));
+$agent = new \Nipwaayoni\Agent(
+    new Nipwaayoni\Config(...), 
+    new \Nipwaayoni\Contexts\ContextCollection(...),
+    new \Nipwaayoni\Middleware\Connector(...),
+    new \Nipwaayoni\Events\DefaultEventFactory(),
+    new \Nipwaayoni\Stores\TransactionsStore()
+);
 ```
-
-Note 1: Previous versions of the Agent accepted an array of configuration values and created the `Config` object internally. That is no longer supported and you must now create the `Config` object and pass it into the constructor.
-
-Note 2: The `Agent` constructor accepts a number of optional parameters. Those parameters will be made required in a future release and the `AgentBuilder` class will assume responsibility for initializing the `Agent` with defaults. We strongly encourage moving to the `AgentBuilder` approach now.
-

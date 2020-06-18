@@ -61,13 +61,6 @@ class Agent
     private $transactionsStore;
 
     /**
-     * Apm Timer
-     *
-     * @var \Nipwaayoni\Helper\Timer
-     */
-    private $timer;
-
-    /**
      * Common/Shared Contexts for Errors and Transactions
      *
      * @var array
@@ -91,43 +84,29 @@ class Agent
     /**
      * Setup the APM Agent
      *
-     * @param array                 $config
-     * @param array                 $sharedContext Set shared contexts such as user and tags
-     * @param EventFactoryInterface $eventFactory  Alternative factory to use when creating event objects
-     *
-     * @return void
+     * @param Config $config
+     * @param ContextCollection $sharedContext Set shared contexts such as user and tags
+     * @param Connector $connector
+     * @param EventFactoryInterface $eventFactory Alternative factory to use when creating event objects
+     * @param TransactionsStore $transactionsStore
      */
     public function __construct(
         Config $config,
-        ContextCollection $sharedContext = null,
-        EventFactoryInterface $eventFactory = null,
-        TransactionsStore $transactionsStore = null,
-        ClientInterface $client = null,
-        RequestFactoryInterface $requestFactory = null,
-        StreamFactoryInterface $streamFactory = null
+        ContextCollection $sharedContext,
+        Connector $connector,
+        EventFactoryInterface $eventFactory,
+        TransactionsStore $transactionsStore
     ) {
-        // Init Agent Config
         $this->config = $config;
 
-        $this->sharedContext = $sharedContext ?? new ContextCollection([]);
+        $this->sharedContext = $sharedContext;
 
-        $client = $client ?: HttpClientDiscovery::find();
-        $requestFactory = $requestFactory ?: Psr17FactoryDiscovery::findRequestFactory();
-        $streamFactory = $streamFactory ?: Psr17FactoryDiscovery::findStreamFactory();
+        $this->eventFactory = $eventFactory;
 
-        // Use the custom event factory or create a default one
-        $this->eventFactory = $eventFactory ?? new DefaultEventFactory();
+        $this->transactionsStore = $transactionsStore;
 
-        // Initialize Event Stores
-        $this->transactionsStore = $transactionsStore ?? new TransactionsStore();
-
-        // Init the Transport "Layer"
-        $this->connector = new Connector($client, $requestFactory, $streamFactory, $this->config);
+        $this->connector = $connector;
         $this->connector->putEvent(new Metadata([], $this->config));
-
-        // Start Global Agent Timer
-        $this->timer = new Timer();
-        $this->timer->start();
     }
 
     /**

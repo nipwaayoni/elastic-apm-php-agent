@@ -2,6 +2,8 @@
 
 namespace Nipwaayoni\Middleware;
 
+use Http\Discovery\HttpClientDiscovery;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Nipwaayoni\Agent;
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Stores\TransactionsStore;
@@ -20,6 +22,17 @@ use Psr\Http\Message\StreamFactoryInterface;
 class Connector
 {
     public const APM_V2_ENDPOINT = 'intake/v2/events';
+
+    /**
+     * @var string
+     */
+    private $serverUrl;
+
+    /**
+     * @var string|null
+     */
+    private $secretToken;
+
     /**
      * @var ClientInterface
      */
@@ -36,27 +49,29 @@ class Connector
     private $streamFactory;
 
     /**
-     * @var Config
-     */
-    private $config;
-
-    /**
      * @var array
      */
     private $payload = [];
 
     /**
+     * @param string $serverUrl
+     * @param string $secretToken
      * @param ClientInterface $client
      * @param RequestFactoryInterface $requestFactory
      * @param StreamFactoryInterface $streamFactory
-     * @param Config $config
      */
-    public function __construct(ClientInterface $client, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory, Config $config)
-    {
-        $this->client = $client;
-        $this->requestFactory = $requestFactory;
-        $this->streamFactory = $streamFactory;
-        $this->config = $config;
+    public function __construct(
+        string $serverUrl,
+        ?string $secretToken,
+        ClientInterface $client = null,
+        RequestFactoryInterface $requestFactory = null,
+        StreamFactoryInterface $streamFactory = null
+    ) {
+        $this->serverUrl = $serverUrl;
+        $this->secretToken = $secretToken;
+        $this->client = $client ?? HttpClientDiscovery::find();
+        $this->requestFactory = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
+        $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
     }
 
     /**
@@ -114,7 +129,7 @@ class Connector
     public function getInfo(): \GuzzleHttp\Psr7\Response
     {
         $request = $this->requestFactory
-            ->createRequest('GET', $this->config->get('serverUrl'));
+            ->createRequest('GET', $this->serverUrl);
 
         $request = $this->populateRequestWithHeaders($request);
 
@@ -130,7 +145,7 @@ class Connector
      */
     private function getEndpoint(): string
     {
-        return sprintf('%s/%s', $this->config->get('serverUrl'), self::APM_V2_ENDPOINT);
+        return sprintf('%s/%s', $this->serverUrl, self::APM_V2_ENDPOINT);
     }
 
     /**
@@ -162,8 +177,8 @@ class Connector
         ];
 
         // Add Secret Token to Header
-        if ($this->config->get('secretToken') !== null) {
-            $headers['Authorization'] = sprintf('Bearer %s', $this->config->get('secretToken'));
+        if ($this->secretToken !== null) {
+            $headers['Authorization'] = sprintf('Bearer %s', $this->secretToken);
         }
 
         return $headers;
