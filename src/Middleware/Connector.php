@@ -19,6 +19,7 @@ use Psr\Http\Message\StreamFactoryInterface;
  */
 class Connector
 {
+    public const APM_V2_ENDPOINT = 'intake/v2/events';
     /**
      * @var ClientInterface
      */
@@ -112,10 +113,12 @@ class Connector
      */
     public function getInfo(): \GuzzleHttp\Psr7\Response
     {
-        return $this->client->get(
-            $this->config->get('serverUrl'),
-            ['headers' => $this->getRequestHeaders(),]
-        );
+        $request = $this->requestFactory
+            ->createRequest('GET', $this->config->get('serverUrl'));
+
+        $request = $this->populateRequestWithHeaders($request);
+
+        return $this->client->sendRequest($request);
     }
 
     /**
@@ -127,7 +130,7 @@ class Connector
      */
     private function getEndpoint(): string
     {
-        return sprintf('%s/intake/v2/events', $this->config->get('serverUrl'));
+        return sprintf('%s/%s', $this->config->get('serverUrl'), self::APM_V2_ENDPOINT);
     }
 
     /**
