@@ -16,6 +16,7 @@ This package is a continuation of the excellent work done by [philkra](https://g
 * [Installation](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/install.md)
 * [Breaking Changes](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/breaking-changes.md)
 * [Configuration](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/config.md)
+* [Creating an Agent](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/agent.md)
 * [Knowledgebase](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/knowledgebase.md)
 
 ## Examples

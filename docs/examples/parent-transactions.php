@@ -9,10 +9,11 @@ use Nipwaayoni\Agent;
 $config = [
     'appName'    => 'examples',
     'appVersion' => '1.0.0-beta',
-    'env'        => ['REMOTE_ADDR'],
 ];
 
-$agent = new Agent($config);
+$agent = (new \Nipwaayoni\AgentBuilder())
+    ->withConfig(new Nipwaayoni\Config($config))
+    ->build();
 
 // Start a new parent Transaction
 $parent = $agent->startTransaction('GET /users');

@@ -8,6 +8,6 @@
 
 namespace Nipwaayoni\Exception;
 
-class InvalidTraceContextHeaderException extends \Exception
+class InvalidTraceContextHeaderException extends ElasticApmException
 {
 }

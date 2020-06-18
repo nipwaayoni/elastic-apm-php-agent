@@ -3,7 +3,7 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\Metadata;
-use Nipwaayoni\Helper\Config;
+use Nipwaayoni\Config;
 use Nipwaayoni\Tests\SchemaTestCase;
 
 class MetadataTest extends SchemaTestCase

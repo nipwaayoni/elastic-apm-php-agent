@@ -2,6 +2,8 @@
 
 namespace Nipwaayoni\Events;
 
+use Nipwaayoni\Exception\Events\AlreadyStartedException;
+use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Helper\Encoding;
 
@@ -22,6 +24,11 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      * @var string
      */
     private $name;
+
+    /**
+     * @var TimerFactory
+     */
+    private $timerFactory;
 
     /**
      * @var \Nipwaayoni\Helper\Timer
@@ -45,26 +52,37 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     private $backtraceLimit = 0;
 
     /**
-    * Create the Transaction
-    *
-    * @param string $name
-    * @param array $contexts
-    */
-    public function __construct(string $name, array $contexts, $start = null)
+     * Create the Transaction
+     *
+     * @param string $name
+     * @param array $contexts
+     * @param TimerFactory|null $timerFactory
+     */
+    public function __construct(string $name, array $contexts, TimerFactory $timerFactory = null)
     {
         parent::__construct($contexts);
         $this->setTransactionName($name);
-        $this->timer = new Timer($start);
+        $this->timerFactory = $timerFactory ?? new TimerFactory();
     }
 
     /**
-    * Start the Transaction
-    *
-    * @return void
-    */
-    public function start()
+     * Start the Transaction
+     *
+     * @param float|null $startTime
+     * @return void
+     * @throws AlreadyStartedException
+     */
+    public function start(float $startTime = null)
     {
-        $this->timer->start();
+        if (null !== $this->timer) {
+            throw new AlreadyStartedException();
+        }
+
+        $this->timer = $this->timerFactory->newTimer($startTime);
+        if ($this->timer->isNotStarted()) {
+            $this->timer->start();
+        }
+        $this->timestamp = (int) round($this->timer->getStartTime() * 1000000);
     }
 
     /**

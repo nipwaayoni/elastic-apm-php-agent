@@ -3,6 +3,7 @@
 namespace Nipwaayoni\Tests;
 
 use Nipwaayoni\Agent;
+use Nipwaayoni\Config;
 use Nipwaayoni\Stores\TransactionsStore;
 
 /**
@@ -19,7 +20,7 @@ final class AgentTest extends TestCase
      */
     public function testStartAndStopATransaction()
     {
-        $agent = new Agent([ 'appName' => 'phpunit_1', 'active' => false, ]);
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1', 'active' => false, ])]);
 
         // Create a Transaction, wait and Stop it
         $name = 'trx';
@@ -46,7 +47,7 @@ final class AgentTest extends TestCase
      */
     public function testStartAndStopATransactionWithExplicitStart()
     {
-        $agent = new Agent([ 'appName' => 'phpunit_1', 'active' => false, ]);
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1', 'active' => false, ])]);
 
         // Create a Transaction, wait and Stop it
         $name = 'trx';
@@ -73,7 +74,7 @@ final class AgentTest extends TestCase
      */
     public function testForceErrorOnUnknownTransaction()
     {
-        $agent = new Agent([ 'appName' => 'phpunit_x', 'active' => false, ]);
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_x', 'active' => false, ])]);
 
         $this->expectException(\Nipwaayoni\Exception\Transaction\UnknownTransactionException::class);
 
@@ -89,7 +90,7 @@ final class AgentTest extends TestCase
      */
     public function testForceErrorOnUnstartedTransaction()
     {
-        $agent = new Agent([ 'appName' => 'phpunit_2', 'active' => false, ]);
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_2', 'active' => false, ])]);
 
         $this->expectException(\Nipwaayoni\Exception\Transaction\UnknownTransactionException::class);
 

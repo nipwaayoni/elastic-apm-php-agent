@@ -5,10 +5,10 @@ namespace Nipwaayoni\Exception;
 /**
  * Application Tear Up has missing App Name in Config
  */
-class MissingAppNameException extends \Exception
+class MissingAppNameException extends ElasticApmException
 {
-    public function __construct(string $message = '', int $code = 0, Throwable $previous = null)
+    public function __construct(int $code = 0, \Throwable $previous = null)
     {
-        parent::__construct(sprintf('No app name registered in agent config.', $message), $code, $previous);
+        parent::__construct('No app name registered in agent config.', $code, $previous);
     }
 }

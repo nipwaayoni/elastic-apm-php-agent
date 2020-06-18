@@ -1,7 +1,8 @@
 <?php
 
-namespace Nipwaayoni\Helper;
+namespace Nipwaayoni;
 
+use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Exception\MissingAppNameException;
 
 /**
@@ -25,6 +26,12 @@ class Config
     {
         if (isset($config['appName']) === false) {
             throw new MissingAppNameException();
+        }
+
+        foreach (['httpClient', 'env', 'cookies'] as $removedKey) {
+            if (array_key_exists($removedKey, $config)) {
+                throw new UnsupportedConfigurationValueException($removedKey);
+            }
         }
 
         // Register Merged Config
@@ -71,9 +78,6 @@ class Config
             'appVersion'     => '',
             'active'         => true,
             'timeout'        => 10,
-            'env'            => ['SERVER_SOFTWARE'],
-            'cookies'        => [],
-            'httpClient'     => [],
             'environment'    => 'development',
             'backtraceLimit' => 0,
         ];
