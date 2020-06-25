@@ -16,12 +16,12 @@ final class StacktraceTest extends TestCase
     /** @var Stacktrace|PHPUnit_Framework_MockObject_MockObject */
     private $stacktraceMock;
 
-    protected function setUp() : void
+    protected function setUp()
     {
         $this->stacktraceMock = $this->getMockForTrait(Stacktrace::class);
     }
 
-    protected function tearDown() : void
+    protected function tearDown()
     {
         $this->stacktraceMock = null;
     }
