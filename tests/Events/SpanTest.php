@@ -106,7 +106,7 @@ class SpanTest extends SchemaTestCase
 
         $payload = json_decode(json_encode($this->span), true);
 
-        $this->assertEquals((int) round($this->timestamp * 1000000), $payload['span']['timestamp']);
+        $this->assertEquals(1591785019000000, $payload['span']['timestamp']);
         $this->assertEquals($duration, $payload['span']['duration']);
     }
 
