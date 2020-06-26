@@ -2,25 +2,16 @@
 
 namespace Nipwaayoni;
 
-use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Stores\TransactionsStore;
 use Nipwaayoni\Events\EventBean;
-use Nipwaayoni\Events\Error;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Events\Metadata;
-use Nipwaayoni\Helper\Timer;
-use Nipwaayoni\Config;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
 use Nipwaayoni\Exception\Transaction\UnknownTransactionException;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Http\Discovery\HttpClientDiscovery;
-use Http\Discovery\Psr17FactoryDiscovery;
 
 /**
  *
@@ -37,7 +28,7 @@ class Agent
      *
      * @var string
      */
-    const VERSION = '7.0.0';
+    const VERSION = '7.1.0';
 
     /**
      * Agent Name

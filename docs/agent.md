@@ -2,7 +2,17 @@
 
 You will need to create an `Agent` object to manage events and send data to APM. A valid `Config` object must be provided during Agent creation.
 
-## Creation with AgentBuilder
+## Creation with AgentBuilder::create()
+
+The static `AgentBuilder::create()` method is the easiest approach if you only need to pass some configuration values to `Agent`.
+
+```php
+$agent = AgentBuilder::create(['appName' => 'My Application']);
+```
+
+The `create` method only accepts an array of valid configuration options. For more advanced `Agent` constructions, you must use the various `AgentBuilder` object methods.
+
+## Creation with AgentBuilder Object Methods
 
 The `AgentBuilder` class provides methods to create a configured `Agent`. The basic usage is:
 
@@ -37,7 +47,7 @@ Note 2: Previous versions of the `Agent` accepted an array of key/value pairs as
 
 This approach to building the `Agent` allows developers to easily inject desired values/implementation without concern for the long list of constructor arguments. For maintainers, we will be able to change the Agent creation without causing major disruption to current consumers.
 
-## Direct Creation (Deprecated)
+## Creation Through Direct Instantiation (Deprecated)
 
 An Agent object can created directly if necessary. Note that the constructor parameters have changed and are also now required. The `Agent` now relies on the caller to provide component implementations. We strongly recommend using the `AgentBuilder` for this purpose. The following example shows how to create an `Agent`:
 

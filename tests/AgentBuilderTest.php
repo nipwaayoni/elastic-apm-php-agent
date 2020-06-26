@@ -24,4 +24,11 @@ class AgentBuilderTest extends TestCase
 
         $this->assertInstanceOf(Agent::class, $agent);
     }
+
+    public function testCreatesAgentFromConfigurationArray(): void
+    {
+        $agent = AgentBuilder::create(['appName' => 'Test Created App']);
+
+        $this->assertEquals('Test Created App', $agent->getConfig()->get('appName'));
+    }
 }
