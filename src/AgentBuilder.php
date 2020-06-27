@@ -44,6 +44,11 @@ class AgentBuilder
     /** @var StreamFactoryInterface */
     private $streamFactory;
 
+    public static function create(array $config): Agent
+    {
+        return (new self())->withConfigData($config)->build();
+    }
+
     public function __construct()
     {
         $this->init();
