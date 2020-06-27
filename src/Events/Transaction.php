@@ -82,7 +82,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
         if ($this->timer->isNotStarted()) {
             $this->timer->start();
         }
-        $this->timestamp = (int) round($this->timer->getStartTime() * 1000000);
+        $this->timestamp = round($this->timer->getStartTime() * 1000000);
     }
 
     /**
