@@ -7,6 +7,7 @@ use Nipwaayoni\Events\Span;
 use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Factory\TimerFactory;
+use Nipwaayoni\Helper\Timestamp;
 use Nipwaayoni\Tests\SchemaTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -106,7 +107,9 @@ class SpanTest extends SchemaTestCase
 
         $payload = json_decode(json_encode($this->span), true);
 
-        $this->assertEquals((int) round($this->timestamp * 1000000), $payload['span']['timestamp']);
+        $timestamp = new Timestamp($this->timestamp);
+
+        $this->assertEquals(floor($timestamp->asMicroSeconds()), $payload['span']['timestamp']);
         $this->assertEquals($duration, $payload['span']['duration']);
     }
 

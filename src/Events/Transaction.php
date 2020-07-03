@@ -6,6 +6,7 @@ use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Helper\Encoding;
+use Nipwaayoni\Helper\Timestamp;
 
 /**
  *
@@ -82,7 +83,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
         if ($this->timer->isNotStarted()) {
             $this->timer->start();
         }
-        $this->timestamp = round($this->timer->getStartTime() * 1000000);
+        $this->timestamp = new Timestamp($this->timer->getStartTime());
     }
 
     /**

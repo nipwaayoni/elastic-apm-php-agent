@@ -5,6 +5,7 @@ namespace Nipwaayoni\Tests\Events;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Helper\Timer;
+use Nipwaayoni\Helper\Timestamp;
 use Nipwaayoni\Tests\SchemaTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -87,8 +88,8 @@ final class TransactionTest extends SchemaTestCase
         $this->assertNotNull($transaction->getTraceId());
         $this->assertNotNull($transaction->getTimestamp());
 
-        $now = round(microtime(true) * 1000000);
-        $this->assertGreaterThanOrEqual($transaction->getTimestamp(), $now);
+        $now = new Timestamp();
+        $this->assertGreaterThanOrEqual($transaction->getTimestamp()->asMicroSeconds(), $now->asMicroSeconds());
     }
 
     /**
