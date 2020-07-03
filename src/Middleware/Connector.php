@@ -12,6 +12,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
 /**
@@ -49,6 +50,16 @@ class Connector
     private $streamFactory;
 
     /**
+     * @var callable|null
+     */
+    private $preCommitCallback;
+
+    /**
+     * @var callable|null
+     */
+    private $postCommitCallback;
+
+    /**
      * @var array
      */
     private $payload = [];
@@ -59,19 +70,25 @@ class Connector
      * @param ClientInterface $client
      * @param RequestFactoryInterface $requestFactory
      * @param StreamFactoryInterface $streamFactory
+     * @param callable|null $preCommitCallback
+     * @param callable|null $postCommitCallback
      */
     public function __construct(
         string $serverUrl,
         ?string $secretToken,
         ClientInterface $client = null,
         RequestFactoryInterface $requestFactory = null,
-        StreamFactoryInterface $streamFactory = null
+        StreamFactoryInterface $streamFactory = null,
+        callable $preCommitCallback = null,
+        callable $postCommitCallback = null
     ) {
         $this->serverUrl = $serverUrl;
         $this->secretToken = $secretToken;
         $this->client = $client ?? HttpClientDiscovery::find();
         $this->requestFactory = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
         $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
+        $this->preCommitCallback = $preCommitCallback;
+        $this->postCommitCallback = $postCommitCallback;
     }
 
     /**
@@ -114,9 +131,31 @@ class Connector
 
         $request = $this->populateRequestWithHeaders($request);
 
+        $this->preCommit($request);
+
         $response = $this->client->sendRequest($request);
 
+        $this->postCommit($response);
+
         return ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300);
+    }
+
+    private function preCommit(RequestInterface $request): void
+    {
+        if (null === $this->preCommitCallback) {
+            return;
+        }
+
+        call_user_func($this->preCommitCallback, $request);
+    }
+
+    private function postCommit(ResponseInterface $response): void
+    {
+        if (null === $this->postCommitCallback) {
+            return;
+        }
+
+        call_user_func($this->postCommitCallback, $response);
     }
 
     /**
@@ -124,9 +163,9 @@ class Connector
      *
      * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
      *
-     * @return Response
+     * @return ResponseInterface
      */
-    public function getInfo(): \GuzzleHttp\Psr7\Response
+    public function getInfo(): ResponseInterface
     {
         $request = $this->requestFactory
             ->createRequest('GET', $this->serverUrl);

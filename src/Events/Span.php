@@ -6,6 +6,7 @@ use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Encoding;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Factory\TimerFactory;
+use Nipwaayoni\Helper\Timestamp;
 use Nipwaayoni\Traits\Events\Stacktrace;
 
 /**
@@ -85,7 +86,7 @@ class Span extends TraceableEvent implements \JsonSerializable
         if ($this->timer->isNotStarted()) {
             $this->timer->start();
         }
-        $this->timestamp = (int) round($this->timer->getStartTime() * 1000000);
+        $this->timestamp = new Timestamp($this->timer->getStartTime());
     }
 
     /**

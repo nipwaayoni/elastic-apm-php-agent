@@ -3,6 +3,7 @@
 namespace Nipwaayoni\Events;
 
 use Nipwaayoni\Helper\Encoding;
+use Nipwaayoni\Helper\Timestamp;
 
 /**
  *
@@ -50,9 +51,9 @@ class EventBean
     private $parentId = null;
 
     /**
-     * Error occurred on Timestamp
+     * Event occurred on Timestamp
      *
-     * @var int
+     * @var Timestamp
      */
     protected $timestamp;
 
@@ -100,8 +101,7 @@ class EventBean
         // Merge Initial Context
         $this->contexts = array_merge($this->contexts, $contexts);
 
-        // Get current Unix timestamp with seconds
-        $this->timestamp = (int) round(microtime(true) * 1000000);
+        $this->timestamp = new Timestamp();
 
         // Set Parent Transaction
         if ($parent !== null) {
@@ -170,21 +170,11 @@ class EventBean
     }
 
     /**
-     * Get the Offset between the Parent's timestamp and this Event's
-     *
-     * @return int
-     */
-    final public function getParentTimestampOffset(): ?int
-    {
-        return $this->parentTimestampOffset;
-    }
-
-    /**
      * Get the Event's Timestamp
      *
-     * @return int
+     * @return Timestamp
      */
-    public function getTimestamp(): int
+    public function getTimestamp(): Timestamp
     {
         return $this->timestamp;
     }

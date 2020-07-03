@@ -44,6 +44,17 @@ class AgentBuilder
     /** @var StreamFactoryInterface */
     private $streamFactory;
 
+    /** @var callable */
+    private $preCommitCallback;
+
+    /** @var callable */
+    private $postCommitCallback;
+
+    public static function create(array $config): Agent
+    {
+        return (new self())->withConfigData($config)->build();
+    }
+
     public function __construct()
     {
         $this->init();
@@ -72,7 +83,9 @@ class AgentBuilder
             $config->get('secretToken'),
             $this->httpClient,
             $this->requestFactory,
-            $this->streamFactory
+            $this->streamFactory,
+            $this->preCommitCallback,
+            $this->postCommitCallback
         );
 
         return new Agent(
@@ -176,6 +189,20 @@ class AgentBuilder
     public function withStreamFactory(StreamFactoryInterface $streamFactory): self
     {
         $this->streamFactory = $streamFactory;
+
+        return $this;
+    }
+
+    public function withPreCommitCallback(callable $callback): self
+    {
+        $this->preCommitCallback = $callback;
+
+        return $this;
+    }
+
+    public function withPostCommitCallback(callable $callback): self
+    {
+        $this->postCommitCallback = $callback;
 
         return $this;
     }
