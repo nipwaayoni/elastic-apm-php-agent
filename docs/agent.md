@@ -47,6 +47,29 @@ Note 2: Previous versions of the `Agent` accepted an array of key/value pairs as
 
 This approach to building the `Agent` allows developers to easily inject desired values/implementation without concern for the long list of constructor arguments. For maintainers, we will be able to change the Agent creation without causing major disruption to current consumers.
 
+## Hooking the APM Request in the AgentBuilder
+
+You can set pre and post hooks for the HTTP request used to send transaction event data to APM.
+
+```php
+$builder->withPreCommitCallback(callable $callback);
+$builder->withPostCommitCallback(callable $callback);
+```
+
+Your callbacks should expect to be called as below and should not return a value. 
+
+```php
+$builder->withPreCommitCallback(function (RequestInterface $request) {
+        // Request stuff
+    });
+
+$builder->withPostCommitCallback(function (ResponseInterface $response) {
+        // Response stuff
+    });
+```
+
+The primary purpose of these hooks is to enable logging or other diagnostics of the APM request/response.
+
 ## Creation Through Direct Instantiation (Deprecated)
 
 An Agent object can created directly if necessary. Note that the constructor parameters have changed and are also now required. The `Agent` now relies on the caller to provide component implementations. We strongly recommend using the `AgentBuilder` for this purpose. The following example shows how to create an `Agent`:
