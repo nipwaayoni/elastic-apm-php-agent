@@ -2,6 +2,7 @@
 
 namespace Nipwaayoni\Middleware;
 
+use Http\Client\HttpAsyncClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Nipwaayoni\Agent;
@@ -121,10 +122,10 @@ class Connector
     /**
      * Commit the Events to the APM server
      *
-     * @return bool
+     * @return void
      * @throws ClientExceptionInterface
      */
-    public function commit(): bool
+    public function commit(): void
     {
         $body = '';
         foreach ($this->payload as $line) {
@@ -138,13 +139,38 @@ class Connector
 
         $request = $this->populateRequestWithHeaders($request);
 
+        $this->sendRequest($request);
+    }
+
+    private function sendRequest(RequestInterface $request): void
+    {
         $this->preCommit($request);
 
-        $response = $this->client->sendRequest($request);
+        if ($this->canMakeAsyncRequest()) {
+            $this->client->sendAsyncRequest($request)->then(
+                function (ResponseInterface $response) {
+                    $this->postCommit($response);
+                },
 
-        $this->postCommit($response);
+                function (\Exception $exception) {
+                    $this->postCommit(null, $exception);
+                }
+            );
 
-        return ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300);
+            return;
+        }
+
+        try {
+            $response = $this->client->sendRequest($request);
+            $this->postCommit($response);
+        } catch (ClientExceptionInterface $e) {
+            $this->postCommit(null, $e);
+        }
+    }
+
+    private function canMakeAsyncRequest(): bool
+    {
+        return is_subclass_of($this->client, HttpAsyncClient::class);
     }
 
     private function preCommit(RequestInterface $request): void
@@ -156,13 +182,13 @@ class Connector
         call_user_func($this->preCommitCallback, $request);
     }
 
-    private function postCommit(ResponseInterface $response): void
+    private function postCommit(ResponseInterface $response = null, \Throwable $e = null): void
     {
         if (null === $this->postCommitCallback) {
             return;
         }
 
-        call_user_func($this->postCommitCallback, $response);
+        call_user_func($this->postCommitCallback, $response, $e);
     }
 
     /**
