@@ -101,7 +101,7 @@ class EventBean
         // Merge Initial Context
         $this->contexts = array_merge($this->contexts, $contexts);
 
-        $this->timestamp = new Timestamp();
+        $this->timestamp = (new Timestamp())->asMicroSeconds();
 
         // Set Parent Transaction
         if ($parent !== null) {
