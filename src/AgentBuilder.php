@@ -153,7 +153,7 @@ class AgentBuilder
 
     public function withCookieData(array $cookies): self
     {
-        $this->config = $cookies;
+        $this->cookies = $cookies;
 
         return $this;
     }
