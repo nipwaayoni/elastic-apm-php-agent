@@ -81,7 +81,7 @@ class Agent implements ApmAgent
      * @param EventFactoryInterface $eventFactory Alternative factory to use when creating event objects
      * @param TransactionsStore $transactionsStore
      */
-    public function __construct(
+    final public function __construct(
         Config $config,
         ContextCollection $sharedContext,
         Connector $connector,
@@ -98,6 +98,13 @@ class Agent implements ApmAgent
 
         $this->connector = $connector;
         $this->connector->putEvent(new Metadata([], $this->config));
+
+        $this->initialize();
+    }
+
+    protected function initialize(): void
+    {
+        // Sub classes can override this method to initialize
     }
 
     /**
