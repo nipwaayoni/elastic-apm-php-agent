@@ -3,7 +3,6 @@
 
 namespace Nipwaayoni;
 
-
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Events\EventFactoryInterface;
 use Nipwaayoni\Events\Transaction;

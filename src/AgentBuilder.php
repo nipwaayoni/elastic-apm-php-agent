@@ -18,6 +18,9 @@ class AgentBuilder
     /** @var string  */
     private $agentClass = Agent::class;
 
+    /** @var callable */
+    private $agentBuildCallback;
+
     /** @var Config */
     private $config;
 
@@ -92,6 +95,18 @@ class AgentBuilder
             $this->postCommitCallback
         );
 
+        if ($this->agentBuildCallback !== null) {
+            $buildMethod = $this->agentBuildCallback;
+
+            return $buildMethod(
+                $config,
+                $this->makeSharedContext(),
+                $connector,
+                $this->eventFactory ?? new DefaultEventFactory(),
+                $this->transactionStore ?? new TransactionsStore()
+            );
+        }
+
         return new $this->agentClass(
             $config,
             $this->makeSharedContext(),
@@ -120,6 +135,13 @@ class AgentBuilder
         }
 
         $this->agentClass = $class;
+
+        return $this;
+    }
+
+    public function withAgentBuildMethod(callable $method): self
+    {
+        $this->agentBuildCallback = $method;
 
         return $this;
     }
