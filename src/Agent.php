@@ -20,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
  * @link https://www.elastic.co/guide/en/apm/server/master/transaction-api.html
  *
  */
-class Agent
+class Agent implements ApmAgent
 {
 
     /**
