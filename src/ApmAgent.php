@@ -20,5 +20,5 @@ interface ApmAgent
     public function captureThrowable(\Throwable $thrown, array $context = [], ?Transaction $parent = null);
     public function putEvent(EventBean $event);
     public function getConfig(): Config;
-    public function send(): bool;
+    public function send(): void;
 }

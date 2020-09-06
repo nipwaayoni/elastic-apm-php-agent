@@ -162,7 +162,6 @@ class Connector
                 function (ResponseInterface $response) {
                     $this->postCommit($response);
                 },
-
                 function (\Exception $exception) {
                     $this->postCommit(null, $exception);
                 }
