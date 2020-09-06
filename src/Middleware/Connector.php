@@ -24,7 +24,7 @@ class Connector
 {
     public const APM_V2_ENDPOINT = 'intake/v2/events';
 
-    private $userAgent = 'elastic-apm-php/0.0';
+    private $userAgent = 'elasticapm-php/0.0';
 
     /**
      * @var string

@@ -28,7 +28,7 @@ class Agent implements ApmAgent
      *
      * @var string
      */
-    public const VERSION = '7.2.0';
+    public const VERSION = '7.3.0';
 
     /**
      * Agent Name
@@ -98,7 +98,7 @@ class Agent implements ApmAgent
 
         $this->connector = $connector;
         $this->connector->useHttpUserAgentString($this->httpUserAgent());
-        // TODO Why is the metadata added here and conditional in the send() method?
+        // TODO Why is the metadata added here and conditionally in the send() method?
         $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
 
         $this->initialize();
