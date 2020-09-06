@@ -248,14 +248,14 @@ class Agent implements ApmAgent
      * @link https://github.com/philkra/elastic-apm-laravel/issues/22
      * @link https://github.com/philkra/elastic-apm-laravel/issues/26
      *
-     * @return bool
+     * @return void
      */
-    public function send(): bool
+    public function send(): void
     {
         // Is the Agent enabled ?
         if ($this->config->get('active') === false) {
             $this->transactionsStore->reset();
-            return true;
+            return;
         }
 
         // Put the preceding Metadata
@@ -269,6 +269,7 @@ class Agent implements ApmAgent
             $this->connector->putEvent($event);
         }
         $this->transactionsStore->reset();
-        return $this->connector->commit();
+
+        $this->connector->commit();
     }
 }
