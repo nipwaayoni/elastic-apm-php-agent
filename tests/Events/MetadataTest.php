@@ -30,7 +30,8 @@ class MetadataTest extends SchemaTestCase
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
-        $metadata = new Metadata([], new Config(['appName' => 'SchemaTest']));
+        $agentMetadata = ['name' => 'My Agent', 'version' => '1.0.0'];
+        $metadata = new Metadata([], new Config(['appName' => 'SchemaTest']), $agentMetadata);
 
         $this->validateObjectAgainstSchema($metadata, $schemaVersion, $schemaFile);
     }

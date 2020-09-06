@@ -20,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
  * @link https://www.elastic.co/guide/en/apm/server/master/transaction-api.html
  *
  */
-class Agent
+class Agent implements ApmAgent
 {
 
     /**
@@ -28,14 +28,14 @@ class Agent
      *
      * @var string
      */
-    const VERSION = '7.1.0';
+    public const VERSION = '7.3.0';
 
     /**
      * Agent Name
      *
      * @var string
      */
-    const NAME = 'elasticapm-php';
+    public const NAME = 'elasticapm-php';
 
     /**
      * Config Store
@@ -81,7 +81,7 @@ class Agent
      * @param EventFactoryInterface $eventFactory Alternative factory to use when creating event objects
      * @param TransactionsStore $transactionsStore
      */
-    public function __construct(
+    final public function __construct(
         Config $config,
         ContextCollection $sharedContext,
         Connector $connector,
@@ -97,7 +97,29 @@ class Agent
         $this->transactionsStore = $transactionsStore;
 
         $this->connector = $connector;
-        $this->connector->putEvent(new Metadata([], $this->config));
+        $this->connector->useHttpUserAgentString($this->httpUserAgent());
+        // TODO Why is the metadata added here and conditionally in the send() method?
+        $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
+
+        $this->initialize();
+    }
+
+    protected function initialize(): void
+    {
+        // Sub classes can override this method to initialize
+    }
+
+    public function agentMetadata(): array
+    {
+        return [
+            'name' => self::NAME,
+            'version' => self::VERSION,
+        ];
+    }
+
+    public function httpUserAgent(): string
+    {
+        return sprintf('%s/%s', self::NAME, self::VERSION);
     }
 
     /**
@@ -239,7 +261,7 @@ class Agent
         // Put the preceding Metadata
         // TODO -- add context ?
         if ($this->connector->isPayloadSet() === false) {
-            $this->putEvent(new Metadata([], $this->config));
+            $this->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
         }
 
         // Start Payload commitment

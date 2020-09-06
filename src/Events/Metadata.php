@@ -21,15 +21,20 @@ class Metadata extends EventBean implements \JsonSerializable
      * @var Config
      */
     private $config;
+    /**
+     * @var array
+     */
+    private $agentMetaData;
 
     /**
      * @param array $contexts
      * @param Config $config
      */
-    public function __construct(array $contexts, Config $config)
+    public function __construct(array $contexts, Config $config, array $agentMetaData)
     {
         parent::__construct($contexts);
         $this->config = $config;
+        $this->agentMetaData = $agentMetaData;
     }
 
     /**
@@ -55,10 +60,7 @@ class Metadata extends EventBean implements \JsonSerializable
                     'process' => [
                         'pid' => getmypid(),
                     ],
-                    'agent' => [
-                        'name'    => Agent::NAME,
-                        'version' => Agent::VERSION
-                    ],
+                    'agent' => $this->agentMetaData,
                     'environment' => Encoding::keywordField($this->config->get('environment'))
                 ],
                 'system' => [

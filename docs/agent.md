@@ -25,6 +25,7 @@ $agent = $builder->build();
 The following methods are available to influence the `Agent` creation:
 
 ```php
+$builder->withAgentClass(string $className);
 $builder->withConfigData(array $config);
 $builder->withConfig(Config $config);
 $builder->withUserContextData(array $context);
@@ -83,3 +84,19 @@ $agent = new \Nipwaayoni\Agent(
     new \Nipwaayoni\Stores\TransactionsStore()
 );
 ```
+
+## Extending the Agent Class
+
+You can add your own agent functionality by extending the `Agent` class. Note that the `Agent::__construct()` method is declared final and you therefore cannot change the constructor signature when extending the class. The `AgentBuilder` must be able to create new agents with a fixed constructor signature.
+
+When you extend the `Agent` class, you should override the `NAME` and `VERSION` class constants as appropriate for your class.
+
+You can also override the `Agent::initialize()` method to execute any object setup. This method will be called by the `Agent::__construct()` method. It is not necessary to call `parent::initialize()`.
+
+Use the `AgentBuilder::withAgentClass()` method to have the builder user your class. For example:
+
+```php
+$builder->withAgentClass(MyAgentClass::class);
+```
+
+If you need to provide other runtime data to your agent object, you will need to do so through objects methods called after construction.
