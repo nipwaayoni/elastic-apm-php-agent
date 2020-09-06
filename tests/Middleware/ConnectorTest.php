@@ -46,13 +46,15 @@ class ConnectorTest extends TestCase
 
     public function testSendsEventsToServerUrl(): void
     {
-        $this->markTestIncomplete('Pending async testing');
         $this->prepareClientWithResponses(new Response(202, []));
 
         $connector = new Connector($this->serverUrl, $this->secretToken, $this->client);
 
         $connector->putEvent(new Transaction('TestTransaction', []));
         $connector->commit();
+
+        $connector->commitPromise()->wait();
+        \GuzzleHttp\Promise\queue();
 
         // Transaction Assertions
         $this->assertCount(1, $this->container);
@@ -77,6 +79,9 @@ class ConnectorTest extends TestCase
 
         $connector->putEvent(new Transaction('TestTransaction', []));
         $connector->commit();
+
+        $connector->commitPromise()->wait();
+        \GuzzleHttp\Promise\queue();
 
         // Request Assertions
         $request = $this->container[0]->request();

@@ -2,6 +2,7 @@
 
 namespace Nipwaayoni\Middleware;
 
+use Http\Adapter\Guzzle6\Promise;
 use Http\Client\HttpAsyncClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
@@ -66,6 +67,9 @@ class Connector
      * @var array
      */
     private $payload = [];
+
+    /** @var Promise */
+    private $commitPromise;
 
     /**
      * @param string $serverUrl
@@ -142,12 +146,19 @@ class Connector
         $this->sendRequest($request);
     }
 
+    public function commitPromise(): Promise
+    {
+        return $this->commitPromise;
+    }
+
     private function sendRequest(RequestInterface $request): void
     {
         $this->preCommit($request);
 
+        $this->commitPromise = null;
+
         if ($this->canMakeAsyncRequest()) {
-            $this->client->sendAsyncRequest($request)->then(
+            $this->commitPromise = $this->client->sendAsyncRequest($request)->then(
                 function (ResponseInterface $response) {
                     $this->postCommit($response);
                 },
