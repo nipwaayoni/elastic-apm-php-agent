@@ -10,6 +10,8 @@ use Psr\Http\Message\ResponseInterface;
 
 interface ApmAgent
 {
+    public function agentMetadata(): array;
+    public function httpUserAgent(): string;
     public function factory(): EventFactoryInterface;
     public function info(): ResponseInterface;
     public function startTransaction(string $name, array $context = [], float $start = null): Transaction;

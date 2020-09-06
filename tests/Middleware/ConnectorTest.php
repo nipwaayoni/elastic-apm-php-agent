@@ -69,4 +69,20 @@ class ConnectorTest extends TestCase
 
         $this->assertEquals('TestTransaction', $payload['transaction']['name']);
     }
+
+    public function testSendsEventsWithGivenUserAgent(): void
+    {
+        $this->prepareClientWithResponses(new Response(202, []));
+
+        $connector = new Connector($this->serverUrl, $this->secretToken, $this->client);
+        $connector->useHttpUserAgentString('my-agent/1.0');
+
+        $connector->putEvent(new Transaction('TestTransaction', []));
+        $connector->commit();
+
+        // Request Assertions
+        $request = $this->container[0]->request();
+
+        $this->assertEquals('my-agent/1.0', $request->getHeader('User-Agent')[0]);
+    }
 }

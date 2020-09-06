@@ -113,13 +113,13 @@ class AgentBuilder
         ));
     }
 
-    public function withAgentClass(string $class): self
+    public function withAgentClass(string $className): self
     {
-        if (!in_array(ApmAgent::class, class_implements($class))) {
-            throw new UnsupportedApmAgentImplementationException($class);
+        if (!in_array(ApmAgent::class, class_implements($className))) {
+            throw new UnsupportedApmAgentImplementationException($className);
         }
 
-        $this->agentClass = $class;
+        $this->agentClass = $className;
 
         return $this;
     }

@@ -11,6 +11,27 @@ use Nipwaayoni\Stores\TransactionsStore;
  */
 final class AgentTest extends TestCase
 {
+    /**
+     * @covers \Nipwaayoni\Agent::agentMetadata
+     */
+    public function testReturnsMetaData(): void
+    {
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])]);
+
+        $metadata = $agent->agentMetadata();
+
+        $this->assertEquals(['name' => Agent::NAME, 'version' => Agent::VERSION], $metadata);
+    }
+
+    /**
+     * @covers \Nipwaayoni\Agent::agentMetadata
+     */
+    public function testReturnsHttpUserAgent(): void
+    {
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])]);
+
+        $this->assertEquals(Agent::NAME . '/' . Agent::VERSION, $agent->httpUserAgent());
+    }
 
     /**
      * @covers \Nipwaayoni\Agent::__construct

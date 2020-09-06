@@ -28,14 +28,14 @@ class Agent implements ApmAgent
      *
      * @var string
      */
-    const VERSION = '7.1.0';
+    public const VERSION = '7.2.0';
 
     /**
      * Agent Name
      *
      * @var string
      */
-    const NAME = 'elasticapm-php';
+    public const NAME = 'elasticapm-php';
 
     /**
      * Config Store
@@ -97,7 +97,9 @@ class Agent implements ApmAgent
         $this->transactionsStore = $transactionsStore;
 
         $this->connector = $connector;
-        $this->connector->putEvent(new Metadata([], $this->config));
+        $this->connector->useHttpUserAgentString($this->httpUserAgent());
+        // TODO Why is the metadata added here and conditional in the send() method?
+        $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
 
         $this->initialize();
     }
@@ -105,6 +107,19 @@ class Agent implements ApmAgent
     protected function initialize(): void
     {
         // Sub classes can override this method to initialize
+    }
+
+    public function agentMetadata(): array
+    {
+        return [
+            'name' => self::NAME,
+            'version' => self::VERSION,
+        ];
+    }
+
+    public function httpUserAgent(): string
+    {
+        return sprintf('%s/%s', self::NAME, self::VERSION);
     }
 
     /**
@@ -246,7 +261,7 @@ class Agent implements ApmAgent
         // Put the preceding Metadata
         // TODO -- add context ?
         if ($this->connector->isPayloadSet() === false) {
-            $this->putEvent(new Metadata([], $this->config));
+            $this->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
         }
 
         // Start Payload commitment
