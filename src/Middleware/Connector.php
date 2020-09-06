@@ -24,6 +24,8 @@ class Connector
 {
     public const APM_V2_ENDPOINT = 'intake/v2/events';
 
+    private $userAgent = 'elasticapm-php/0.0';
+
     /**
      * @var string
      */
@@ -89,6 +91,11 @@ class Connector
         $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
         $this->preCommitCallback = $preCommitCallback;
         $this->postCommitCallback = $postCommitCallback;
+    }
+
+    public function useHttpUserAgentString(string $userAgent): void
+    {
+        $this->userAgent = $userAgent;
     }
 
     /**
@@ -211,7 +218,7 @@ class Connector
         // Default Headers Set
         $headers = [
             'Content-Type'     => 'application/x-ndjson',
-            'User-Agent'       => sprintf('elasticapm-php/%s', Agent::VERSION),
+            'User-Agent'       => $this->userAgent,
             'Accept'           => 'application/json',
         ];
 
