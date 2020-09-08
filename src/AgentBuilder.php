@@ -81,6 +81,9 @@ class AgentBuilder
     public function build(): ApmAgent
     {
         $config = $this->config ?? new Config(['appName' => 'APM Agent']);
+        $sharedContext = $this->makeSharedContext();
+        $eventFactory = $this->eventFactory ?? new DefaultEventFactory();
+        $transactionStore = $this->transactionStore ?? new TransactionsStore();
 
         $connector = new Connector(
             $config->get('serverUrl'),
@@ -92,12 +95,33 @@ class AgentBuilder
             $this->postCommitCallback
         );
 
+        return $this->newAgent($config, $sharedContext, $connector, $eventFactory, $transactionStore);
+    }
+
+    /**
+     * Override this method when extending the AgentBuilder if you need to construct a custom Agent with
+     * a different constructor signature.
+     *
+     * @param Config $config
+     * @param ContextCollection $sharedContext
+     * @param Connector $connector
+     * @param EventFactoryInterface $eventFactory
+     * @param TransactionsStore $transactionsStore
+     * @return mixed
+     */
+    protected function newAgent(
+        Config $config,
+        ContextCollection $sharedContext,
+        Connector $connector,
+        EventFactoryInterface $eventFactory,
+        TransactionsStore $transactionsStore
+    ): ApmAgent {
         return new $this->agentClass(
             $config,
-            $this->makeSharedContext(),
+            $sharedContext,
             $connector,
-            $this->eventFactory ?? new DefaultEventFactory(),
-            $this->transactionStore ?? new TransactionsStore()
+            $eventFactory,
+            $transactionsStore
         );
     }
 

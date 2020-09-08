@@ -81,7 +81,7 @@ class Agent implements ApmAgent
      * @param EventFactoryInterface $eventFactory Alternative factory to use when creating event objects
      * @param TransactionsStore $transactionsStore
      */
-    final public function __construct(
+    public function __construct(
         Config $config,
         ContextCollection $sharedContext,
         Connector $connector,
@@ -137,7 +137,7 @@ class Agent implements ApmAgent
      *
      * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
      *
-     * @return Response
+     * @return ResponseInterface
      */
     public function info(): ResponseInterface
     {

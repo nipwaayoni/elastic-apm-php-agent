@@ -87,16 +87,65 @@ $agent = new \Nipwaayoni\Agent(
 
 ## Extending the Agent Class
 
-You can add your own agent functionality by extending the `Agent` class. Note that the `Agent::__construct()` method is declared final and you therefore cannot change the constructor signature when extending the class. The `AgentBuilder` must be able to create new agents with a fixed constructor signature.
+You can add your own agent functionality by extending the `Agent` class.
 
 When you extend the `Agent` class, you should override the `NAME` and `VERSION` class constants as appropriate for your class.
 
 You can also override the `Agent::initialize()` method to execute any object setup. This method will be called by the `Agent::__construct()` method. It is not necessary to call `parent::initialize()`.
 
-Use the `AgentBuilder::withAgentClass()` method to have the builder user your class. For example:
+If you do not change the constructor signature, you can use the `AgentBuilder::withAgentClass()` method to have the builder user your class. For example:
 
 ```php
 $builder->withAgentClass(MyAgentClass::class);
 ```
 
 If you need to provide other runtime data to your agent object, you will need to do so through objects methods called after construction.
+
+If you want to change the `Agent` constructor, you will cannot use the default `AgentBuilder` behavior. See the next section.
+
+## Extending the AgentBuilder Class
+
+You can also extend the `AgentBuilder` if you need more control of a custom `Agent` object construction. The builder calls the `AgentBuilder::newAgent()` method and returns the result as the constructed `Agent` object. You can override that method to create your own object. The builder will call the method with all of the objects necessary to pass to `Agent::__construct()`:
+
+```php
+class MyAgentBuilder extends AgentBuilder 
+{
+    ...
+    protected function newAgent(Config $config,
+                                ContextCollection $sharedContext,
+                                Connector $connector,
+                                EventFactoryInterface $eventFactory,
+                                TransactionsStore $transactionsStore)
+    {
+        $otherOption = ''; #get a value somewhere
+
+        return new MyAgent(
+            $config,
+            $sharedContext,
+            $connector,
+            $eventFactory,
+            $transactionsStore,
+            $otherOption
+        );
+    }
+    ...
+}
+
+class MyAgent extends Agent
+{
+    ...
+    public function __construct(
+        Config $config,
+        ContextCollection $sharedContext,
+        Connector $connector,
+        EventFactoryInterface $eventFactory,
+        TransactionsStore $transactionsStore,
+        int $otherOption
+    ) {
+        parent::__construct($config, $sharedContext, $connector, $eventFactory, $transactionsStore);
+        
+        $this->otherOption = $otherOption;
+    }
+    ...
+}
+``` 
