@@ -6,7 +6,6 @@ namespace Nipwaayoni;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
-use Nipwaayoni\Exception\UnsupportedApmAgentImplementationException;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientInterface;
@@ -54,7 +53,7 @@ class AgentBuilder
     /** @var callable */
     private $postCommitCallback;
 
-    public static function create(array $config): Agent
+    public static function create(array $config): ApmAgent
     {
         return (new self())->withConfigData($config)->build();
     }
@@ -135,17 +134,6 @@ class AgentBuilder
                 'cookies' => $this->cookies,
             ]
         ));
-    }
-
-    public function withAgentClass(string $className): self
-    {
-        if (!in_array(ApmAgent::class, class_implements($className))) {
-            throw new UnsupportedApmAgentImplementationException($className);
-        }
-
-        $this->agentClass = $className;
-
-        return $this;
     }
 
     public function withConfigData(array $config): self

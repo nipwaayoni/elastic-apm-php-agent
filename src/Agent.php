@@ -100,13 +100,6 @@ class Agent implements ApmAgent
         $this->connector->useHttpUserAgentString($this->httpUserAgent());
         // TODO Why is the metadata added here and conditionally in the send() method?
         $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
-
-        $this->initialize();
-    }
-
-    protected function initialize(): void
-    {
-        // Sub classes can override this method to initialize
     }
 
     public function agentMetadata(): array

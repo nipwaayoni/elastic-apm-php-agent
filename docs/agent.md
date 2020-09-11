@@ -91,21 +91,11 @@ You can add your own agent functionality by extending the `Agent` class.
 
 When you extend the `Agent` class, you should override the `NAME` and `VERSION` class constants as appropriate for your class.
 
-You can also override the `Agent::initialize()` method to execute any object setup. This method will be called by the `Agent::__construct()` method. It is not necessary to call `parent::initialize()`.
-
-If you do not change the constructor signature, you can use the `AgentBuilder::withAgentClass()` method to have the builder user your class. For example:
-
-```php
-$builder->withAgentClass(MyAgentClass::class);
-```
-
-If you need to provide other runtime data to your agent object, you will need to do so through objects methods called after construction.
-
-If you want to change the `Agent` constructor, you will cannot use the default `AgentBuilder` behavior. See the next section.
+Using your own `Agent` implementation will likely require also extending the `AgentBuilder` class, as described below. The `Agent` requires a number of supporting objects to function which the `AgentBuilder` helps to construct.
 
 ## Extending the AgentBuilder Class
 
-You can also extend the `AgentBuilder` if you need more control of a custom `Agent` object construction. The builder calls the `AgentBuilder::newAgent()` method and returns the result as the constructed `Agent` object. You can override that method to create your own object. The builder will call the method with all of the objects necessary to pass to `Agent::__construct()`:
+You should also extend the `AgentBuilder` when you extend the `Agent` class. While it is possible to take full responsibility for creating your `Agent` object, the base class requires a number of configured objects to function. The builder calls the `AgentBuilder::newAgent()` method and returns the result as the constructed `Agent` object. You can override that method to create your own object. The builder will call the method with all of the objects necessary to pass to `Agent::__construct()`:
 
 ```php
 class MyAgentBuilder extends AgentBuilder 
