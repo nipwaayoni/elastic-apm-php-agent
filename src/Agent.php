@@ -81,7 +81,7 @@ class Agent implements ApmAgent
      * @param EventFactoryInterface $eventFactory Alternative factory to use when creating event objects
      * @param TransactionsStore $transactionsStore
      */
-    final public function __construct(
+    public function __construct(
         Config $config,
         ContextCollection $sharedContext,
         Connector $connector,
@@ -100,13 +100,6 @@ class Agent implements ApmAgent
         $this->connector->useHttpUserAgentString($this->httpUserAgent());
         // TODO Why is the metadata added here and conditionally in the send() method?
         $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
-
-        $this->initialize();
-    }
-
-    protected function initialize(): void
-    {
-        // Sub classes can override this method to initialize
     }
 
     public function agentMetadata(): array
@@ -137,7 +130,7 @@ class Agent implements ApmAgent
      *
      * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
      *
-     * @return Response
+     * @return ResponseInterface
      */
     public function info(): ResponseInterface
     {

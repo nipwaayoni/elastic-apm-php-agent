@@ -6,7 +6,6 @@ namespace Nipwaayoni;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
-use Nipwaayoni\Exception\UnsupportedApmAgentImplementationException;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientInterface;
@@ -54,7 +53,7 @@ class AgentBuilder
     /** @var callable */
     private $postCommitCallback;
 
-    public static function create(array $config): Agent
+    public static function create(array $config): ApmAgent
     {
         return (new self())->withConfigData($config)->build();
     }
@@ -81,6 +80,9 @@ class AgentBuilder
     public function build(): ApmAgent
     {
         $config = $this->config ?? new Config(['appName' => 'APM Agent']);
+        $sharedContext = $this->makeSharedContext();
+        $eventFactory = $this->eventFactory ?? new DefaultEventFactory();
+        $transactionStore = $this->transactionStore ?? new TransactionsStore();
 
         $connector = new Connector(
             $config->get('serverUrl'),
@@ -92,12 +94,33 @@ class AgentBuilder
             $this->postCommitCallback
         );
 
+        return $this->newAgent($config, $sharedContext, $connector, $eventFactory, $transactionStore);
+    }
+
+    /**
+     * Override this method when extending the AgentBuilder if you need to construct a custom Agent with
+     * a different constructor signature.
+     *
+     * @param Config $config
+     * @param ContextCollection $sharedContext
+     * @param Connector $connector
+     * @param EventFactoryInterface $eventFactory
+     * @param TransactionsStore $transactionsStore
+     * @return mixed
+     */
+    protected function newAgent(
+        Config $config,
+        ContextCollection $sharedContext,
+        Connector $connector,
+        EventFactoryInterface $eventFactory,
+        TransactionsStore $transactionsStore
+    ): ApmAgent {
         return new $this->agentClass(
             $config,
-            $this->makeSharedContext(),
+            $sharedContext,
             $connector,
-            $this->eventFactory ?? new DefaultEventFactory(),
-            $this->transactionStore ?? new TransactionsStore()
+            $eventFactory,
+            $transactionsStore
         );
     }
 
@@ -111,17 +134,6 @@ class AgentBuilder
                 'cookies' => $this->cookies,
             ]
         ));
-    }
-
-    public function withAgentClass(string $className): self
-    {
-        if (!in_array(ApmAgent::class, class_implements($className))) {
-            throw new UnsupportedApmAgentImplementationException($className);
-        }
-
-        $this->agentClass = $className;
-
-        return $this;
     }
 
     public function withConfigData(array $config): self
