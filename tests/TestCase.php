@@ -2,9 +2,10 @@
 
 namespace Nipwaayoni\Tests;
 
-use Nipwaayoni\Agent;
 use Nipwaayoni\AgentBuilder;
+use Nipwaayoni\ApmAgent;
 use Nipwaayoni\Config;
+use Nipwaayoni\Factory\ConnectorFactory;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -16,9 +17,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $this->assertLessThanOrEqual($maxOverhead, $overhead);
     }
 
-    protected function makeAgent(array $components = []): Agent
+    protected function makeAgent(array $components = [], ConnectorFactory $connectorFactory = null): ApmAgent
     {
-        $builder = new AgentBuilder();
+        $builder = new AgentBuilder($connectorFactory);
 
         if (empty($components['config'])) {
             $components['config'] = new Config(['appName' => 'test']);

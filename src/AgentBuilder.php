@@ -6,6 +6,7 @@ namespace Nipwaayoni;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
+use Nipwaayoni\Factory\ConnectorFactory;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
 use Psr\Http\Client\ClientInterface;
@@ -52,14 +53,20 @@ class AgentBuilder
 
     /** @var callable */
     private $postCommitCallback;
+    /**
+     * @var ConnectorFactory|null
+     */
+    private $connectorFactory;
 
     public static function create(array $config): ApmAgent
     {
         return (new self())->withConfigData($config)->build();
     }
 
-    public function __construct()
+    public function __construct(ConnectorFactory $connectorFactory = null)
     {
+        $this->connectorFactory = $connectorFactory ?? new ConnectorFactory();
+
         $this->init();
     }
 
@@ -84,7 +91,7 @@ class AgentBuilder
         $eventFactory = $this->eventFactory ?? new DefaultEventFactory();
         $transactionStore = $this->transactionStore ?? new TransactionsStore();
 
-        $connector = new Connector(
+        $connector = $this->connectorFactory->makeConnector(
             $config->get('serverUrl'),
             $config->get('secretToken'),
             $this->httpClient,
