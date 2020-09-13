@@ -4,6 +4,14 @@ namespace Nipwaayoni\Events;
 
 final class DefaultEventFactory implements EventFactoryInterface
 {
+    /** @var SamplingStrategy */
+    private $transactionSamplingStrategy;
+
+    public function __construct()
+    {
+        $this->transactionSamplingStrategy = new DefaultSamplingStrategy();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -13,11 +21,24 @@ final class DefaultEventFactory implements EventFactoryInterface
     }
 
     /**
+     * Sets the SamplingStrategy to use for Transactions
+     *
+     * @param SamplingStrategy $strategy
+     */
+    public function setTransactionSamplingStrategy(SamplingStrategy $strategy): void
+    {
+        $this->transactionSamplingStrategy = $strategy;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function newTransaction(string $name, array $contexts): Transaction
     {
-        return new Transaction($name, $contexts);
+        $transaction = new Transaction($name, $contexts);
+        $transaction->sampleStrategy($this->transactionSamplingStrategy);
+
+        return $transaction;
     }
 
     /**

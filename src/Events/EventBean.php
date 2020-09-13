@@ -67,6 +67,11 @@ class EventBean implements Samplable
         'type'   => 'generic'
     ];
 
+    /** @var SamplingStrategy */
+    protected $sampleStrategy;
+
+    /** @var bool */
+    protected $includeAsSample = true;
     /**
      * Extended Contexts such as Custom and/or User
      *
@@ -102,6 +107,7 @@ class EventBean implements Samplable
         $this->contexts = array_merge($this->contexts, $contexts);
 
         $this->timestamp = new Timestamp();
+        $this->sampleStrategy = new DefaultSamplingStrategy();
 
         // Set Parent Transaction
         if ($parent !== null) {
@@ -413,9 +419,9 @@ class EventBean implements Samplable
         return $context;
     }
 
-    public function sampleStrategy(SampleStrategy $strategy): void
+    public function sampleStrategy(SamplingStrategy $strategy): void
     {
-        // TODO: Implement sampleStrategy() method.
+        $this->sampleStrategy = $strategy;
     }
 
     public function includeSamples(): bool
@@ -425,6 +431,6 @@ class EventBean implements Samplable
 
     public function isSampled(): bool
     {
-        return true;
+        return $this->includeAsSample;
     }
 }

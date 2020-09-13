@@ -3,15 +3,14 @@
 
 namespace Nipwaayoni\Events;
 
-
 interface Samplable
 {
     /**
      * Sets the strategy used for determining of the object should be sampled.
      *
-     * @param SampleStrategy $strategy
+     * @param SamplingStrategy $strategy
      */
-    public function sampleStrategy(SampleStrategy $strategy): void;
+    public function sampleStrategy(SamplingStrategy $strategy): void;
 
     /**
      * Indicates if the object's descendent events should be included as samples.
@@ -25,5 +24,5 @@ interface Samplable
      *
      * @return bool
      */
-    public function isSampled():bool;
+    public function isSampled(): bool;
 }

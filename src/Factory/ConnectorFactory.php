@@ -3,7 +3,6 @@
 
 namespace Nipwaayoni\Factory;
 
-
 use Nipwaayoni\Middleware\Connector;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -19,8 +18,7 @@ class ConnectorFactory
         StreamFactoryInterface $streamFactory = null,
         callable $preCommitCallback = null,
         callable $postCommitCallback = null
-    ): Connector
-    {
+    ): Connector {
         return new Connector(
             $serverUrl,
             $secretToken,

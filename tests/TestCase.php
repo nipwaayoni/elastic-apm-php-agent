@@ -5,6 +5,7 @@ namespace Nipwaayoni\Tests;
 use Nipwaayoni\AgentBuilder;
 use Nipwaayoni\ApmAgent;
 use Nipwaayoni\Config;
+use Nipwaayoni\Events\SamplingStrategy;
 use Nipwaayoni\Factory\ConnectorFactory;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
@@ -27,5 +28,23 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $builder->withConfig($components['config']);
 
         return $builder->build();
+    }
+
+    protected function makeSampleStrategy(bool $sampled): SamplingStrategy
+    {
+        $strategy = $this->createMock(SamplingStrategy::class);
+        $strategy->method('sampleEvent')->willReturn($sampled);
+
+        return $strategy;
+    }
+
+    protected function makeIncludeStrategy(): SamplingStrategy
+    {
+        return $this->makeSampleStrategy(true);
+    }
+
+    protected function makeExcludeStrategy(): SamplingStrategy
+    {
+        return $this->makeSampleStrategy(false);
     }
 }

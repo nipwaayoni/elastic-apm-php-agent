@@ -65,7 +65,12 @@ class Span extends TraceableEvent implements \JsonSerializable
     {
         parent::__construct([]);
         $this->name  = trim($name);
+
         $this->setParent($parent);
+
+        // Spans are only included when the parent transaction is sampled.
+        $this->includeAsSample = $parent->includeSamples();
+
         $this->timerFactory = $timerFactory ?? new TimerFactory();
     }
 

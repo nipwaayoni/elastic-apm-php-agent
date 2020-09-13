@@ -149,6 +149,11 @@ class Transaction extends TraceableEvent implements \JsonSerializable
         $this->backtraceLimit = $limit;
     }
 
+    public function includeSamples(): bool
+    {
+        return $this->sampleStrategy->sampleEvent();
+    }
+
     /**
      * Serialize Transaction Event
      *
@@ -156,6 +161,12 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
+        $context = null;
+
+        if ($this->includeSamples()) {
+            $context = $this->getContext();
+        }
+
         return [
             $this->eventType => [
                 'trace_id'   => $this->getTraceId(),
@@ -166,8 +177,8 @@ class Transaction extends TraceableEvent implements \JsonSerializable
                 'timestamp'  => $this->getTimestamp(),
                 'result'     => $this->getMetaResult(),
                 'name'       => Encoding::keywordField($this->getTransactionName()),
-                'context'    => $this->getContext(),
-                'sampled'    => null,
+                'context'    => $context,
+                'sampled'    => $this->includeSamples(),
                 'span_count' => [
                     'started' => 0,
                     'dropped' => 0,
