@@ -6,6 +6,7 @@ namespace Nipwaayoni;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
+use Nipwaayoni\Events\TransactionSamplingStrategy;
 use Nipwaayoni\Factory\ConnectorFactory;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
@@ -65,6 +66,9 @@ class AgentBuilder
 
     public function __construct(ConnectorFactory $connectorFactory = null)
     {
+        // We must have a valid Config object for some other tasks, so just it now.
+        // This should be replaced later.
+        $this->config = new Config(['appName' => 'APM Agent']);
         $this->connectorFactory = $connectorFactory ?? new ConnectorFactory();
 
         $this->init();
@@ -86,14 +90,9 @@ class AgentBuilder
 
     public function build(): ApmAgent
     {
-        $config = $this->config ?? new Config(['appName' => 'APM Agent']);
-        $sharedContext = $this->makeSharedContext();
-        $eventFactory = $this->eventFactory ?? new DefaultEventFactory();
-        $transactionStore = $this->transactionStore ?? new TransactionsStore();
-
         $connector = $this->connectorFactory->makeConnector(
-            $config->get('serverUrl'),
-            $config->get('secretToken'),
+            $this->config->get('serverUrl'),
+            $this->config->get('secretToken'),
             $this->httpClient,
             $this->requestFactory,
             $this->streamFactory,
@@ -101,7 +100,11 @@ class AgentBuilder
             $this->postCommitCallback
         );
 
-        return $this->newAgent($config, $sharedContext, $connector, $eventFactory, $transactionStore);
+        $sharedContext = $this->makeSharedContext();
+        $eventFactory = $this->makeEventFactory();
+        $transactionStore = $this->makeTransactionStore();
+
+        return $this->newAgent($this->config, $sharedContext, $connector, $eventFactory, $transactionStore);
     }
 
     /**
@@ -141,6 +144,26 @@ class AgentBuilder
                 'cookies' => $this->cookies,
             ]
         ));
+    }
+
+    private function makeEventFactory(): EventFactoryInterface
+    {
+        if (null !== $this->eventFactory) {
+            return $this->eventFactory;
+        }
+
+        $factory = new DefaultEventFactory();
+
+        $factory->setTransactionSamplingStrategy(
+            new TransactionSamplingStrategy($this->config->get('transactionSamplingRate'))
+        );
+
+        return $factory;
+    }
+
+    private function makeTransactionStore(): TransactionsStore
+    {
+        return $this->transactionStore ?? new TransactionsStore();
     }
 
     public function withConfigData(array $config): self
