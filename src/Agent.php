@@ -222,6 +222,10 @@ class Agent implements ApmAgent
      */
     public function putEvent(EventBean $event)
     {
+        if (!$event->isSampled()) {
+            return;
+        }
+
         $this->connector->putEvent($event);
     }
 

@@ -10,7 +10,7 @@ use Nipwaayoni\Helper\Timestamp;
  * EventBean for occurring events such as Exceptions or Transactions
  *
  */
-class EventBean
+class EventBean implements Samplable
 {
     /**
      * Bit Size of ID's
@@ -411,5 +411,20 @@ class EventBean
         }
 
         return $context;
+    }
+
+    public function sampleStrategy(SampleStrategy $strategy): void
+    {
+        // TODO: Implement sampleStrategy() method.
+    }
+
+    public function includeSamples(): bool
+    {
+        return true;
+    }
+
+    public function isSampled(): bool
+    {
+        return true;
     }
 }
