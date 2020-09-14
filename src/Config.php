@@ -5,6 +5,8 @@ namespace Nipwaayoni;
 use Nipwaayoni\Exception\ConfigurationException;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Exception\MissingAppNameException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  *
@@ -20,6 +22,9 @@ class Config
      */
     private $config;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * @param array $config
      * @throws ConfigurationException
@@ -28,6 +33,10 @@ class Config
      */
     public function __construct(array $config = [])
     {
+        $this->logger = $config['logger'] ?? new NullLogger();
+        // Don't leave the logger hanging around in the config array.
+        unset($config['logger']);
+
         foreach (['httpClient', 'env', 'cookies'] as $removedKey) {
             if (array_key_exists($removedKey, $config)) {
                 throw new UnsupportedConfigurationValueException($removedKey);
@@ -38,7 +47,9 @@ class Config
             throw new ConfigurationException('Please provide only one of "active" or "enabled", preferring "enabled"');
         }
 
-        // TODO prefer 'enabled' over 'active'
+        if (isset($config['active'])) {
+            $this->logger->notice('The "active" configuration option is deprecated, please use "enabled" instead.');
+        }
 
         // Register Merged Config
         $this->config = array_merge($this->getDefaultConfig(), $config);
@@ -48,6 +59,27 @@ class Config
         }
 
         $this->config['serverUrl'] = rtrim($this->config['serverUrl'], '/');
+
+        $this->logConfig();
+    }
+
+    private function logConfig(): void
+    {
+        $config = $this->asArray();
+
+        if (!empty($config['secretToken'])) {
+            $config['secretToken'] = preg_replace('/^(.).*(.)$/', '$1***$2', $config['secretToken']);
+        }
+
+        $message = implode(
+            PHP_EOL,
+            array_reduce(array_keys($config), function ($c, string $key) use ($config) {
+                $c[] = sprintf('%s=%s', $key, $config[$key]);
+                return $c;
+            }, [])
+        );
+
+        $this->logger->debug('Runtime config: ' . PHP_EOL . $message);
     }
 
     /**

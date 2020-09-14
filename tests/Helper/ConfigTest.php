@@ -7,6 +7,8 @@ use Nipwaayoni\Exception\ConfigurationException;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Config;
 use Nipwaayoni\Tests\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\Test\TestLogger;
 
 /**
  * Test Case for @see \Nipwaayoni\Config
@@ -268,5 +270,23 @@ final class ConfigTest extends TestCase
         $this->expectException(ConfigurationException::class);
 
         new Config(['active' => true, 'enabled' => true]);
+    }
+
+    public function testLogsNoticeWhenUsingActiveInsteadOfEnabled(): void
+    {
+        $logger = new TestLogger();
+
+        new Config(['appName' => 'Test', 'active' => true, 'logger' => $logger]);
+
+        $this->assertTrue($logger->hasNoticeThatContains('The "active" configuration option is deprecated, please use "enabled" instead.'));
+    }
+
+    public function testLoggingConfigValuesMasksSecretToken(): void
+    {
+        $logger = new TestLogger();
+
+        new Config(['appName' => 'Test', 'secretToken' => 'abc123xyz', 'logger' => $logger]);
+
+        $this->assertTrue($logger->hasDebugThatMatches('/secretToken=a\*\*\*z/'));
     }
 }
