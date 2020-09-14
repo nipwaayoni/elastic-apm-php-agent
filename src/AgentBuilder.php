@@ -155,7 +155,7 @@ class AgentBuilder
         $factory = new DefaultEventFactory();
 
         $factory->setTransactionSamplingStrategy(
-            new TransactionSamplingStrategy($this->config->get('transactionSamplingRate'))
+            new TransactionSamplingStrategy($this->config->get('transactionSampleRate'))
         );
 
         return $factory;

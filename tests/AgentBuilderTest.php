@@ -43,7 +43,7 @@ class AgentBuilderTest extends TestCase
     public function testAppliesTransactionSamplingStrategyToEventFactory(float $rate, bool $expected): void
     {
         $agent = (new AgentBuilder())
-            ->withConfig(new Config(['appName' => 'test', 'transactionSamplingRate' => $rate]))
+            ->withConfig(new Config(['appName' => 'test', 'transactionSampleRate' => $rate]))
             ->build();
 
         $transaction = $agent->startTransaction('My Transaction', []);
