@@ -3,6 +3,7 @@
 namespace Nipwaayoni\Tests\Helper;
 
 use Nipwaayoni\Agent;
+use Nipwaayoni\Exception\ConfigurationException;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Config;
 use Nipwaayoni\Tests\TestCase;
@@ -35,15 +36,15 @@ final class ConfigTest extends TestCase
         $this->assertArrayHasKey('backtraceLimit', $config);
         $this->assertArrayHasKey('transactionSampleRate', $config);
 
-        $this->assertEquals($config['appName'], $appName);
+        $this->assertEquals($appName, $config['appName']);
         $this->assertNull($config['secretToken']);
-        $this->assertEquals($config['serverUrl'], 'http://127.0.0.1:8200');
-        $this->assertEquals($config['hostname'], gethostname());
+        $this->assertEquals('http://127.0.0.1:8200', $config['serverUrl']);
+        $this->assertEquals(gethostname(), $config['hostname']);
         $this->assertFalse($config['active']);
-        $this->assertEquals($config['timeout'], 10);
-        $this->assertEquals($config['environment'], 'development');
-        $this->assertEquals($config['backtraceLimit'], 0);
-        $this->assertEquals($config['transactionSampleRate'], 1);
+        $this->assertEquals(10, $config['timeout']);
+        $this->assertEquals('development', $config['environment']);
+        $this->assertEquals(0, $config['backtraceLimit']);
+        $this->assertEquals(1, $config['transactionSampleRate']);
     }
 
     /**
@@ -144,5 +145,128 @@ final class ConfigTest extends TestCase
             'cookies' => ['cookies'],
             'http client' => ['httpClient'],
         ];
+    }
+
+    public function testSetsAppNameFromEnvironmentVariable(): void
+    {
+        putenv(sprintf('%s=%s', 'ELASTIC_APM_APP_NAME', 'My Test App'));
+
+        $config = new Config();
+
+        $this->assertEquals('My Test App', $config->get('appName'));
+    }
+
+    public function testExplicitSettingTakesPrecedenceOverEnvironmentVariable(): void
+    {
+        putenv(sprintf('%s=%s', 'ELASTIC_APM_APP_NAME', 'My Test App'));
+
+        $config = new Config(['appName' => 'Test']);
+
+        $this->assertEquals('Test', $config->get('appName'));
+    }
+
+    /**
+     * @throws UnsupportedConfigurationValueException
+     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     *
+     * @dataProvider environmentVariableChecks
+     */
+    public function testAllowsSettingOptionsWithEnvironmentVariables(string $envName, string $envValue, string $configName, $configValue): void
+    {
+        $envFullName = 'ELASTIC_APM_' . strtoupper($envName);
+
+        putenv(sprintf('%s=%s', $envFullName, $envValue));
+
+        $config = new Config(['appName' => 'Test']);
+
+        $this->assertEquals($configValue, $config->get($configName));
+
+        putenv(sprintf('%s=', $envFullName));
+    }
+
+    public function environmentVariableChecks(): array
+    {
+        // App Name is tested separately
+        return [
+            'server url' => [
+                'server_url',
+                'https://example.com:8200',
+                'serverUrl',
+                'https://example.com:8200',
+            ],
+            'secret token' => [
+                'secret_token',
+                'abc123',
+                'secretToken',
+                'abc123',
+            ],
+            'hostname' => [
+                'hostname',
+                'example.com',
+                'hostname',
+                'example.com',
+            ],
+            'app version' => [
+                'app_version',
+                '1.2',
+                'appVersion',
+                '1.2',
+            ],
+            'enabled (active)' => [
+                'enabled',
+                'false',
+                'active',
+                false,
+            ],
+            'not enabled (active)' => [
+                'enabled',
+                'true',
+                'active',
+                true,
+            ],
+            'enabled (enabled)' => [
+                'enabled',
+                'false',
+                'enabled',
+                false,
+            ],
+            'not enabled (enabled)' => [
+                'enabled',
+                'true',
+                'enabled',
+                true,
+            ],
+            'timeout' => [
+                'timeout',
+                '15',
+                'timeout',
+                15,
+            ],
+            'environment' => [
+                'environment',
+                'production',
+                'environment',
+                'production',
+            ],
+            'backtrace limit' => [
+                'backtrace_limit',
+                '10',
+                'backtraceLimit',
+                10,
+            ],
+            'transaction sample rate' => [
+                'transaction_sample_rate',
+                '.25',
+                'transactionSampleRate',
+                .25,
+            ],
+        ];
+    }
+
+    public function testThrowsExceptionWhenConfigArrayContainsActiveAndEnabled(): void
+    {
+        $this->expectException(ConfigurationException::class);
+
+        new Config(['active' => true, 'enabled' => true]);
     }
 }
