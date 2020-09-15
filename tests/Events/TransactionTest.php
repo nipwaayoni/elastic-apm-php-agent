@@ -2,7 +2,7 @@
 
 namespace Nipwaayoni\Tests\Events;
 
-use Nipwaayoni\Events\SamplingStrategy;
+use Nipwaayoni\Events\SampleStrategy;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Helper\Timer;
@@ -165,7 +165,7 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider includeSamplesChecks
      */
-    public function testIncludeSamplesReflectsSampleStrategy(SamplingStrategy $strategy, bool $expected): void
+    public function testIncludeSamplesReflectsSampleStrategy(SampleStrategy $strategy, bool $expected): void
     {
         $this->transaction->sampleStrategy($strategy);
 
@@ -183,7 +183,7 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testIsSampledIsAlwaysTrue(SamplingStrategy $strategy): void
+    public function testIsSampledIsAlwaysTrue(SampleStrategy $strategy): void
     {
         $this->transaction->sampleStrategy($strategy);
 
@@ -201,7 +201,7 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testSampledAttributeReflectsStrategy(SamplingStrategy $strategy): void
+    public function testSampledAttributeReflectsStrategy(SampleStrategy $strategy): void
     {
         $this->transaction->sampleStrategy($strategy);
 
@@ -213,7 +213,7 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testContextAttributeReflectsStrategy(SamplingStrategy $strategy): void
+    public function testContextAttributeReflectsStrategy(SampleStrategy $strategy): void
     {
         $this->transaction->sampleStrategy($strategy);
 

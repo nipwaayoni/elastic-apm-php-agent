@@ -2,12 +2,10 @@
 
 namespace Nipwaayoni\Tests\Helper;
 
-use Nipwaayoni\Agent;
 use Nipwaayoni\Exception\ConfigurationException;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Config;
 use Nipwaayoni\Tests\TestCase;
-use Psr\Log\LoggerInterface;
 use Psr\Log\Test\TestLogger;
 
 /**
@@ -25,7 +23,7 @@ final class ConfigTest extends TestCase
     public function testControlDefaultConfig()
     {
         $appName = sprintf('app_name_%d', rand(10, 99));
-        $config = (new Config([ 'appName' => $appName, 'active' => false, ]))->asArray();
+        $config = (new Config([ 'appName' => $appName, 'active' => false]))->asArray();
 
         $this->assertArrayHasKey('appName', $config);
         $this->assertArrayHasKey('secretToken', $config);
@@ -94,7 +92,7 @@ final class ConfigTest extends TestCase
 
         $config = new Config($init);
 
-        $this->assertEquals($config->get('appName'), $init['appName']);
+        $this->assertEquals($config->appName(), $init['appName']);
     }
 
     /**
@@ -155,7 +153,7 @@ final class ConfigTest extends TestCase
 
         $config = new Config();
 
-        $this->assertEquals('My Test App', $config->get('appName'));
+        $this->assertEquals('My Test App', $config->appName());
     }
 
     public function testExplicitSettingTakesPrecedenceOverEnvironmentVariable(): void
@@ -164,7 +162,7 @@ final class ConfigTest extends TestCase
 
         $config = new Config(['appName' => 'Test']);
 
-        $this->assertEquals('Test', $config->get('appName'));
+        $this->assertEquals('Test', $config->appName());
     }
 
     /**
@@ -181,7 +179,7 @@ final class ConfigTest extends TestCase
 
         $config = new Config(['appName' => 'Test']);
 
-        $this->assertEquals($configValue, $config->get($configName));
+        $this->assertEquals($configValue, $config->$configName());
 
         putenv(sprintf('%s=', $envFullName));
     }
@@ -214,29 +212,29 @@ final class ConfigTest extends TestCase
                 'appVersion',
                 '1.2',
             ],
-            'enabled (active)' => [
-                'enabled',
-                'false',
-                'active',
-                false,
-            ],
-            'not enabled (active)' => [
-                'enabled',
-                'true',
-                'active',
-                true,
-            ],
-            'enabled (enabled)' => [
+            'not enabled (check enabled)' => [
                 'enabled',
                 'false',
                 'enabled',
                 false,
             ],
-            'not enabled (enabled)' => [
+            'not enabled (check notEnabled)' => [
+                'enabled',
+                'false',
+                'notEnabled',
+                true,
+            ],
+            'enabled (check enabled)' => [
                 'enabled',
                 'true',
                 'enabled',
                 true,
+            ],
+            'enabled (check notEnabled)' => [
+                'enabled',
+                'true',
+                'notEnabled',
+                false,
             ],
             'timeout' => [
                 'timeout',

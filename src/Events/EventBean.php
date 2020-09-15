@@ -67,7 +67,7 @@ class EventBean implements Samplable
         'type'   => 'generic'
     ];
 
-    /** @var SamplingStrategy */
+    /** @var SampleStrategy */
     protected $sampleStrategy;
 
     /** @var bool */
@@ -107,7 +107,7 @@ class EventBean implements Samplable
         $this->contexts = array_merge($this->contexts, $contexts);
 
         $this->timestamp = new Timestamp();
-        $this->sampleStrategy = new DefaultSamplingStrategy();
+        $this->sampleStrategy = new DefaultSampleStrategy();
 
         // Set Parent Transaction
         if ($parent !== null) {
@@ -419,7 +419,7 @@ class EventBean implements Samplable
         return $context;
     }
 
-    public function sampleStrategy(SamplingStrategy $strategy): void
+    public function sampleStrategy(SampleStrategy $strategy): void
     {
         $this->sampleStrategy = $strategy;
     }

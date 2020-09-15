@@ -189,7 +189,7 @@ class Agent implements ApmAgent
      */
     public function stopTransaction(string $name, array $meta = [])
     {
-        $this->getTransaction($name)->setBacktraceLimit($this->config->get('backtraceLimit', 0));
+        $this->getTransaction($name)->setBacktraceLimit($this->config->backtraceLimit());
         $this->getTransaction($name)->stop();
         $this->getTransaction($name)->setMeta($meta);
 
@@ -263,15 +263,12 @@ class Agent implements ApmAgent
     /**
      * Send Data to APM Service
      *
-     * @link https://github.com/philkra/elastic-apm-laravel/issues/22
-     * @link https://github.com/philkra/elastic-apm-laravel/issues/26
-     *
      * @return void
      */
     public function send(): void
     {
         // Is the Agent enabled ?
-        if ($this->config->get('active') === false) {
+        if ($this->config->notEnabled()) {
             $this->transactionsStore->reset();
             $this->logger->debug('Agent disabled, did not send data.');
             return;

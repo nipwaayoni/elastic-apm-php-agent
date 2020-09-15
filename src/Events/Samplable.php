@@ -8,9 +8,9 @@ interface Samplable
     /**
      * Sets the strategy used for determining of the object should be sampled.
      *
-     * @param SamplingStrategy $strategy
+     * @param SampleStrategy $strategy
      */
-    public function sampleStrategy(SamplingStrategy $strategy): void;
+    public function sampleStrategy(SampleStrategy $strategy): void;
 
     /**
      * Indicates if the object's descendent events should be included as samples.

@@ -6,7 +6,7 @@ namespace Nipwaayoni;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
-use Nipwaayoni\Events\TransactionSamplingStrategy;
+use Nipwaayoni\Events\TransactionSampleStrategy;
 use Nipwaayoni\Factory\ConnectorFactory;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
@@ -91,8 +91,8 @@ class AgentBuilder
     public function build(): ApmAgent
     {
         $connector = $this->connectorFactory->makeConnector(
-            $this->config->get('serverUrl'),
-            $this->config->get('secretToken'),
+            $this->config->serverUrl(),
+            $this->config->secretToken(),
             $this->httpClient,
             $this->requestFactory,
             $this->streamFactory,
@@ -158,8 +158,8 @@ class AgentBuilder
 
         $factory = new DefaultEventFactory();
 
-        $factory->setTransactionSamplingStrategy(
-            new TransactionSamplingStrategy($this->config->get('transactionSampleRate'))
+        $factory->setTransactionSampleStrategy(
+            new TransactionSampleStrategy($this->config->transactionSampleRate())
         );
 
         return $factory;

@@ -3,7 +3,7 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\EventBean;
-use Nipwaayoni\Events\SamplingStrategy;
+use Nipwaayoni\Events\SampleStrategy;
 use Nipwaayoni\Events\Span;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Exception\Events\AlreadyStartedException;
@@ -141,7 +141,7 @@ class SpanTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testIsSampledIsReflectsParentStrategy(SamplingStrategy $strategy): void
+    public function testIsSampledIsReflectsParentStrategy(SampleStrategy $strategy): void
     {
         $parent = new Transaction('MyParent', []);
         $parent->sampleStrategy($strategy);

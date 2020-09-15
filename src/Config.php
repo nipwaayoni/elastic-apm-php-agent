@@ -97,7 +97,74 @@ class Config
      */
     public function get(string $key, $default = null)
     {
+        $this->logger->notice(sprintf('Use of get("%s") is deprecated, please use the appropriate named accessor instead.', $key));
+
         return ($this->config[$key]) ?? $default;
+    }
+
+    public function enabled(): bool
+    {
+        return $this->config['enabled'];
+    }
+
+    public function notEnabled(): bool
+    {
+        return !$this->config['enabled'];
+    }
+
+    public function serverUrl(): string
+    {
+        return $this->config['serverUrl'];
+    }
+
+    public function secretToken(): ?string
+    {
+        return $this->config['secretToken'];
+    }
+
+    public function transactionSampleRate(): float
+    {
+        return $this->config['transactionSampleRate'];
+    }
+
+    public function appName(): string
+    {
+        return $this->config['appName'];
+    }
+
+    public function appVersion(): ?string
+    {
+        return $this->config['appVersion'];
+    }
+
+    public function framework(): ?string
+    {
+        return $this->config['frameworkName'];
+    }
+
+    public function frameworkVersion(): ?string
+    {
+        return $this->config['frameworkVersion'];
+    }
+
+    public function timeout(): int
+    {
+        return $this->config['timeout'];
+    }
+
+    public function environment(): string
+    {
+        return $this->config['environment'];
+    }
+
+    public function backtraceLimit(): int
+    {
+        return $this->config['backtraceLimit'];
+    }
+
+    public function hostname(): string
+    {
+        return $this->config['hostname'];
     }
 
     /**
@@ -123,7 +190,8 @@ class Config
             'hostname'              => $this->findHostName(),
             'appName'               => $this->findAppName(),
             'appVersion'            => $this->findAppVersion(),
-            'active'                => $this->findEnabled(),
+            'frameworkName'         => $this->findFrameworkName(),
+            'frameworkVersion'      => $this->findFrameworkVersion(),
             'enabled'               => $this->findEnabled(),
             'timeout'               => $this->findTimout(),
             'environment'           => $this->findEnvironment(),
@@ -152,9 +220,19 @@ class Config
         return $this->findConfigValue('app_name');
     }
 
-    private function findAppVersion(): string
+    private function findAppVersion(): ?string
     {
-        return $this->findConfigValue('app_version', '');
+        return $this->findConfigValue('app_version');
+    }
+
+    private function findFrameworkName(): ?string
+    {
+        return $this->findConfigValue('framework_name');
+    }
+
+    private function findFrameworkVersion(): ?string
+    {
+        return $this->findConfigValue('framework_version');
     }
 
     private function findEnabled(): bool

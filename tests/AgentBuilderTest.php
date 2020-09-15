@@ -29,7 +29,7 @@ class AgentBuilderTest extends TestCase
     {
         $agent = AgentBuilder::create(['appName' => 'Test Created App']);
 
-        $this->assertEquals('Test Created App', $agent->getConfig()->get('appName'));
+        $this->assertEquals('Test Created App', $agent->getConfig()->appName());
     }
 
     /**

@@ -47,11 +47,11 @@ class Metadata extends EventBean implements \JsonSerializable
         return [
             $this->eventType => [
                 'service' => [
-                    'name'    => Encoding::keywordField($this->config->get('appName')),
-                    'version' => Encoding::keywordField($this->config->get('appVersion')),
+                    'name'    => Encoding::keywordField($this->config->appName()),
+                    'version' => Encoding::keywordField($this->config->appVersion()),
                     'framework' => [
-                        'name' => $this->config->get('framework') ?? '',
-                        'version' => $this->config->get('frameworkVersion') ?? '',
+                        'name' => $this->config->framework(),
+                        'version' => $this->config->frameworkVersion(),
                     ],
                     'language' => [
                         'name'    => 'php',
@@ -61,10 +61,10 @@ class Metadata extends EventBean implements \JsonSerializable
                         'pid' => getmypid(),
                     ],
                     'agent' => $this->agentMetaData,
-                    'environment' => Encoding::keywordField($this->config->get('environment'))
+                    'environment' => Encoding::keywordField($this->config->environment())
                 ],
                 'system' => [
-                    'hostname'     => Encoding::keywordField($this->config->get('hostname')),
+                    'hostname'     => Encoding::keywordField($this->config->hostname()),
                     'architecture' => php_uname('m'),
                     'platform'     => php_uname('s')
                 ]
