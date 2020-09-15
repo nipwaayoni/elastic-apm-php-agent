@@ -99,12 +99,16 @@ class AgentBuilder
             $this->preCommitCallback,
             $this->postCommitCallback
         );
+        $connector->setLogger($this->config->logger());
 
         $sharedContext = $this->makeSharedContext();
         $eventFactory = $this->makeEventFactory();
         $transactionStore = $this->makeTransactionStore();
 
-        return $this->newAgent($this->config, $sharedContext, $connector, $eventFactory, $transactionStore);
+        $agent = $this->newAgent($this->config, $sharedContext, $connector, $eventFactory, $transactionStore);
+        $agent->setLogger($this->config->logger());
+
+        return $agent;
     }
 
     /**

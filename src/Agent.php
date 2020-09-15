@@ -12,6 +12,8 @@ use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
 use Nipwaayoni\Exception\Transaction\UnknownTransactionException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  *
@@ -72,6 +74,9 @@ class Agent implements ApmAgent
      */
     private $connector;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * Setup the APM Agent
      *
@@ -100,6 +105,13 @@ class Agent implements ApmAgent
         $this->connector->useHttpUserAgentString($this->httpUserAgent());
         // TODO Why is the metadata added here and conditionally in the send() method?
         $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
+
+        $this->logger = new NullLogger();
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     public function agentMetadata(): array
@@ -160,6 +172,8 @@ class Agent implements ApmAgent
 
         $transaction->start($start);
 
+        $this->logger->debug('Transaction start: ' . $name);
+
         return $transaction;
     }
 
@@ -178,6 +192,8 @@ class Agent implements ApmAgent
         $this->getTransaction($name)->setBacktraceLimit($this->config->get('backtraceLimit', 0));
         $this->getTransaction($name)->stop();
         $this->getTransaction($name)->setMeta($meta);
+
+        $this->logger->debug('Transaction stop: ' . $name);
     }
 
     /**
@@ -215,6 +231,8 @@ class Agent implements ApmAgent
         $eventContext = $this->sharedContext->merge(new ContextCollection($context));
 
         $this->putEvent($this->factory()->newError($thrown, $eventContext->toArray(), $parent));
+
+        $this->logger->debug('Captured throwable: ' . $thrown->getMessage());
     }
 
     /**
@@ -223,10 +241,13 @@ class Agent implements ApmAgent
     public function putEvent(EventBean $event)
     {
         if (!$event->isSampled()) {
+            $this->logger->debug('Skipped adding event (not sampled): ' . $event->getEventType());
             return;
         }
 
         $this->connector->putEvent($event);
+
+        $this->logger->debug('Added event: ' . $event->getEventType());
     }
 
     /**
@@ -245,27 +266,35 @@ class Agent implements ApmAgent
      * @link https://github.com/philkra/elastic-apm-laravel/issues/22
      * @link https://github.com/philkra/elastic-apm-laravel/issues/26
      *
-     * @return bool
+     * @return void
      */
-    public function send(): bool
+    public function send(): void
     {
         // Is the Agent enabled ?
         if ($this->config->get('active') === false) {
             $this->transactionsStore->reset();
-            return true;
+            $this->logger->debug('Agent disabled, did not send data.');
+            return;
         }
 
         // Put the preceding Metadata
         // TODO -- add context ?
         if ($this->connector->isPayloadSet() === false) {
             $this->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
+            $this->logger->debug('Payload empty, added metadata.');
         }
 
         // Start Payload commitment
         foreach ($this->transactionsStore->list() as $event) {
             $this->connector->putEvent($event);
         }
+
+        $this->logger->debug('Added transactions to connector.');
+
         $this->transactionsStore->reset();
-        return $this->connector->commit();
+
+        $this->connector->commit();
+
+        $this->logger->debug('Sent data to Elastic APM host.');
     }
 }

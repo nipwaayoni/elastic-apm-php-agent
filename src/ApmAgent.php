@@ -7,8 +7,9 @@ use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Events\EventFactoryInterface;
 use Nipwaayoni\Events\Transaction;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerAwareInterface;
 
-interface ApmAgent
+interface ApmAgent extends LoggerAwareInterface
 {
     public function agentMetadata(): array;
     public function httpUserAgent(): string;
@@ -20,5 +21,5 @@ interface ApmAgent
     public function captureThrowable(\Throwable $thrown, array $context = [], ?Transaction $parent = null);
     public function putEvent(EventBean $event);
     public function getConfig(): Config;
-    public function send(): bool;
+    public function send(): void;
 }

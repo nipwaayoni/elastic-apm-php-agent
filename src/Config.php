@@ -82,6 +82,11 @@ class Config
         $this->logger->debug('Runtime config: ' . PHP_EOL . $message);
     }
 
+    public function logger(): LoggerInterface
+    {
+        return $this->logger;
+    }
+
     /**
      * Get Config Value
      *
