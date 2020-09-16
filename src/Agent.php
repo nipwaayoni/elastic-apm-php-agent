@@ -189,7 +189,7 @@ class Agent implements ApmAgent
      */
     public function stopTransaction(string $name, array $meta = [])
     {
-        $this->getTransaction($name)->setBacktraceLimit($this->config->backtraceLimit());
+        $this->getTransaction($name)->setBacktraceLimit($this->config->stackTraceLimit());
         $this->getTransaction($name)->stop();
         $this->getTransaction($name)->setMeta($meta);
 

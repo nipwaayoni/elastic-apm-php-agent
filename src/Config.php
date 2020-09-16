@@ -4,7 +4,7 @@ namespace Nipwaayoni;
 
 use Nipwaayoni\Exception\ConfigurationException;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
-use Nipwaayoni\Exception\MissingAppNameException;
+use Nipwaayoni\Exception\MissingServiceNameException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
@@ -19,17 +19,26 @@ class Config
         'serverUrl'             => 'server_url',
         'secretToken'           => 'secret_token',
         'hostname'              => 'hostname',
-        'appName'               => 'app_name',
-        'appVersion'            => 'app_version',
+        'serviceName'           => 'service_name',
+        'serviceVersion'        => 'service_version',
         'frameworkName'         => 'framework_name',
         'frameworkVersion'      => 'framework_version',
         'enabled'               => 'enabled',
         'timeout'               => 'timeout',
         'environment'           => 'environment',
-        'backtraceLimit'        => 'backtrace_limit',
+        'stackTraceLimit'       => 'stack_trace_limit',
         'transactionSampleRate' => 'transaction_sample_rate',
     ];
 
+    private $legacyOptions = [
+        'active' => ['name' => 'enabled', 'default' => true],
+        'appName' => ['name' => 'serviceName', 'default' => null],
+        'appVersion' => ['name' => 'serviceVersion', 'default' => null],
+        'backtraceLimit' => ['name' => 'stackTraceLimit', 'default' => 0],
+    ];
+
+    /** @var string */
+    private $defaultServiceName;
     /**
      * Config Set
      *
@@ -47,7 +56,7 @@ class Config
      * @param array $config
      * @throws ConfigurationException
      * @throws UnsupportedConfigurationValueException
-     * @throws MissingAppNameException
+     * @throws MissingServiceNameException
      */
     public function __construct(array $config = [])
     {
@@ -79,41 +88,63 @@ class Config
             $this->logger->notice('The "active" configuration option is deprecated, please use "enabled" instead.');
         }
 
+        if (isset($values['defaultServiceName'])) {
+            $this->defaultServiceName = $values['defaultServiceName'];
+        }
+
         $this->values = $values;
     }
 
     private function validateConfig(): void
     {
-        if (empty($this->config['appName'])) {
-            throw new MissingAppNameException();
+        $this->resolveLegacyOptions();
+
+        if (empty($this->config['serviceName'])) {
+            throw new MissingServiceNameException();
         }
 
-        $this->resolveActiveAndEnabled();
+        // TODO validate serviceName matches ^[a-zA-Z0-9 _-]+$
+        // TODO support list of server URLs
 
         $this->config['serverUrl'] = rtrim($this->config['serverUrl'], '/');
     }
 
-    private function resolveActiveAndEnabled(): void
+    /**
+     * This method should be completely removed any default values applied to the find* methods
+     * when support for the legacy options is officially removed.
+     *
+     * @throws ConfigurationException
+     */
+    private function resolveLegacyOptions(): void
     {
-        if (null !== $this->config['enabled'] && array_key_exists('active', $this->values)) {
-            throw new ConfigurationException('Provide only one of "active" or "enabled", preferring "enabled"');
+        foreach ($this->legacyOptions as $legacyOption => $preferred) {
+            $this->resolveLegacyOption($legacyOption, $preferred['name'], $preferred['default']);
+        }
+    }
+
+    private function resolveLegacyOption(string $legacyOption, string $preferredOption, $preferredDefault): void
+    {
+        if (null !== $this->config[$preferredOption] && array_key_exists($legacyOption, $this->values)) {
+            throw new ConfigurationException(
+                sprintf('Provide only one of "%s" or "%s", preferring "%s"', $legacyOption, $preferredOption, $preferredOption)
+            );
         }
 
-        // Only enabled was specified
-        if (null !== $this->config['enabled'] && !array_key_exists('active', $this->values)) {
-            $this->values['active'] = $this->config['enabled'];
+        // Only preferred was specified
+        if (null !== $this->config[$preferredOption] && !array_key_exists($legacyOption, $this->values)) {
+            $this->values[$legacyOption] = $this->config[$preferredOption];
             return;
         }
 
-        // Only active was specified
-        if (null === $this->config['enabled'] && array_key_exists('active', $this->values)) {
-            $this->config['enabled'] = $this->values['active'];
+        // Only legacy was specified
+        if (null === $this->config[$preferredOption] && array_key_exists($legacyOption, $this->values)) {
+            $this->config[$preferredOption] = $this->values[$legacyOption];
             return;
         }
 
-        // Neither enabled or active were specified
-        $this->config['enabled'] = true;
-        $this->values['active'] = true;
+        // Neither preferred or legacy were specified
+        $this->config[$preferredOption] = $preferredDefault;
+        $this->values[$legacyOption] = $preferredDefault;
     }
 
     private function logConfig(): void
@@ -191,14 +222,14 @@ class Config
         return $this->config['transactionSampleRate'];
     }
 
-    public function appName(): string
+    public function serviceName(): string
     {
-        return $this->config['appName'];
+        return $this->config['serviceName'];
     }
 
-    public function appVersion(): ?string
+    public function serviceVersion(): ?string
     {
-        return $this->config['appVersion'];
+        return $this->config['serviceVersion'];
     }
 
     public function framework(): ?string
@@ -221,9 +252,9 @@ class Config
         return $this->config['environment'];
     }
 
-    public function backtraceLimit(): int
+    public function stackTraceLimit(): int
     {
-        return $this->config['backtraceLimit'];
+        return $this->config['stackTraceLimit'];
     }
 
     public function hostname(): string
@@ -251,22 +282,22 @@ class Config
         $this->config = [
             'serverUrl'             => $this->findServerUrl(),
             'secretToken'           => $this->findSecretToken(),
-            'hostname'              => $this->findHostName(),
-            'appName'               => $this->findAppName(),
-            'appVersion'            => $this->findAppVersion(),
+            'hostname'              => $this->findHostname(),
+            'serviceName'           => $this->findServiceName(),
+            'serviceVersion'        => $this->findServiceVersion(),
             'frameworkName'         => $this->findFrameworkName(),
             'frameworkVersion'      => $this->findFrameworkVersion(),
             'enabled'               => $this->findEnabled(),
             'timeout'               => $this->findTimout(),
             'environment'           => $this->findEnvironment(),
-            'backtraceLimit'        => $this->findBacktraceLimit(),
+            'stackTraceLimit'       => $this->findStackTraceLimit(),
             'transactionSampleRate' => $this->findTransactionSampleRate(),
         ];
     }
 
     private function findServerUrl(): string
     {
-        return $this->findConfigValue('serverUrl', 'http://127.0.0.1:8200');
+        return $this->findConfigValue('serverUrl', 'http://localhost:8200');
     }
 
     private function findSecretToken(): ?string
@@ -274,19 +305,19 @@ class Config
         return $this->findConfigValue('secretToken');
     }
 
-    private function findHostName(): string
+    private function findHostname(): ?string
     {
         return $this->findConfigValue('hostname', gethostname());
     }
 
-    private function findAppName(): ?string
+    private function findServiceName(): ?string
     {
-        return $this->findConfigValue('appName');
+        return $this->findConfigValue('serviceName', $this->defaultServiceName);
     }
 
-    private function findAppVersion(): ?string
+    private function findServiceVersion(): ?string
     {
-        return $this->findConfigValue('appVersion');
+        return $this->findConfigValue('serviceVersion');
     }
 
     private function findFrameworkName(): ?string
@@ -325,9 +356,19 @@ class Config
         return $this->findConfigValue('environment', 'development');
     }
 
-    private function findBacktraceLimit(): int
+    private function findStackTraceLimit(): ?int
     {
-        return (int) $this->findConfigValue('backtraceLimit', 0);
+        $limit = $this->findConfigValue('stackTraceLimit');
+
+        if (null === $limit) {
+            return null;
+        }
+
+        // Type casting makes null into an int and subsequent null checks fail.
+        // This can be changed after the legacy backtraceLimit is removed and the
+        // default value is set here. The return value will no longer be nullable
+        // at that point.
+        return (int) $limit;
     }
 
     private function findTransactionSampleRate(): float

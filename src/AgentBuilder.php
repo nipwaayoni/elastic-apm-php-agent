@@ -66,9 +66,9 @@ class AgentBuilder
 
     public function __construct(ConnectorFactory $connectorFactory = null)
     {
-        // We must have a valid Config object for some other tasks, so just it now.
+        // We must have a valid Config object for some other tasks, so create one now.
         // This should be replaced later.
-        $this->config = new Config(['appName' => 'APM Agent']);
+        $this->config = new Config(['defaultServiceName' => 'APM Agent']);
         $this->connectorFactory = $connectorFactory ?? new ConnectorFactory();
 
         $this->init();

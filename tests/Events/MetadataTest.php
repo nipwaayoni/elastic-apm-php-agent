@@ -26,12 +26,12 @@ class MetadataTest extends SchemaTestCase
      * @dataProvider schemaVersionDataProvider
      * @param string $schemaVersion
      * @param string $schemaFile
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
         $agentMetadata = ['name' => 'My Agent', 'version' => '1.0.0'];
-        $metadata = new Metadata([], new Config(['appName' => 'SchemaTest']), $agentMetadata);
+        $metadata = new Metadata([], new Config(['serviceName' => 'SchemaTest']), $agentMetadata);
 
         $this->validateObjectAgainstSchema($metadata, $schemaVersion, $schemaFile);
     }
