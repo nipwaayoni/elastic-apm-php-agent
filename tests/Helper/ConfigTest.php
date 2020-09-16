@@ -13,13 +13,25 @@ use Psr\Log\Test\TestLogger;
  */
 final class ConfigTest extends TestCase
 {
+    public function tearDown(): void
+    {
+        parent::tearDown();
 
-  /**
-   * @covers \Nipwaayoni\Config::__construct
-   * @covers \Nipwaayoni\Agent::getConfig
-   * @covers \Nipwaayoni\Config::getDefaultConfig
-   * @covers \Nipwaayoni\Config::asArray
-   */
+        foreach (array_keys(getenv()) as $envName) {
+            if (strpos($envName, 'ELASTIC_APM') !== 0) {
+                continue;
+            }
+
+            putenv($envName);
+        }
+    }
+
+    /**
+     * @covers \Nipwaayoni\Config::__construct
+     * @covers \Nipwaayoni\Agent::getConfig
+     * @covers \Nipwaayoni\Config::getDefaultConfig
+     * @covers \Nipwaayoni\Config::asArray
+     */
     public function testControlDefaultConfig()
     {
         $appName = sprintf('app_name_%d', rand(10, 99));
@@ -29,7 +41,7 @@ final class ConfigTest extends TestCase
         $this->assertArrayHasKey('secretToken', $config);
         $this->assertArrayHasKey('serverUrl', $config);
         $this->assertArrayHasKey('hostname', $config);
-        $this->assertArrayHasKey('active', $config);
+        $this->assertArrayHasKey('enabled', $config);
         $this->assertArrayHasKey('timeout', $config);
         $this->assertArrayHasKey('appVersion', $config);
         $this->assertArrayHasKey('environment', $config);
@@ -40,7 +52,7 @@ final class ConfigTest extends TestCase
         $this->assertNull($config['secretToken']);
         $this->assertEquals('http://127.0.0.1:8200', $config['serverUrl']);
         $this->assertEquals(gethostname(), $config['hostname']);
-        $this->assertFalse($config['active']);
+        $this->assertFalse($config['enabled']);
         $this->assertEquals(10, $config['timeout']);
         $this->assertEquals('development', $config['environment']);
         $this->assertEquals(0, $config['backtraceLimit']);
@@ -65,7 +77,7 @@ final class ConfigTest extends TestCase
             'frameworkName' => uniqid(),
             'timeout'       => rand(10, 20),
             'hostname'      => sprintf('host_%d', rand(0, 9)),
-            'active'        => false,
+            'enabled'       => false,
         ];
 
         $config = (new Config($init))->asArray();
@@ -107,8 +119,8 @@ final class ConfigTest extends TestCase
     {
         $init = [
             'serverUrl' => 'http://foo.bar/',
-            'appName' => sprintf('app_name_%d', rand(10, 99)),
-            'active'  => false,
+            'appName'   => sprintf('app_name_%d', rand(10, 99)),
+            'enabled'   => false,
         ];
 
         $config = (new Config($init))->asArray();
@@ -147,9 +159,16 @@ final class ConfigTest extends TestCase
         ];
     }
 
+    public function testMakesArbitraryConfigValuesAvailable(): void
+    {
+        $config = new Config(['appName' => 'Test', 'my-item' => 'some value']);
+
+        $this->assertEquals('some value', $config->get('my-item'));
+    }
+
     public function testSetsAppNameFromEnvironmentVariable(): void
     {
-        putenv(sprintf('%s=%s', 'ELASTIC_APM_APP_NAME', 'My Test App'));
+        putenv(sprintf('ELASTIC_APM_APP_NAME=%s', 'My Test App'));
 
         $config = new Config();
 
@@ -158,7 +177,7 @@ final class ConfigTest extends TestCase
 
     public function testExplicitSettingTakesPrecedenceOverEnvironmentVariable(): void
     {
-        putenv(sprintf('%s=%s', 'ELASTIC_APM_APP_NAME', 'My Test App'));
+        putenv(sprintf('ELASTIC_APM_APP_NAME=%s', 'My Test App'));
 
         $config = new Config(['appName' => 'Test']);
 
@@ -180,8 +199,6 @@ final class ConfigTest extends TestCase
         $config = new Config(['appName' => 'Test']);
 
         $this->assertEquals($configValue, $config->$configName());
-
-        putenv(sprintf('%s=', $envFullName));
     }
 
     public function environmentVariableChecks(): array
@@ -267,7 +284,7 @@ final class ConfigTest extends TestCase
     {
         $this->expectException(ConfigurationException::class);
 
-        new Config(['active' => true, 'enabled' => true]);
+        new Config(['appName' => 'My App', 'active' => true, 'enabled' => true]);
     }
 
     public function testLogsNoticeWhenUsingActiveInsteadOfEnabled(): void
@@ -286,5 +303,101 @@ final class ConfigTest extends TestCase
         new Config(['appName' => 'Test', 'secretToken' => 'abc123xyz', 'logger' => $logger]);
 
         $this->assertTrue($logger->hasDebugThatMatches('/secretToken=a\*\*\*z/'));
+    }
+
+    /**
+     * @throws ConfigurationException
+     * @throws UnsupportedConfigurationValueException
+     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     *
+     * @dataProvider activeAndEnabledChecks
+     */
+    public function testHandlesActiveAndEnabledSettings(array $settings, bool $expected): void
+    {
+        $enabledEnvValue = $settings['enabledEnvValue'];
+        $activeAppValue = $settings['activeAppValue'];
+        $enabledAppValue = $settings['enabledAppValue'];
+
+        $configValues = ['appName' => 'Test App'];
+
+        if (null !== $enabledEnvValue) {
+            putenv('ELASTIC_APM_ENABLED=' . $enabledEnvValue);
+        }
+
+        if (null !== $activeAppValue) {
+            $configValues['active'] = $activeAppValue;
+        }
+
+        if (null !== $enabledAppValue) {
+            $configValues['enabled'] = $enabledAppValue;
+        }
+
+        $config = new Config($configValues);
+
+        $this->assertEquals($expected, $config->get('active'));
+        $this->assertEquals($expected, $config->get('enabled'));
+        $this->assertEquals($expected, $config->enabled());
+    }
+
+    public function activeAndEnabledChecks(): array
+    {
+        return [
+            'default' => [
+                [
+                    'enabledEnvValue' => null,
+                    'activeAppValue' => null,
+                    'enabledAppValue' => null,
+                ],
+                true
+            ],
+            'env enabled only' => [
+                [
+                    'enabledEnvValue' => 'true',
+                    'activeAppValue' => null,
+                    'enabledAppValue' => null,
+                ],
+                true
+            ],
+            'env not enabled only' => [
+                [
+                    'enabledEnvValue' => 'false',
+                    'activeAppValue' => null,
+                    'enabledAppValue' => null,
+                ],
+                false
+            ],
+            'app enabled only' => [
+                [
+                    'enabledEnvValue' => null,
+                    'activeAppValue' => null,
+                    'enabledAppValue' => true,
+                ],
+                true
+            ],
+            'app not enabled only' => [
+                [
+                    'enabledEnvValue' => null,
+                    'activeAppValue' => null,
+                    'enabledAppValue' => false,
+                ],
+                false
+            ],
+            'app active only' => [
+                [
+                    'enabledEnvValue' => null,
+                    'activeAppValue' => true,
+                    'enabledAppValue' => null,
+                ],
+                true
+            ],
+            'app not active only' => [
+                [
+                    'enabledEnvValue' => null,
+                    'activeAppValue' => false,
+                    'enabledAppValue' => null,
+                ],
+                false
+            ],
+        ];
     }
 }

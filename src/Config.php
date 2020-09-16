@@ -15,12 +15,30 @@ use Psr\Log\NullLogger;
  */
 class Config
 {
+    public const CONFIG_NAME_MAP = [
+        'serverUrl'             => 'server_url',
+        'secretToken'           => 'secret_token',
+        'hostname'              => 'hostname',
+        'appName'               => 'app_name',
+        'appVersion'            => 'app_version',
+        'frameworkName'         => 'framework_name',
+        'frameworkVersion'      => 'framework_version',
+        'enabled'               => 'enabled',
+        'timeout'               => 'timeout',
+        'environment'           => 'environment',
+        'backtraceLimit'        => 'backtrace_limit',
+        'transactionSampleRate' => 'transaction_sample_rate',
+    ];
+
     /**
      * Config Set
      *
      * @var array
      */
     private $config;
+
+    /** @var array */
+    private $values;
 
     /** @var LoggerInterface */
     private $logger;
@@ -33,34 +51,69 @@ class Config
      */
     public function __construct(array $config = [])
     {
-        $this->logger = $config['logger'] ?? new NullLogger();
-        // Don't leave the logger hanging around in the config array.
-        unset($config['logger']);
+        $this->validateValues($config);
+
+        $this->makeConfig();
+
+        $this->validateConfig();
+
+        $this->logConfig();
+    }
+
+    /**
+     * @param array $values
+     * @throws ConfigurationException
+     * @throws UnsupportedConfigurationValueException
+     */
+    private function validateValues(array $values): void
+    {
+        $this->logger = $values['logger'] ?? new NullLogger();
 
         foreach (['httpClient', 'env', 'cookies'] as $removedKey) {
-            if (array_key_exists($removedKey, $config)) {
+            if (array_key_exists($removedKey, $values)) {
                 throw new UnsupportedConfigurationValueException($removedKey);
             }
         }
 
-        if (isset($config['active']) && isset($config['enabled'])) {
-            throw new ConfigurationException('Please provide only one of "active" or "enabled", preferring "enabled"');
-        }
-
-        if (isset($config['active'])) {
+        if (isset($values['active'])) {
             $this->logger->notice('The "active" configuration option is deprecated, please use "enabled" instead.');
         }
 
-        // Register Merged Config
-        $this->config = array_merge($this->getDefaultConfig(), $config);
+        $this->values = $values;
+    }
 
+    private function validateConfig(): void
+    {
         if (empty($this->config['appName'])) {
             throw new MissingAppNameException();
         }
 
-        $this->config['serverUrl'] = rtrim($this->config['serverUrl'], '/');
+        $this->resolveActiveAndEnabled();
 
-        $this->logConfig();
+        $this->config['serverUrl'] = rtrim($this->config['serverUrl'], '/');
+    }
+
+    private function resolveActiveAndEnabled(): void
+    {
+        if (null !== $this->config['enabled'] && array_key_exists('active', $this->values)) {
+            throw new ConfigurationException('Provide only one of "active" or "enabled", preferring "enabled"');
+        }
+
+        // Only enabled was specified
+        if (null !== $this->config['enabled'] && !array_key_exists('active', $this->values)) {
+            $this->values['active'] = $this->config['enabled'];
+            return;
+        }
+
+        // Only active was specified
+        if (null === $this->config['enabled'] && array_key_exists('active', $this->values)) {
+            $this->config['enabled'] = $this->values['active'];
+            return;
+        }
+
+        // Neither enabled or active were specified
+        $this->config['enabled'] = true;
+        $this->values['active'] = true;
     }
 
     private function logConfig(): void
@@ -99,7 +152,18 @@ class Config
     {
         $this->logger->notice(sprintf('Use of get("%s") is deprecated, please use the appropriate named accessor instead.', $key));
 
-        return ($this->config[$key]) ?? $default;
+        // Try to return the config value first.
+        if (array_key_exists($key, $this->config)) {
+            return $this->config[$key];
+        }
+
+        // If there is no config value, try an input value.
+        if (array_key_exists($key, $this->values)) {
+            return $this->values[$key];
+        }
+
+        // Finally, return the default.
+        return $default;
     }
 
     public function enabled(): bool
@@ -178,13 +242,13 @@ class Config
     }
 
     /**
-     * Get the Default Config of the Agent
+     * Make the configuration of the Agent
      *
-     * @return array
+     * @return void
      */
-    private function getDefaultConfig(): array
+    private function makeConfig(): void
     {
-        return [
+        $this->config = [
             'serverUrl'             => $this->findServerUrl(),
             'secretToken'           => $this->findSecretToken(),
             'hostname'              => $this->findHostName(),
@@ -202,12 +266,12 @@ class Config
 
     private function findServerUrl(): string
     {
-        return $this->findConfigValue('server_url', 'http://127.0.0.1:8200');
+        return $this->findConfigValue('serverUrl', 'http://127.0.0.1:8200');
     }
 
     private function findSecretToken(): ?string
     {
-        return $this->findConfigValue('secret_token');
+        return $this->findConfigValue('secretToken');
     }
 
     private function findHostName(): string
@@ -217,30 +281,35 @@ class Config
 
     private function findAppName(): ?string
     {
-        return $this->findConfigValue('app_name');
+        return $this->findConfigValue('appName');
     }
 
     private function findAppVersion(): ?string
     {
-        return $this->findConfigValue('app_version');
+        return $this->findConfigValue('appVersion');
     }
 
     private function findFrameworkName(): ?string
     {
-        return $this->findConfigValue('framework_name');
+        return $this->findConfigValue('frameworkName');
     }
 
     private function findFrameworkVersion(): ?string
     {
-        return $this->findConfigValue('framework_version');
+        return $this->findConfigValue('frameworkVersion');
     }
 
-    private function findEnabled(): bool
+    private function findEnabled(): ?bool
     {
         $envValue = $this->findConfigValue('enabled');
 
         if (null === $envValue) {
-            return true;
+            // This will change to 'return true' after removing the 'active' config option.
+            return null;
+        }
+
+        if (is_bool($envValue)) {
+            return $envValue;
         }
 
         return $envValue === 'true';
@@ -258,17 +327,21 @@ class Config
 
     private function findBacktraceLimit(): int
     {
-        return (int) $this->findConfigValue('backtrace_limit', 0);
+        return (int) $this->findConfigValue('backtraceLimit', 0);
     }
 
     private function findTransactionSampleRate(): float
     {
-        return (float) $this->findConfigValue('transaction_sample_rate', 1.0);
+        return (float) $this->findConfigValue('transactionSampleRate', 1.0);
     }
 
     private function findConfigValue(string $name, $default = null)
     {
-        $envName = 'ELASTIC_APM_' . strtoupper($name);
+        if (isset($this->values[$name])) {
+            return $this->values[$name];
+        }
+
+        $envName = 'ELASTIC_APM_' . strtoupper(self::CONFIG_NAME_MAP[$name]);
 
         $envValue = getenv($envName, true) ?: getenv($envName);
 
