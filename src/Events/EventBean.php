@@ -345,11 +345,20 @@ class EventBean implements Samplable
     final protected function getEnv(): array
     {
         $envMask = $this->contexts['env'];
-        $env = empty($envMask)
+        return $this->filterElasticApmEnvironmentVariables(
+            empty($envMask)
             ? $_SERVER
-            : array_intersect_key($_SERVER, array_flip($envMask));
+            : array_intersect_key($_SERVER, array_flip($envMask))
+        );
+    }
 
-        return $env;
+    private function filterElasticApmEnvironmentVariables(array $variables): array
+    {
+        $elasticApmKeys = array_filter(array_keys($variables), function(string $key) {
+            return strpos($key, 'ELASTIC_APM_') === 0;
+        });
+
+        return array_diff_key($variables, array_flip($elasticApmKeys));
     }
 
     /**

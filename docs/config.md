@@ -1,5 +1,11 @@
 # Configuration
 
+There are two types of configuration you will use with the agent. Most operational options are given to the `Config` object when it is created, and that object then provides the configuration settings to other components. The following sections describe how to provide these settings.
+
+The second type of configuration is setting options which influence what data is captured and sent to APM and accessing internal behaviors of the `Agent`. These options are provided to the `AgentBuilder` which then passes them to the `Agent` during construction.
+
+## Config Object Options
+
 The agent configuration can be provided through environment variables or as an associative array given to the `Config` class constructor. These methods may be intermixed.
 
 The precedence is:
@@ -8,11 +14,11 @@ The precedence is:
 * Environment variables
 * Default values
 
-## Required Options
+### Required Options
 
 The Agent requires following options to function as expected.
 
-### Service Name
+#### Service Name
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -24,7 +30,7 @@ This is the only configuration option you are required to provide when creating 
 
 **Note:** The service name must confirm to the regular expression `^[a-zA-Z0-9 _-]+$` (ASCII alphabet, numbers, dashes, underscores and spaces).
 
-### Server URL
+#### Server URL
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -32,9 +38,9 @@ This is the only configuration option you are required to provide when creating 
 
 The URL for your APM service. The URL must be fully qualified, including the protocol and port.
 
-## Other Options
+### Other Options
 
-### Enabled
+#### Enabled
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -42,7 +48,7 @@ The URL for your APM service. The URL must be fully qualified, including the pro
 
 Enable or disable the sending of data to APM. When not enabled, the Agent may still collect event data, but will not attempt to send data to the APM service.
 
-### Service Version
+#### Service Version
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -50,7 +56,7 @@ Enable or disable the sending of data to APM. When not enabled, the Agent may st
 
 The version of your deployed service.
 
-### Secret Token
+#### Secret Token
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -58,7 +64,7 @@ The version of your deployed service.
 
 The secret token required to send data to your APM service.
 
-### Hostname
+#### Hostname
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -66,7 +72,7 @@ The secret token required to send data to your APM service.
 
 The OS hostname on which the agent is running.
 
-### Framework Name
+#### Framework Name
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -74,7 +80,7 @@ The OS hostname on which the agent is running.
 
 The name of the application framework, if any.
 
-### Framework Version
+#### Framework Version
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -82,7 +88,7 @@ The name of the application framework, if any.
 
 The version of the application framework, if any.
 
-### Stack Trace Limit
+#### Stack Trace Limit
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -90,18 +96,17 @@ The version of the application framework, if any.
 
 Depth of a transaction stack trace. The default (0) is unlimited depth.
 
-### Transaction Sample Rate
+#### Transaction Sample Rate
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
 | ELASTIC_APM_TRANSACTION_SAMPLE_RATE | transactionSampleRate | 1.0 |
 
-
-## Legacy Options
+### Legacy Options
 
 The following options are deprecated in favor naming conventions adopted by other APM clients. While these still work at the moment, they are only supported as constructor arguments and are not available as environment variables.
 
-### App Name
+#### App Name
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -109,7 +114,7 @@ The following options are deprecated in favor naming conventions adopted by othe
 
 Use the `service name` configuration option instead.
 
-### App Version
+#### App Version
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -117,7 +122,7 @@ Use the `service name` configuration option instead.
 
 Use the `service version` configuration option instead.
 
-### Active
+#### Active
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -125,8 +130,7 @@ Use the `service version` configuration option instead.
 
 Use the `enabled` configuration option instead.
 
-
-### Backtrace Limit
+#### Backtrace Limit
 
 | Environment | Config Key | Default |
 |-------------|------------|---------|
@@ -134,36 +138,46 @@ Use the `enabled` configuration option instead.
 
 Use the `stack trace limit` configuration option instead.
 
-## Passing Configuration to the Config Object Constructor
+## AgentBuilder Options
 
-The following parameters can be given as key/value pairs to the `Config` object used during `Agent` creation.
+withConfigData(array $config)
+withConfig(Config $config)
 
-```
-appName               : Name of this application, Required
-appVersion            : Application version, Default: ''
-serverUrl             : APM Server Endpoint, Default: 'http://127.0.0.1:8200'
-secretToken           : Secret token for APM Server, Default: null
-hostname              : Hostname to transmit to the APM Server, Default: gethostname()
-active                : Activate the APM Agent, Default: true
-backtraceLimit        : Depth of a transaction backtrace, Default: unlimited
-transactionSampleRate : Rate at which transactions will be sampled, 0.0 to 1.0, Default: 1.0 
-```
+withUserContextData(array $context)
+withCustomContextData(array $context)
 
-You may provide lists environment variables and HTTP cookies to include when sending events to APM. The `AgentBuilder` must be used to construct an `Agent` with these settings. 
+withTagData(array $tags)
 
-```
-withEnvData()    : $_SERVER vars to send to the APM Server, empty set sends all. Keys are case sensitive, Default: ['SERVER_SOFTWARE']
-withCookiesData(): Cookies to send to the APM Server, empty set sends all. Keys are case sensitive, Default: []
-```
+withEnvData(array $env)
+
+withCookieData(array $cookies)
+
+withEventFactory(EventFactoryInterface $eventFactory)
+
+withTransactionStore(TransactionsStore $store)
+
+withHttpClient(ClientInterface $httpClient)
+
+withRequestFactory(RequestFactoryInterface $requestFactory)
+
+withStreamFactory(StreamFactoryInterface $streamFactory)
+
+withPreCommitCallback(callable $callback)
+
+withPostCommitCallback(callable $callback)
+
+## Logging
+
 
 ## Example
 
 ```php
+putenv('ELASTIC_APM_SECRET_TOKEN=DKKbdsupZWEEzYd4LX34TyHF36vDKRJP');
+
 $config = new Nipwaayoni\Config([
     'serviceName'     => 'My WebApp',
     'serviceVersion'  => '1.0.42',
     'serverUrl'       => 'http://apm-server.example.com',
-    'secretToken'     => 'DKKbdsupZWEEzYd4LX34TyHF36vDKRJP',
     'hostname'        => 'node-24.app.network.com',
 ]);
 

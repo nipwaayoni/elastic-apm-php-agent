@@ -221,4 +221,20 @@ final class TransactionTest extends SchemaTestCase
 
         $this->assertNotEquals($strategy->sampleEvent(), empty($payload['transaction']['context']));
     }
+
+    public function testDoesNotIncludeElasticApmEnvironmentVariablesInData(): void
+    {
+        // Add directly to $_SERVER since PHP has already populated it
+        $_SERVER['ELASTIC_APM_SECRET_TOKEN'] = 'abc123';
+        $_SERVER['ANOTHER_VARIABLE_TO_INCLUDE'] = 'xyz987';
+
+        $transaction = new Transaction('MyTransaction', []);
+
+        $json = json_encode($transaction);
+
+        $this->assertNotContains('ELASTIC_APM_SECRET_TOKEN', $json);
+        $this->assertNotContains('abc123', $json);
+        $this->assertContains('ANOTHER_VARIABLE_TO_INCLUDE', $json);
+        $this->assertContains('xyz987', $json);
+    }
 }
