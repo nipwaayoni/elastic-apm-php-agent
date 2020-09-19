@@ -25,6 +25,17 @@ class AgentBuilderTest extends TestCase
         $this->assertInstanceOf(Agent::class, $agent);
     }
 
+    public function testCreatesAgentWithoutConfigurationArray(): void
+    {
+        putenv('ELASTIC_APM_SERVICE_NAME=Test Created App');
+
+        $agent = AgentBuilder::create();
+
+        $this->assertEquals('Test Created App', $agent->getConfig()->serviceName());
+
+        putenv('ELASTIC_APM_SERVICE_NAME');
+    }
+
     public function testCreatesAgentFromConfigurationArray(): void
     {
         $agent = AgentBuilder::create(['serviceName' => 'Test Created App']);

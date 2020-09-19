@@ -59,7 +59,7 @@ class AgentBuilder
      */
     private $connectorFactory;
 
-    public static function create(array $config): ApmAgent
+    public static function create(array $config = []): ApmAgent
     {
         return (new self())->withConfigData($config)->build();
     }

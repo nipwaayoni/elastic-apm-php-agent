@@ -104,7 +104,7 @@ Depth of a transaction stack trace. The default (0) is unlimited depth.
 
 ### Legacy Options
 
-The following options are deprecated in favor naming conventions adopted by other APM clients. While these still work at the moment, they are only supported as constructor arguments and are not available as environment variables.
+The following options are deprecated in favor of naming conventions adopted by other APM clients. While these still work at the moment, they are only supported as constructor arguments and are not available as environment variables.
 
 #### App Name
 
@@ -140,34 +140,84 @@ Use the `stack trace limit` configuration option instead.
 
 ## AgentBuilder Options
 
-withConfigData(array $config)
-withConfig(Config $config)
+You can use the following `AgentBuilder` methods to specify data for the `Agent` to collect and send to APM. Please see the [agent documentation](agent.md) for more information.
 
-withUserContextData(array $context)
-withCustomContextData(array $context)
+### Configuration
 
-withTagData(array $tags)
+Configuration can be supplied either as an array of key/value pairs (legacy) or as a Config object (preferred). See the preceding section regarding configuration options for details.
 
-withEnvData(array $env)
+Note that the context data set here is shared by all transactions and other events created by the resulting `Agent` and will be merged with locally provided context data. Therefore, only system level, common context data should be provided. In a typical request/response PHP application, a new `Agent`, and therefore new context data, is likely created for each request. However, long running worker queues may need to consider what "context" means.
 
-withCookieData(array $cookies)
+```php
+$builder->withConfigData(array $config);
+$builder->withConfig(Config $config);
+```
 
-withEventFactory(EventFactoryInterface $eventFactory)
+Note that you should use only one of the two methods as any previous configuration will be replaced.
 
-withTransactionStore(TransactionsStore $store)
+### User Context
 
-withHttpClient(ClientInterface $httpClient)
+User context must be an array of key/value pairs as expected by APM. See the [user context docs](https://www.elastic.co/guide/en/apm/get-started/current/metadata.html#user-fields) for more.
 
-withRequestFactory(RequestFactoryInterface $requestFactory)
+```php
+$context = [
+    'email' => 'bob@example.com',
+    'name' => 'Bob Smith',
+    'id' => '123',
+];
 
-withStreamFactory(StreamFactoryInterface $streamFactory)
+$builder->withUserContextData(array $context);
+```
 
-withPreCommitCallback(callable $callback)
+### Custom Context
 
-withPostCommitCallback(callable $callback)
+Custom context must be an array of key/value pairs. See the [custom context docs](https://www.elastic.co/guide/en/apm/get-started/current/metadata.html#custom-fields) for more.
+
+```php
+$context = [
+    'my-fact' => 'something interesting',
+];
+
+$builder->withCustomContextData(array $context);
+```
+
+### Tags
+
+Tags are indexed data added to APM events. (This was changed to `labels` in the APM 7.0 release and this module will be updated to reflect that. See the [APM docs](https://www.elastic.co/guide/en/apm/get-started/current/metadata.html#labels-fields) for more information.)
+
+```php
+$builder->withTagData(array $tags);
+```
+
+### Environment Variables
+
+If used, only the provided environment variables (from PHP `$_SERVER`) will be sent to APM. 
+
+**WARNING!** If this list not provided or is empty, all values from `$_SERVER` will be sent, which may expose sensitive information. 
+
+```php
+$builder->withEnvData(array $env);
+```
+
+Note that the `Agent` will always remove `ELASTIC_APM_*` variables before sending, regardless of the provided list.
+
+### Cookies
+
+If used, only the provided cookie values (from PHP `$_COOKIE`) will be sent to APM.
+
+```php
+$builder->withCookieData(array $cookies);
+```
 
 ## Logging
 
+The `Agent` can use a [PSR-3](https://www.php-fig.org/psr/psr-3/) compatible logger object. You must supply a valid object using the `logger` key in the `Config` constructor arguments:
+
+```php
+$logger = new Logger('name');
+
+$agent = AgentBuilder::create(['logger' => $logger]);
+```
 
 ## Example
 

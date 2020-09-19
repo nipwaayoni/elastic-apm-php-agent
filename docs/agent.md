@@ -25,7 +25,6 @@ $agent = $builder->build();
 The following methods are available to influence the `Agent` creation:
 
 ```php
-$builder->withAgentClass(string $className);
 $builder->withConfigData(array $config);
 $builder->withConfig(Config $config);
 $builder->withUserContextData(array $context);

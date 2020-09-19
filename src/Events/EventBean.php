@@ -354,7 +354,7 @@ class EventBean implements Samplable
 
     private function filterElasticApmEnvironmentVariables(array $variables): array
     {
-        $elasticApmKeys = array_filter(array_keys($variables), function(string $key) {
+        $elasticApmKeys = array_filter(array_keys($variables), function (string $key) {
             return strpos($key, 'ELASTIC_APM_') === 0;
         });
 
