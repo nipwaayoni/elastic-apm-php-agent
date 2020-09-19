@@ -33,6 +33,7 @@ final class ConfigTest extends TestCase
         $this->assertArrayHasKey('appVersion', $config);
         $this->assertArrayHasKey('environment', $config);
         $this->assertArrayHasKey('backtraceLimit', $config);
+        $this->assertArrayHasKey('transactionSampleRate', $config);
 
         $this->assertEquals($config['appName'], $appName);
         $this->assertNull($config['secretToken']);
@@ -42,6 +43,7 @@ final class ConfigTest extends TestCase
         $this->assertEquals($config['timeout'], 10);
         $this->assertEquals($config['environment'], 'development');
         $this->assertEquals($config['backtraceLimit'], 0);
+        $this->assertEquals($config['transactionSampleRate'], 1);
     }
 
     /**

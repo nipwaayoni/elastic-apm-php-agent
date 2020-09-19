@@ -31,4 +31,31 @@ class AgentBuilderTest extends TestCase
 
         $this->assertEquals('Test Created App', $agent->getConfig()->get('appName'));
     }
+
+    /**
+     * @param float $rate
+     * @param bool $expected
+     * @throws \Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException
+     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     *
+     * @dataProvider transactionSamplingChecks
+     */
+    public function testAppliesTransactionSamplingStrategyToEventFactory(float $rate, bool $expected): void
+    {
+        $agent = (new AgentBuilder())
+            ->withConfig(new Config(['appName' => 'test', 'transactionSampleRate' => $rate]))
+            ->build();
+
+        $transaction = $agent->startTransaction('My Transaction', []);
+
+        $this->assertEquals($expected, $transaction->includeSamples());
+    }
+
+    public function transactionSamplingChecks(): array
+    {
+        return [
+            '100%' => [1.0, true],
+            '0%' => [0.0, false],
+        ];
+    }
 }

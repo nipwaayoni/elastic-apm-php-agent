@@ -10,7 +10,7 @@ use Nipwaayoni\Helper\Timestamp;
  * EventBean for occurring events such as Exceptions or Transactions
  *
  */
-class EventBean
+class EventBean implements Samplable
 {
     /**
      * Bit Size of ID's
@@ -67,6 +67,11 @@ class EventBean
         'type'   => 'generic'
     ];
 
+    /** @var SamplingStrategy */
+    protected $sampleStrategy;
+
+    /** @var bool */
+    protected $includeAsSample = true;
     /**
      * Extended Contexts such as Custom and/or User
      *
@@ -102,6 +107,7 @@ class EventBean
         $this->contexts = array_merge($this->contexts, $contexts);
 
         $this->timestamp = new Timestamp();
+        $this->sampleStrategy = new DefaultSamplingStrategy();
 
         // Set Parent Transaction
         if ($parent !== null) {
@@ -411,5 +417,20 @@ class EventBean
         }
 
         return $context;
+    }
+
+    public function sampleStrategy(SamplingStrategy $strategy): void
+    {
+        $this->sampleStrategy = $strategy;
+    }
+
+    public function includeSamples(): bool
+    {
+        return true;
+    }
+
+    public function isSampled(): bool
+    {
+        return $this->includeAsSample;
     }
 }

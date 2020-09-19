@@ -72,14 +72,15 @@ class Config
     private function getDefaultConfig(): array
     {
         return [
-            'serverUrl'      => 'http://127.0.0.1:8200',
-            'secretToken'    => null,
-            'hostname'       => gethostname(),
-            'appVersion'     => '',
-            'active'         => true,
-            'timeout'        => 10,
-            'environment'    => 'development',
-            'backtraceLimit' => 0,
+            'serverUrl'             => 'http://127.0.0.1:8200',
+            'secretToken'           => null,
+            'hostname'              => gethostname(),
+            'appVersion'            => '',
+            'active'                => true,
+            'timeout'               => 10,
+            'environment'           => 'development',
+            'backtraceLimit'        => 0,
+            'transactionSampleRate' => 1,
         ];
     }
 }

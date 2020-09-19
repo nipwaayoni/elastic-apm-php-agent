@@ -2,6 +2,7 @@
 
 namespace Nipwaayoni\Tests\Events;
 
+use Nipwaayoni\Events\SamplingStrategy;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Helper\Timer;
@@ -159,5 +160,65 @@ final class TransactionTest extends SchemaTestCase
             'null start time' => [null],
             'set start time' => [microtime(true)],
         ];
+    }
+
+    /**
+     * @dataProvider includeSamplesChecks
+     */
+    public function testIncludeSamplesReflectsSampleStrategy(SamplingStrategy $strategy, bool $expected): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $this->assertEquals($expected, $this->transaction->includeSamples());
+    }
+
+    public function includeSamplesChecks(): array
+    {
+        return [
+            'include' => [$this->makeIncludeStrategy(), true],
+            'exclude' => [$this->makeExcludeStrategy(), false],
+        ];
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testIsSampledIsAlwaysTrue(SamplingStrategy $strategy): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $this->assertTrue($this->transaction->isSampled());
+    }
+
+    public function isSampledChecks(): array
+    {
+        return [
+            'include' => [$this->makeIncludeStrategy()],
+            'exclude' => [$this->makeExcludeStrategy()],
+        ];
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testSampledAttributeReflectsStrategy(SamplingStrategy $strategy): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $payload = json_decode(json_encode($this->transaction), true);
+
+        $this->assertEquals($strategy->sampleEvent(), $payload['transaction']['sampled']);
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testContextAttributeReflectsStrategy(SamplingStrategy $strategy): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $payload = json_decode(json_encode($this->transaction), true);
+
+        $this->assertNotEquals($strategy->sampleEvent(), empty($payload['transaction']['context']));
     }
 }

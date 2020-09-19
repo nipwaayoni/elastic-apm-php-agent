@@ -3,7 +3,9 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Events\SamplingStrategy;
 use Nipwaayoni\Events\Span;
+use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Factory\TimerFactory;
@@ -133,6 +135,27 @@ class SpanTest extends SchemaTestCase
         return [
             'null start time' => [null],
             'set start time' => [microtime(true)],
+        ];
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testIsSampledIsReflectsParentStrategy(SamplingStrategy $strategy): void
+    {
+        $parent = new Transaction('MyParent', []);
+        $parent->sampleStrategy($strategy);
+
+        $this->span = new Span('MySpan', $parent, $this->timerFactory);
+
+        $this->assertEquals($strategy->sampleEvent(), $this->span->isSampled());
+    }
+
+    public function isSampledChecks(): array
+    {
+        return [
+            'include' => [$this->makeIncludeStrategy()],
+            'exclude' => [$this->makeExcludeStrategy()],
         ];
     }
 }

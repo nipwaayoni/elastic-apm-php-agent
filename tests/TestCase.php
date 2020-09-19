@@ -2,9 +2,11 @@
 
 namespace Nipwaayoni\Tests;
 
-use Nipwaayoni\Agent;
 use Nipwaayoni\AgentBuilder;
+use Nipwaayoni\ApmAgent;
 use Nipwaayoni\Config;
+use Nipwaayoni\Events\SamplingStrategy;
+use Nipwaayoni\Factory\ConnectorFactory;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -16,9 +18,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $this->assertLessThanOrEqual($maxOverhead, $overhead);
     }
 
-    protected function makeAgent(array $components = []): Agent
+    protected function makeAgent(array $components = [], ConnectorFactory $connectorFactory = null): ApmAgent
     {
-        $builder = new AgentBuilder();
+        $builder = new AgentBuilder($connectorFactory);
 
         if (empty($components['config'])) {
             $components['config'] = new Config(['appName' => 'test']);
@@ -26,5 +28,23 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $builder->withConfig($components['config']);
 
         return $builder->build();
+    }
+
+    protected function makeSampleStrategy(bool $sampled): SamplingStrategy
+    {
+        $strategy = $this->createMock(SamplingStrategy::class);
+        $strategy->method('sampleEvent')->willReturn($sampled);
+
+        return $strategy;
+    }
+
+    protected function makeIncludeStrategy(): SamplingStrategy
+    {
+        return $this->makeSampleStrategy(true);
+    }
+
+    protected function makeExcludeStrategy(): SamplingStrategy
+    {
+        return $this->makeSampleStrategy(false);
     }
 }

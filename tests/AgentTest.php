@@ -4,7 +4,11 @@ namespace Nipwaayoni\Tests;
 
 use Nipwaayoni\Agent;
 use Nipwaayoni\Config;
+use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Factory\ConnectorFactory;
+use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test Case for @see \Nipwaayoni\Agent
@@ -117,5 +121,45 @@ final class AgentTest extends TestCase
 
         // Stop an unstarted Transaction and let it go boom!
         $agent->stopTransaction('unknown');
+    }
+
+    public function testAddsSampledEvents(): void
+    {
+        /** @var Connector|MockObject $connector */
+        $connector = $this->createMock(Connector::class);
+        $connector->expects($this->exactly(2))->method('putEvent');
+
+        /** @var ConnectorFactory|MockObject $connectorFactory */
+        $connectorFactory = $this->createMock(ConnectorFactory::class);
+        $connectorFactory->expects($this->once())->method('makeConnector')
+            ->willreturn($connector);
+
+        /** @var EventBean|MockObject $event */
+        $event = $this->createMock(EventBean::class);
+        $event->expects($this->once())->method('isSampled')->willReturn(true);
+
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])], $connectorFactory);
+
+        $agent->putEvent($event);
+    }
+
+    public function testDoesNotAddNonSampledEvents(): void
+    {
+        /** @var Connector|MockObject $connector */
+        $connector = $this->createMock(Connector::class);
+        $connector->expects($this->once())->method('putEvent');
+
+        /** @var ConnectorFactory|MockObject $connectorFactory */
+        $connectorFactory = $this->createMock(ConnectorFactory::class);
+        $connectorFactory->expects($this->once())->method('makeConnector')
+            ->willreturn($connector);
+
+        /** @var EventBean|MockObject $event */
+        $event = $this->createMock(EventBean::class);
+        $event->expects($this->once())->method('isSampled')->willReturn(false);
+
+        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])], $connectorFactory);
+
+        $agent->putEvent($event);
     }
 }
