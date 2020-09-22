@@ -84,10 +84,6 @@ class Config
             }
         }
 
-        if (isset($values['active'])) {
-            $this->logger->notice('The "active" configuration option is deprecated, please use "enabled" instead.');
-        }
-
         if (isset($values['defaultServiceName'])) {
             $this->defaultServiceName = $values['defaultServiceName'];
         }
@@ -125,9 +121,11 @@ class Config
     private function resolveLegacyOption(string $legacyOption, string $preferredOption, $preferredDefault): void
     {
         if (null !== $this->config[$preferredOption] && array_key_exists($legacyOption, $this->values)) {
-            throw new ConfigurationException(
-                sprintf('Provide only one of "%s" or "%s", preferring "%s"', $legacyOption, $preferredOption, $preferredOption)
+            $this->logger->notice(
+                sprintf('Both "%s" and "%s" were set, using the preferred option "%s".', $legacyOption, $preferredOption, $preferredOption)
             );
+            $this->values[$legacyOption] = $this->config[$preferredOption];
+            return;
         }
 
         // Only preferred was specified
@@ -138,6 +136,7 @@ class Config
 
         // Only legacy was specified
         if (null === $this->config[$preferredOption] && array_key_exists($legacyOption, $this->values)) {
+            $this->logger->notice(sprintf('The "%s" configuration option is deprecated, please use "%s" instead.', $legacyOption, $preferredOption));
             $this->config[$preferredOption] = $this->values[$legacyOption];
             return;
         }
@@ -155,15 +154,9 @@ class Config
             $config['secretToken'] = preg_replace('/^(.).*(.)$/', '$1***$2', $config['secretToken']);
         }
 
-        $message = implode(
-            PHP_EOL,
-            array_reduce(array_keys($config), function ($c, string $key) use ($config) {
-                $c[] = sprintf('%s=%s', $key, $config[$key]);
-                return $c;
-            }, [])
-        );
+        $message = json_encode($config);
 
-        $this->logger->debug('Runtime config: ' . PHP_EOL . $message);
+        $this->logger->debug('Runtime config: ' . $message);
     }
 
     public function logger(): LoggerInterface

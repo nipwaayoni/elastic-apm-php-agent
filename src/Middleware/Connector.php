@@ -166,7 +166,7 @@ class Connector implements LoggerAwareInterface
             $this->logger->debug(sprintf('Sent request, response status: %s', $response->getStatusCode()));
             $this->postCommit($response);
         } catch (ClientExceptionInterface $e) {
-            $this->logger->error(sprintf('Sending to APM failed, response status: %s', $response->getStatusCode()), ['exception' => $e]);
+            $this->logger->error(sprintf('Sending to APM failed, request error: %s', $e->getMessage()));
             $this->postCommit(null, $e);
         }
     }
@@ -182,7 +182,7 @@ class Connector implements LoggerAwareInterface
         call_user_func($this->preCommitCallback, $request);
     }
 
-    private function postCommit(ResponseInterface $response = null, \Throwable $e = null): void
+    private function postCommit(?ResponseInterface $response = null, \Throwable $e = null): void
     {
         if (null === $this->postCommitCallback) {
             return;

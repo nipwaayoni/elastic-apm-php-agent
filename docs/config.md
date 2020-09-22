@@ -16,7 +16,7 @@ The precedence is:
 
 ### Required Options
 
-The Agent requires following options to function as expected.
+The Agent requires the following options to function as expected.
 
 #### Service Name
 
@@ -47,6 +47,14 @@ The URL for your APM service. The URL must be fully qualified, including the pro
 | ELASTIC_APM_ENABLED | enabled | true |
 
 Enable or disable the sending of data to APM. When not enabled, the Agent may still collect event data, but will not attempt to send data to the APM service.
+
+#### Default Service Name
+
+| Environment | Config Key | Default |
+|-------------|------------|---------|
+| *N/A* | defaultServiceName | none |
+
+The default value to use as the service name if none other is given. This is intended to support frameworks wishing to make the `Agent` available to users with minimal configuration. This option should be used rather than setting `serviceName` so that the user is free to use an environment variable or `Config` option as they choose.
 
 #### Service Version
 
@@ -101,6 +109,8 @@ Depth of a transaction stack trace. The default (0) is unlimited depth.
 | Environment | Config Key | Default |
 |-------------|------------|---------|
 | ELASTIC_APM_TRANSACTION_SAMPLE_RATE | transactionSampleRate | 1.0 |
+
+Transactions will be sampled at the given rate (1.0 being 100%). Sampling a transaction means that the context and child events will be included in the data sent to APM. Unsampled transactions are still reported to APM, including the overall transaction time, but will have no details. The default is to sample all (1.0) transactions.
 
 ### Legacy Options
 
@@ -193,7 +203,7 @@ $builder->withTagData(array $tags);
 
 If used, only the provided environment variables (from PHP `$_SERVER`) will be sent to APM. 
 
-**WARNING!** If this list not provided or is empty, all values from `$_SERVER` will be sent, which may expose sensitive information. 
+**WARNING!** If this list is not provided or is empty, all values from `$_SERVER` will be sent, which may expose sensitive information. 
 
 ```php
 $builder->withEnvData(array $env);

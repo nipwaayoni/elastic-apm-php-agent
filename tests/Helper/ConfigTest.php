@@ -398,20 +398,48 @@ final class ConfigTest extends TestCase
         ];
     }
 
-    public function testThrowsExceptionWhenConfigArrayContainsActiveAndEnabled(): void
-    {
-        $this->expectException(ConfigurationException::class);
-
-        new Config(['serviceName' => 'My App', 'active' => true, 'enabled' => true]);
-    }
-
-    public function testLogsNoticeWhenUsingActiveInsteadOfEnabled(): void
+    /**
+     * @dataProvider deprecatedOptionsChecks
+     */
+    public function testLogsNoticeWhenUsingDeprecatedOptions(string $legacyOption, $optionValue, string $preferredOption): void
     {
         $logger = new TestLogger();
 
-        new Config(['serviceName' => 'Test', 'active' => true, 'logger' => $logger]);
+        $options = [$legacyOption => $optionValue, 'logger' => $logger];
+        if ($preferredOption !== 'serviceName') {
+            $options['serviceName'] = 'Test';
+        }
 
-        $this->assertTrue($logger->hasNoticeThatContains('The "active" configuration option is deprecated, please use "enabled" instead.'));
+        new Config($options);
+
+        $this->assertTrue($logger->hasNoticeThatContains(
+            sprintf('The "%s" configuration option is deprecated, please use "%s" instead.', $legacyOption, $preferredOption)
+        ));
+    }
+
+    /**
+     * @dataProvider deprecatedOptionsChecks
+     */
+    public function testUsesPreferredOptionOverLegacyWhenBothArePresent(string $legacyOption, $optionValue, string $preferredOption): void
+    {
+        $options = [$legacyOption => $optionValue];
+        if ($preferredOption !== 'serviceName') {
+            $options['serviceName'] = 'Test';
+        }
+
+        $config = new Config($options);
+
+        $this->assertEquals($optionValue, $config->$preferredOption());
+    }
+
+    public function deprecatedOptionsChecks(): array
+    {
+        return [
+            'active/enabled' => ['active', true, 'enabled'],
+            'appName/serviceName' => ['appName', 'My App', 'serviceName'],
+            'appVersion/serviceVersion' => ['appVersion', '1.0', 'serviceVersion'],
+            'backtraceLimit/stackTraceLimit' => ['backtraceLimit', 10, 'stackTraceLimit'],
+        ];
     }
 
     public function testLoggingConfigValuesMasksSecretToken(): void
@@ -420,7 +448,7 @@ final class ConfigTest extends TestCase
 
         new Config(['serviceName' => 'Test', 'secretToken' => 'abc123xyz', 'logger' => $logger]);
 
-        $this->assertTrue($logger->hasDebugThatMatches('/secretToken=a\*\*\*z/'));
+        $this->assertTrue($logger->hasDebugThatMatches('/"secretToken":"a\*\*\*z"/'));
     }
 
     /**
