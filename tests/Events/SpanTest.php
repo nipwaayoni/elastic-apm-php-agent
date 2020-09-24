@@ -158,4 +158,11 @@ class SpanTest extends SchemaTestCase
             'exclude' => [$this->makeExcludeStrategy()],
         ];
     }
+
+    public function testSpanIsSync(): void
+    {
+        $payload = json_decode(json_encode($this->span), true);
+
+        $this->assertTrue($payload['span']['sync']);
+    }
 }
