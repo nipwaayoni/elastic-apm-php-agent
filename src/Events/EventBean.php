@@ -96,9 +96,9 @@ class EventBean implements Samplable
      * @link https://github.com/philkra/elastic-apm-php-agent/issues/3
      *
      * @param array $contexts
-     * @param ?Transaction $parent
+     * @param ?EventBean $parent
      */
-    public function __construct(array $contexts, ?Transaction $parent = null)
+    public function __construct(array $contexts, ?EventBean $parent = null)
     {
         // Generate Random Event Id
         $this->id = self::generateRandomBitsInHex(self::EVENT_ID_BITS);
@@ -194,6 +194,8 @@ class EventBean implements Samplable
      */
     public function setParent(EventBean $parent)
     {
+        $this->timestamp = $parent->getTimestamp();
+
         $this->setParentId($parent->getId());
         $this->setTraceId($parent->getTraceId());
     }

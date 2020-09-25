@@ -52,6 +52,14 @@ final class DefaultEventFactory implements EventFactoryInterface
     /**
      * {@inheritdoc}
      */
+    public function newAsyncSpan(string $name, EventBean $parent): AsyncSpan
+    {
+        return new AsyncSpan($name, $parent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function newMetricset(array $set, array $tags = []): Metricset
     {
         return new Metricset($set, $tags);

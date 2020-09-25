@@ -140,6 +140,7 @@ class Connector implements LoggerAwareInterface
      */
     public function commit(): void
     {
+        $eventCount = count($this->payload);
         $body = '';
         foreach ($this->payload as $line) {
             $body .= $line . "\n";
@@ -152,7 +153,7 @@ class Connector implements LoggerAwareInterface
 
         $request = $this->populateRequestWithHeaders($request);
 
-        $this->logger->debug('Prepared request.');
+        $this->logger->debug(sprintf('Prepared request with %s events.', $eventCount));
 
         $this->sendRequest($request);
     }

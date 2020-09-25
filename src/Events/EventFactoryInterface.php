@@ -35,6 +35,16 @@ interface EventFactoryInterface
     public function newSpan(string $name, EventBean $parent): Span;
 
     /**
+     * Creates a new AsyncSpan
+     *
+     * @param string    $name
+     * @param EventBean $parent
+     *
+     * @return Span
+     */
+    public function newAsyncSpan(string $name, EventBean $parent): AsyncSpan;
+
+    /**
      * Creates a new Metricset
      *
      * @link https://www.elastic.co/guide/en/apm/server/7.3/metricset-api.html
