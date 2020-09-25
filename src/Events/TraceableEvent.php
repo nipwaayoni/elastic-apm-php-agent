@@ -12,16 +12,22 @@ use Nipwaayoni\Helper\DistributedTracing;
  */
 class TraceableEvent extends EventBean
 {
+    /**
+     * @var EventBean
+     */
+    private $parent;
 
     /**
-    * Create the Transaction
-    *
-    * @param string $name
-    * @param array $contexts
-    */
-    public function __construct(array $contexts)
+     * Create the Transaction
+     *
+     * @param array $contexts
+     * @param EventBean $parent
+     * @throws \Exception
+     */
+    public function __construct(array $contexts, ?EventBean $parent = null)
     {
-        parent::__construct($contexts);
+        parent::__construct($contexts, $parent);
+        $this->parent = $parent;
         $this->setTraceContext();
     }
 
@@ -42,6 +48,10 @@ class TraceableEvent extends EventBean
      */
     private function setTraceContext()
     {
+        if (null !== $this->parent) {
+            return;
+        }
+
         // Is one of the Traceparent Headers populated ?
         $header = $_SERVER['HTTP_ELASTIC_APM_TRACEPARENT'] ?? ($_SERVER['HTTP_TRACEPARENT'] ?? null);
         if ($header !== null && DistributedTracing::isValidHeader($header) === true) {
