@@ -3,7 +3,6 @@
 
 namespace Nipwaayoni\Events;
 
-
 class AsyncSpan extends Span
 {
     /** @var bool  */
