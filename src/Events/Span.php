@@ -85,7 +85,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      * @return void
      * @throws \Nipwaayoni\Exception\Timer\AlreadyRunningException
      */
-    public function start(float $startTime = null)
+    public function start(float $startTime = null) // TODO separate out timing from Event
     {
         if (null !== $this->timer) {
             throw new AlreadyStartedException();
@@ -105,13 +105,13 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function stop(int $duration = null)
+    public function stop(int $duration = null) // TODO separate out timing from Event
     {
         $this->timer->stop();
         $this->duration = $duration ?? round($this->timer->getDurationInMilliseconds(), 3);
     }
 
-    public function setStartOffset(float $offset): void
+    public function setStartOffset(float $offset): void  // TODO separate out timing from Event
     {
         $this->startOffset = $offset;
         $this->timestamp = $this->timestamp->asMicroSeconds() + $offset * 1000;
@@ -122,7 +122,7 @@ class Span extends TraceableEvent implements \JsonSerializable
     *
     * @return string
     */
-    public function getName(): string
+    public function getName(): string // TODO move to parent, share with Transaction
     {
         return $this->name;
     }
@@ -147,7 +147,7 @@ class Span extends TraceableEvent implements \JsonSerializable
         $this->type = trim($type);
     }
 
-    public function setDuration(float $duration)
+    public function setDuration(float $duration)  // TODO separate out timing from Event
     {
         $this->duration = $duration;
     }

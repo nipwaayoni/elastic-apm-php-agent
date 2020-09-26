@@ -567,4 +567,32 @@ final class ConfigTest extends TestCase
 
         $this->assertEquals(10, $config->stackTraceLimit());
     }
+
+    /**
+     * @throws ConfigurationException
+     * @throws UnsupportedConfigurationValueException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
+     *
+     * @dataProvider logLevelChecks
+     */
+    public function testSetsApmLogLevel(string $logLevel, bool $expected): void
+    {
+        $logger = new TestLogger();
+
+        $options = ['serviceName' => 'Test', 'logger' => $logger, 'logLevel' => $logLevel];
+
+        new Config($options);
+
+        $this->assertEquals($expected, $logger->hasDebugThatContains(
+            'Runtime config'
+        ));
+    }
+
+    public function logLevelChecks(): array
+    {
+        return [
+            'debug' => ['debug', true],
+            'error' => ['error', false],
+        ];
+    }
 }

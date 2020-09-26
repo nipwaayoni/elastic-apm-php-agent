@@ -6,6 +6,7 @@ use Nipwaayoni\Exception\ConfigurationException;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
 use Nipwaayoni\Exception\MissingServiceNameException;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Psr\Log\NullLogger;
 
 /**
@@ -76,7 +77,10 @@ class Config
      */
     private function validateValues(array $values): void
     {
-        $this->logger = $values['logger'] ?? new NullLogger();
+        $this->logger = new ApmLogger(
+            $values['logger'] ?? new NullLogger(),
+            $values['logLevel'] ?? LogLevel::INFO
+        );
 
         foreach (['httpClient', 'env', 'cookies'] as $removedKey) {
             if (array_key_exists($removedKey, $values)) {

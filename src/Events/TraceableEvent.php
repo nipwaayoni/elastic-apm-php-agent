@@ -10,7 +10,7 @@ use Nipwaayoni\Helper\DistributedTracing;
  * Traceable Event -- Distributed Tracing
  *
  */
-class TraceableEvent extends EventBean
+class TraceableEvent extends EventBean // TODO refactor to DistributedTrace or something
 {
     /**
      * @var EventBean
@@ -53,6 +53,12 @@ class TraceableEvent extends EventBean
         if (null !== $this->parent) {
             return;
         }
+
+        // TODO test behavior with and without parent
+        // TODO set trace-flags
+        // TODO set trace-flags sampled based on parent
+        // TODO provide list of candidate trace headers and use first
+        // TODO provide method to add trace header to RequestInterface object
 
         // Is one of the Traceparent Headers populated ?
         $header = $_SERVER['HTTP_ELASTIC_APM_TRACEPARENT'] ?? ($_SERVER['HTTP_TRACEPARENT'] ?? null);
