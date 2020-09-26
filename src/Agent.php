@@ -149,6 +149,19 @@ class Agent implements ApmAgent
         return $this->connector->getInfo();
     }
 
+    // TODO drop any mention of support for pre-7.0 and v1
+    // TODO all event creation originates in Agent, and everything is tracked automatically (remove addEvent)
+    // TODO Agent must be aware of current Transaction and Transaction must be aware of current Span
+    // TODO implement Agent::startTransactionFromHttpRequest(RequestInterface $request): Transaction
+    // TODO implement Agent::createTransaction(TransactionData $data): Transaction
+    // TODO implement Agent::startTransaction(string $name, ...): TimedTransaction
+    // TODO implement Agent::captureError(ErrorData $data): Error (to Span, Transaction or global)
+    // TODO implement TimedTransaction::stop(): Transaction
+    // TODO implement Transaction::createSpan(SpanData $data): Span
+    // TODO implement Transaction::startSpan(...): TimedSpan
+    // TODO implement TimedSpan::stop(): Span
+    // TODO all Events should have explicit toJson() method (they may use json_encode internally)
+
     /**
      * Start the Transaction capturing
      *
