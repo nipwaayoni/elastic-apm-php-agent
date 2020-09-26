@@ -446,7 +446,12 @@ final class ConfigTest extends TestCase
     {
         $logger = new TestLogger();
 
-        new Config(['serviceName' => 'Test', 'secretToken' => 'abc123xyz', 'logger' => $logger]);
+        new Config([
+            'serviceName' => 'Test',
+            'secretToken' => 'abc123xyz',
+            'logger' => $logger,
+            'logLevel' => 'debug',
+        ]);
 
         $this->assertTrue($logger->hasDebugThatMatches('/"secretToken":"a\*\*\*z"/'));
     }
