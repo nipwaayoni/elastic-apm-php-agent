@@ -38,7 +38,9 @@ class TraceableEvent extends EventBean
      */
     public function getDistributedTracing(): string
     {
-        return (new DistributedTracing($this->getTraceId(), $this->getParentId()))->__toString();
+        $id = null !== $this->parent ? $this->getParentId() : $this->getId();
+
+        return (string) new DistributedTracing($this->getTraceId(), $id);
     }
 
     /**
