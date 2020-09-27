@@ -191,13 +191,15 @@ $context = [
 $builder->withCustomContextData(array $context);
 ```
 
-### Tags
+### Labels (aka Tags)
 
-Tags are indexed data added to APM events. (This was changed to `labels` in the APM 7.0 release and this module will be updated to reflect that. See the [APM docs](https://www.elastic.co/guide/en/apm/get-started/current/metadata.html#labels-fields) for more information.)
+Tags are indexed data added to APM events. (This was changed from `tags` to `labels` in the APM 7.0 release. See the [APM docs](https://www.elastic.co/guide/en/apm/get-started/current/metadata.html#labels-fields) for more information.)
 
 ```php
-$builder->withTagData(array $tags);
+$builder->withLabelData(array $labels);
 ```
+
+Note that internally, labels are still referred to as tags and APM schema expects them to be given in the `tags` key.
 
 ### Environment Variables
 
@@ -221,7 +223,7 @@ $builder->withCookieData(array $cookies);
 
 ## Logging
 
-The `Agent` can use a [PSR-3](https://www.php-fig.org/psr/psr-3/) compatible logger object. You must supply a valid object using the `logger` key in the `Config` constructor arguments. You can also provide a `logLevel` ([PSR-3 compliant](https://www.php-fig.org/psr/psr-3/#5-psrlogloglevel)), allowing you to manage the package log level independent of the application log level.
+The `Agent` can use a [PSR-3](https://www.php-fig.org/psr/psr-3/) compatible logger object. You must supply a valid object using the `logger` key in the `Config` constructor arguments. You can also provide a `logLevel` ([PSR-3 compliant](https://www.php-fig.org/psr/psr-3/#5-psrlogloglevel)), allowing you to manage the package log level independent of the application log level. The log level defaults to `info`.
 
 ```php
 $logger = new Logger('name');

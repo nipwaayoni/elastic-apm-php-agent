@@ -8,6 +8,12 @@
 * `Span` objects now default to "sync: true" indicating they are blocking. The APM schema defines `sync` as "Indicates whether the span was executed synchronously or asynchronously." Since most PHP execution is synchronous, this default makes sense. A new `AsyncSpan` class has been added to represent asynchronously executed spans.
 * The `EventFactoryInterface` now includes a `newAsyncSpan` method which must be implemented.
 
+### Deprecated
+
+* The `AgentBuilder::withTagData()` method is deprecated in favor of `AgentBuilder::withLabelData()`, in keeping with Elastic and other agents.
+* The configuration options `active`, `appName`, `appVersion` and `backtraceLimit` are all deprecated in favor of more commonly used names. See the [configuration legacy options](config.md) for details and alternatives.
+* The `Config::get()` method is deprecated in favor of named accessors. Furthermore, the behavior of the `Config` class to carry arbitrary key/value pairs is also deprecated. A future release will only allow known configuration keys.
+
 ## 6.x to 7.x
 * The `EventFactoryInterface` has been changed, in case you are injecting your custom Event Factory, you will be affected.
 * The methods `Transaction::setSpans`, `Transaction::getSpans`, `Transaction::getErrors` and `Transaction::setErrors` has been removed given the schema change rendered the these method unnecessary.

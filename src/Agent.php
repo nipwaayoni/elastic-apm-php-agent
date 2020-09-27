@@ -185,7 +185,7 @@ class Agent implements ApmAgent
 
         $transaction->start($start);
 
-        $this->logger->debug('Transaction start: ' . $name);
+        $this->logger->debug('Started transaction: ' . $name);
 
         return $transaction;
     }
@@ -206,7 +206,7 @@ class Agent implements ApmAgent
         $this->getTransaction($name)->stop();
         $this->getTransaction($name)->setMeta($meta);
 
-        $this->logger->debug('Transaction stop: ' . $name);
+        $this->logger->debug('Stopped transaction: ' . $name);
     }
 
     /**
@@ -258,6 +258,7 @@ class Agent implements ApmAgent
             return;
         }
 
+        // TODO reconcile putting directly vs accumulating in TransactionStore
         $this->connector->putEvent($event);
 
         $this->logger->debug('Added event: ' . $event->getEventType());
@@ -283,7 +284,7 @@ class Agent implements ApmAgent
         // Is the Agent enabled ?
         if ($this->config->notEnabled()) {
             $this->transactionsStore->reset();
-            $this->logger->debug('Agent disabled, did not send data.');
+            $this->logger->debug('Agent is disabled, did not send data');
             return;
         }
 
@@ -291,7 +292,7 @@ class Agent implements ApmAgent
         // TODO -- add context ?
         if ($this->connector->isPayloadSet() === false) {
             $this->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
-            $this->logger->debug('Payload empty, added metadata.');
+            $this->logger->debug('Payload is empty, added metadata');
         }
 
         // Start Payload commitment
@@ -299,12 +300,12 @@ class Agent implements ApmAgent
             $this->connector->putEvent($event);
         }
 
-        $this->logger->debug('Added transactions to connector.');
+        $this->logger->debug('Added transactions to connector');
 
         $this->transactionsStore->reset();
 
         $this->connector->commit();
 
-        $this->logger->debug('Sent data to Elastic APM host.');
+        $this->logger->debug('Sent data to Elastic APM host');
     }
 }
