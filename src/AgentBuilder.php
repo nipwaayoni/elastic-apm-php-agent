@@ -198,11 +198,16 @@ class AgentBuilder
         return $this;
     }
 
-    public function withTagData(array $tags): self
+    public function withLabelData(array $labels): self
     {
-        $this->tags = $tags;
+        $this->tags = $labels;
 
         return $this;
+    }
+
+    public function withTagData(array $tags): self
+    {
+        return $this->withLabelData($tags);
     }
 
     public function withEnvData(array $env): self

@@ -19,7 +19,7 @@ class AgentBuilderTest extends TestCase
     {
         $agent = (new AgentBuilder())
             ->withConfig(new Config(['serviceName' => 'test']))
-            ->withTagData(['my-tag'])
+            ->withLabelData(['my-tag'])
             ->build();
 
         $this->assertInstanceOf(Agent::class, $agent);
