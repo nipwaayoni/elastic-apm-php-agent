@@ -31,6 +31,8 @@ class Config
         'transactionSampleRate' => 'transaction_sample_rate',
     ];
 
+    private $maskedOptions = ['secretToken'];
+
     private $legacyOptions = [
         'active' => ['name' => 'enabled', 'default' => true],
         'appName' => ['name' => 'serviceName', 'default' => null],
@@ -154,8 +156,12 @@ class Config
     {
         $config = $this->asArray();
 
-        if (!empty($config['secretToken'])) {
-            $config['secretToken'] = preg_replace('/^(.).*(.)$/', '$1***$2', $config['secretToken']);
+        foreach ($this->maskedOptions as $option) {
+            if (empty($config[$option])) {
+                continue;
+            }
+
+            $config[$option] = preg_replace('/^(.).*(.)$/', '$1***$2', $config[$option]);
         }
 
         $message = json_encode($config);

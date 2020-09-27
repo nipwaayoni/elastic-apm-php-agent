@@ -9,6 +9,7 @@ use Psr\Log\NullLogger;
 
 class ApmLogger extends \Psr\Log\AbstractLogger
 {
+    public const LOG_PREFIX = '[Elastic APM Agent]';
     /** @var LoggerInterface */
     private $logger;
 
@@ -50,7 +51,7 @@ class ApmLogger extends \Psr\Log\AbstractLogger
             return;
         }
 
-        $this->logger->log($level, $message, $context);
+        $this->logger->log($level, self::LOG_PREFIX . ' ' . $message, $context);
     }
 
     private function doNotLog(string $level): bool
