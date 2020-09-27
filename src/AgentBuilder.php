@@ -6,7 +6,7 @@ namespace Nipwaayoni;
 use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\DefaultEventFactory;
 use Nipwaayoni\Events\EventFactoryInterface;
-use Nipwaayoni\Events\TransactionSamplingStrategy;
+use Nipwaayoni\Events\TransactionSampleStrategy;
 use Nipwaayoni\Factory\ConnectorFactory;
 use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
@@ -59,16 +59,16 @@ class AgentBuilder
      */
     private $connectorFactory;
 
-    public static function create(array $config): ApmAgent
+    public static function create(array $config = []): ApmAgent
     {
         return (new self())->withConfigData($config)->build();
     }
 
     public function __construct(ConnectorFactory $connectorFactory = null)
     {
-        // We must have a valid Config object for some other tasks, so just it now.
+        // We must have a valid Config object for some other tasks, so create one now.
         // This should be replaced later.
-        $this->config = new Config(['appName' => 'APM Agent']);
+        $this->config = new Config(['defaultServiceName' => 'APM Agent']);
         $this->connectorFactory = $connectorFactory ?? new ConnectorFactory();
 
         $this->init();
@@ -91,20 +91,24 @@ class AgentBuilder
     public function build(): ApmAgent
     {
         $connector = $this->connectorFactory->makeConnector(
-            $this->config->get('serverUrl'),
-            $this->config->get('secretToken'),
+            $this->config->serverUrl(),
+            $this->config->secretToken(),
             $this->httpClient,
             $this->requestFactory,
             $this->streamFactory,
             $this->preCommitCallback,
             $this->postCommitCallback
         );
+        $connector->setLogger($this->config->logger());
 
         $sharedContext = $this->makeSharedContext();
         $eventFactory = $this->makeEventFactory();
         $transactionStore = $this->makeTransactionStore();
 
-        return $this->newAgent($this->config, $sharedContext, $connector, $eventFactory, $transactionStore);
+        $agent = $this->newAgent($this->config, $sharedContext, $connector, $eventFactory, $transactionStore);
+        $agent->setLogger($this->config->logger());
+
+        return $agent;
     }
 
     /**
@@ -154,8 +158,8 @@ class AgentBuilder
 
         $factory = new DefaultEventFactory();
 
-        $factory->setTransactionSamplingStrategy(
-            new TransactionSamplingStrategy($this->config->get('transactionSampleRate'))
+        $factory->setTransactionSampleStrategy(
+            new TransactionSampleStrategy($this->config->transactionSampleRate())
         );
 
         return $factory;
@@ -194,11 +198,16 @@ class AgentBuilder
         return $this;
     }
 
-    public function withTagData(array $tags): self
+    public function withLabelData(array $labels): self
     {
-        $this->tags = $tags;
+        $this->tags = $labels;
 
         return $this;
+    }
+
+    public function withTagData(array $tags): self
+    {
+        return $this->withLabelData($tags);
     }
 
     public function withEnvData(array $env): self

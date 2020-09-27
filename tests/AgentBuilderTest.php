@@ -13,37 +13,48 @@ class AgentBuilderTest extends TestCase
      * This test is sort of pointless, but demonstrates how the fluent
      * building works.
      *
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      */
     public function testCanCreateAgentWithFluentCalls(): void
     {
         $agent = (new AgentBuilder())
-            ->withConfig(new Config(['appName' => 'test']))
-            ->withTagData(['my-tag'])
+            ->withConfig(new Config(['serviceName' => 'test']))
+            ->withLabelData(['my-tag'])
             ->build();
 
         $this->assertInstanceOf(Agent::class, $agent);
     }
 
+    public function testCreatesAgentWithoutConfigurationArray(): void
+    {
+        putenv('ELASTIC_APM_SERVICE_NAME=Test Created App');
+
+        $agent = AgentBuilder::create();
+
+        $this->assertEquals('Test Created App', $agent->getConfig()->serviceName());
+
+        putenv('ELASTIC_APM_SERVICE_NAME');
+    }
+
     public function testCreatesAgentFromConfigurationArray(): void
     {
-        $agent = AgentBuilder::create(['appName' => 'Test Created App']);
+        $agent = AgentBuilder::create(['serviceName' => 'Test Created App']);
 
-        $this->assertEquals('Test Created App', $agent->getConfig()->get('appName'));
+        $this->assertEquals('Test Created App', $agent->getConfig()->serviceName());
     }
 
     /**
      * @param float $rate
      * @param bool $expected
      * @throws \Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      *
      * @dataProvider transactionSamplingChecks
      */
     public function testAppliesTransactionSamplingStrategyToEventFactory(float $rate, bool $expected): void
     {
         $agent = (new AgentBuilder())
-            ->withConfig(new Config(['appName' => 'test', 'transactionSampleRate' => $rate]))
+            ->withConfig(new Config(['serviceName' => 'test', 'transactionSampleRate' => $rate]))
             ->build();
 
         $transaction = $agent->startTransaction('My Transaction', []);

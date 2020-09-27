@@ -10,18 +10,24 @@ use Nipwaayoni\Helper\DistributedTracing;
  * Traceable Event -- Distributed Tracing
  *
  */
-class TraceableEvent extends EventBean
+class TraceableEvent extends EventBean // TODO refactor to DistributedTrace or something
 {
+    /**
+     * @var EventBean
+     */
+    private $parent;
 
     /**
-    * Create the Transaction
-    *
-    * @param string $name
-    * @param array $contexts
-    */
-    public function __construct(array $contexts)
+     * Create the Transaction
+     *
+     * @param array $contexts
+     * @param EventBean $parent
+     * @throws \Exception
+     */
+    public function __construct(array $contexts, ?EventBean $parent = null)
     {
-        parent::__construct($contexts);
+        parent::__construct($contexts, $parent);
+        $this->parent = $parent;
         $this->setTraceContext();
     }
 
@@ -32,7 +38,9 @@ class TraceableEvent extends EventBean
      */
     public function getDistributedTracing(): string
     {
-        return (new DistributedTracing($this->getTraceId(), $this->getParentId()))->__toString();
+        $id = null !== $this->parent ? $this->getParentId() : $this->getId();
+
+        return (string) new DistributedTracing($this->getTraceId(), $id);
     }
 
     /**
@@ -42,6 +50,16 @@ class TraceableEvent extends EventBean
      */
     private function setTraceContext()
     {
+        if (null !== $this->parent) {
+            return;
+        }
+
+        // TODO test behavior with and without parent
+        // TODO set trace-flags
+        // TODO set trace-flags sampled based on parent
+        // TODO provide list of candidate trace headers and use first
+        // TODO provide method to add trace header to RequestInterface object
+
         // Is one of the Traceparent Headers populated ?
         $header = $_SERVER['HTTP_ELASTIC_APM_TRACEPARENT'] ?? ($_SERVER['HTTP_TRACEPARENT'] ?? null);
         if ($header !== null && DistributedTracing::isValidHeader($header) === true) {

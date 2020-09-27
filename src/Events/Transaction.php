@@ -73,7 +73,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      * @return void
      * @throws AlreadyStartedException
      */
-    public function start(float $startTime = null)
+    public function start(float $startTime = null) // TODO separate out timing from Event
     {
         if (null !== $this->timer) {
             throw new AlreadyStartedException();
@@ -93,7 +93,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function stop(int $duration = null)
+    public function stop(int $duration = null) // TODO separate out timing from Event
     {
         // Stop the Timer
         $this->timer->stop();
@@ -104,6 +104,8 @@ class Transaction extends TraceableEvent implements \JsonSerializable
         $this->summary['backtrace'] = debug_backtrace($this->backtraceLimit);
     }
 
+    // TODO allow Transaction to create Span (set parent, etc)
+
     /**
     * Set the Transaction Name
     *
@@ -111,7 +113,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     *
     * @return void
     */
-    public function setTransactionName(string $name)
+    public function setTransactionName(string $name) // TODO drop setTransactionName in favor of unmutable object
     {
         $this->name = $name;
     }
@@ -121,7 +123,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     *
     * @return string
     */
-    public function getTransactionName(): string
+    public function getTransactionName(): string // TODO move name parts to parent and share with Span (NamedEvent ?)
     {
         return $this->name;
     }
@@ -144,7 +146,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      *
      * @param int $limit
      */
-    public function setBacktraceLimit(int $limit)
+    public function setBacktraceLimit(int $limit) // TODO remove setters in favor of immutable objects
     {
         $this->backtraceLimit = $limit;
     }
@@ -180,7 +182,9 @@ class Transaction extends TraceableEvent implements \JsonSerializable
                 'context'    => $context,
                 'sampled'    => $this->includeSamples(),
                 'span_count' => [
+                    // TODO track started transactions
                     'started' => 0,
+                    // TODO track dropped transactions
                     'dropped' => 0,
                 ],
             ]

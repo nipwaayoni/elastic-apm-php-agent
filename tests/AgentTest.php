@@ -20,7 +20,7 @@ final class AgentTest extends TestCase
      */
     public function testReturnsMetaData(): void
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])]);
 
         $metadata = $agent->agentMetadata();
 
@@ -32,7 +32,7 @@ final class AgentTest extends TestCase
      */
     public function testReturnsHttpUserAgent(): void
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])]);
 
         $this->assertEquals(Agent::NAME . '/' . Agent::VERSION, $agent->httpUserAgent());
     }
@@ -45,7 +45,7 @@ final class AgentTest extends TestCase
      */
     public function testStartAndStopATransaction()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1', 'active' => false, ])]);
 
         // Create a Transaction, wait and Stop it
         $name = 'trx';
@@ -72,7 +72,7 @@ final class AgentTest extends TestCase
      */
     public function testStartAndStopATransactionWithExplicitStart()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1', 'active' => false, ])]);
 
         // Create a Transaction, wait and Stop it
         $name = 'trx';
@@ -99,7 +99,7 @@ final class AgentTest extends TestCase
      */
     public function testForceErrorOnUnknownTransaction()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_x', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_x', 'active' => false, ])]);
 
         $this->expectException(\Nipwaayoni\Exception\Transaction\UnknownTransactionException::class);
 
@@ -115,7 +115,7 @@ final class AgentTest extends TestCase
      */
     public function testForceErrorOnUnstartedTransaction()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_2', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_2', 'active' => false, ])]);
 
         $this->expectException(\Nipwaayoni\Exception\Transaction\UnknownTransactionException::class);
 
@@ -138,7 +138,7 @@ final class AgentTest extends TestCase
         $event = $this->createMock(EventBean::class);
         $event->expects($this->once())->method('isSampled')->willReturn(true);
 
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])], $connectorFactory);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])], $connectorFactory);
 
         $agent->putEvent($event);
     }
@@ -158,7 +158,7 @@ final class AgentTest extends TestCase
         $event = $this->createMock(EventBean::class);
         $event->expects($this->once())->method('isSampled')->willReturn(false);
 
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])], $connectorFactory);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])], $connectorFactory);
 
         $agent->putEvent($event);
     }

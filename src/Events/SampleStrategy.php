@@ -3,7 +3,7 @@
 
 namespace Nipwaayoni\Events;
 
-interface SamplingStrategy
+interface SampleStrategy
 {
     public function sampleEvent(): bool;
 }

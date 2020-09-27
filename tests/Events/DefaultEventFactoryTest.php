@@ -3,7 +3,7 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\DefaultEventFactory;
-use Nipwaayoni\Events\SamplingStrategy;
+use Nipwaayoni\Events\SampleStrategy;
 use Nipwaayoni\Tests\TestCase;
 
 class DefaultEventFactoryTest extends TestCase
@@ -20,10 +20,10 @@ class DefaultEventFactoryTest extends TestCase
     /**
      * @dataProvider samplingStrategyChecks
      */
-    public function testAppliesSamplingStrategyToNewTransactions(SamplingStrategy $strategy, bool $expected): void
+    public function testAppliesSamplingStrategyToNewTransactions(SampleStrategy $strategy, bool $expected): void
     {
         $factory = new DefaultEventFactory();
-        $factory->setTransactionSamplingStrategy($strategy);
+        $factory->setTransactionSampleStrategy($strategy);
 
         $transaction = $factory->newTransaction('My Transaction', []);
 

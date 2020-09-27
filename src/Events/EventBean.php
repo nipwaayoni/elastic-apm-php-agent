@@ -67,7 +67,7 @@ class EventBean implements Samplable
         'type'   => 'generic'
     ];
 
-    /** @var SamplingStrategy */
+    /** @var SampleStrategy */
     protected $sampleStrategy;
 
     /** @var bool */
@@ -96,9 +96,9 @@ class EventBean implements Samplable
      * @link https://github.com/philkra/elastic-apm-php-agent/issues/3
      *
      * @param array $contexts
-     * @param ?Transaction $parent
+     * @param ?EventBean $parent
      */
-    public function __construct(array $contexts, ?Transaction $parent = null)
+    public function __construct(array $contexts, ?EventBean $parent = null)
     {
         // Generate Random Event Id
         $this->id = self::generateRandomBitsInHex(self::EVENT_ID_BITS);
@@ -107,11 +107,12 @@ class EventBean implements Samplable
         $this->contexts = array_merge($this->contexts, $contexts);
 
         $this->timestamp = new Timestamp();
-        $this->sampleStrategy = new DefaultSamplingStrategy();
+        $this->sampleStrategy = new DefaultSampleStrategy();
 
         // Set Parent Transaction
         if ($parent !== null) {
             $this->setParent($parent);
+            // TODO store parent and use as appropriate
         }
     }
 
@@ -150,7 +151,7 @@ class EventBean implements Samplable
      *
      * @param string $traceId
      */
-    final public function setTraceId(string $traceId)
+    final public function setTraceId(string $traceId) // TODO to not allow setting, prefer immutable
     {
         $this->traceId = $traceId;
     }
@@ -160,7 +161,7 @@ class EventBean implements Samplable
      *
      * @param string $parentId
      */
-    final public function setParentId(string $parentId)
+    final public function setParentId(string $parentId) // TODO to not allow setting, prefer immutable
     {
         $this->parentId = $parentId;
     }
@@ -192,8 +193,10 @@ class EventBean implements Samplable
      *
      * @param EventBean $parent
      */
-    public function setParent(EventBean $parent)
+    public function setParent(EventBean $parent) // TODO to not allow setting, prefer immutable
     {
+        $this->timestamp = $parent->getTimestamp();
+
         $this->setParentId($parent->getId());
         $this->setTraceId($parent->getTraceId());
     }
@@ -205,7 +208,7 @@ class EventBean implements Samplable
      *
      * @return void
      */
-    final public function setMeta(array $meta)
+    final public function setMeta(array $meta)  // TODO to not allow setting, prefer immutable
     {
         $this->meta = array_merge($this->meta, $meta);
     }
@@ -215,7 +218,7 @@ class EventBean implements Samplable
      *
      * @param array $userContext
      */
-    final public function setUserContext(array $userContext)
+    final public function setUserContext(array $userContext) // TODO to not allow setting, prefer immutable
     {
         $this->contexts['user'] = array_merge($this->contexts['user'], $userContext);
     }
@@ -225,7 +228,7 @@ class EventBean implements Samplable
      *
      * @param array $customContext
      */
-    final public function setCustomContext(array $customContext)
+    final public function setCustomContext(array $customContext) // TODO to not allow setting, prefer immutable
     {
         $this->contexts['custom'] = array_merge($this->contexts['custom'], $customContext);
     }
@@ -235,7 +238,7 @@ class EventBean implements Samplable
      *
      * @param array $response
      */
-    final public function setResponse(array $response)
+    final public function setResponse(array $response) // TODO to not allow setting, prefer immutable
     {
         $this->contexts['response'] = array_merge($this->contexts['response'], $response);
     }
@@ -245,7 +248,7 @@ class EventBean implements Samplable
      *
      * @param array $tags
      */
-    final public function setTags(array $tags)
+    final public function setTags(array $tags) // TODO to not allow setting, prefer immutable
     {
         $this->contexts['tags'] = array_merge($this->contexts['tags'], $tags);
     }
@@ -255,7 +258,7 @@ class EventBean implements Samplable
      *
      * @param array $request
      */
-    final public function setRequest(array $request)
+    final public function setRequest(array $request) // TODO to not allow setting, prefer immutable
     {
         $this->contexts['request'] = array_merge($this->contexts['request'], $request);
     }
@@ -345,11 +348,20 @@ class EventBean implements Samplable
     final protected function getEnv(): array
     {
         $envMask = $this->contexts['env'];
-        $env = empty($envMask)
+        return $this->filterElasticApmEnvironmentVariables(
+            empty($envMask)
             ? $_SERVER
-            : array_intersect_key($_SERVER, array_flip($envMask));
+            : array_intersect_key($_SERVER, array_flip($envMask))
+        );
+    }
 
-        return $env;
+    private function filterElasticApmEnvironmentVariables(array $variables): array
+    {
+        $elasticApmKeys = array_filter(array_keys($variables), function (string $key) {
+            return strpos($key, 'ELASTIC_APM_') === 0;
+        });
+
+        return array_diff_key($variables, array_flip($elasticApmKeys));
     }
 
     /**
@@ -419,7 +431,8 @@ class EventBean implements Samplable
         return $context;
     }
 
-    public function sampleStrategy(SamplingStrategy $strategy): void
+    // TODO move sample strategy to Transaction
+    public function sampleStrategy(SampleStrategy $strategy): void
     {
         $this->sampleStrategy = $strategy;
     }

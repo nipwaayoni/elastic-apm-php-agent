@@ -18,7 +18,7 @@ $builder->withUserContextData([
 $builder->withCustomContextData([
         // ... more key-values
     ]);
-$builder->withTagData([
+$builder->withLabelData([
         // ... more key-values
     ]);
 $agent = $builder->build();
@@ -36,7 +36,7 @@ $agent = (new \Nipwaayoni\AgentBuilder())
     ->withCustomContextData([
         // ... more key-values
     ])
-    ->withTagData([
+    ->withLabelData([
         // ... more key-values
     ])
     ->build();

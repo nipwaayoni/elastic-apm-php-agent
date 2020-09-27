@@ -2,7 +2,7 @@
 
 namespace Nipwaayoni\Tests\Events;
 
-use Nipwaayoni\Events\SamplingStrategy;
+use Nipwaayoni\Events\SampleStrategy;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Helper\Timer;
@@ -64,7 +64,7 @@ final class TransactionTest extends SchemaTestCase
      * @dataProvider schemaVersionDataProvider
      * @param string $schemaVersion
      * @param string $schemaFile
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
@@ -165,7 +165,7 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider includeSamplesChecks
      */
-    public function testIncludeSamplesReflectsSampleStrategy(SamplingStrategy $strategy, bool $expected): void
+    public function testIncludeSamplesReflectsSampleStrategy(SampleStrategy $strategy, bool $expected): void
     {
         $this->transaction->sampleStrategy($strategy);
 
@@ -183,7 +183,7 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testIsSampledIsAlwaysTrue(SamplingStrategy $strategy): void
+    public function testIsSampledIsAlwaysTrue(SampleStrategy $strategy): void
     {
         $this->transaction->sampleStrategy($strategy);
 
@@ -201,7 +201,7 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testSampledAttributeReflectsStrategy(SamplingStrategy $strategy): void
+    public function testSampledAttributeReflectsStrategy(SampleStrategy $strategy): void
     {
         $this->transaction->sampleStrategy($strategy);
 
@@ -213,12 +213,28 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testContextAttributeReflectsStrategy(SamplingStrategy $strategy): void
+    public function testContextAttributeReflectsStrategy(SampleStrategy $strategy): void
     {
         $this->transaction->sampleStrategy($strategy);
 
         $payload = json_decode(json_encode($this->transaction), true);
 
         $this->assertNotEquals($strategy->sampleEvent(), empty($payload['transaction']['context']));
+    }
+
+    public function testDoesNotIncludeElasticApmEnvironmentVariablesInData(): void
+    {
+        // Add directly to $_SERVER since PHP has already populated it
+        $_SERVER['ELASTIC_APM_SECRET_TOKEN'] = 'abc123';
+        $_SERVER['ANOTHER_VARIABLE_TO_INCLUDE'] = 'xyz987';
+
+        $transaction = new Transaction('MyTransaction', []);
+
+        $json = json_encode($transaction);
+
+        $this->assertNotContains('ELASTIC_APM_SECRET_TOKEN', $json);
+        $this->assertNotContains('abc123', $json);
+        $this->assertContains('ANOTHER_VARIABLE_TO_INCLUDE', $json);
+        $this->assertContains('xyz987', $json);
     }
 }

@@ -27,7 +27,7 @@ class MetricsetTest extends SchemaTestCase
      * @dataProvider schemaVersionDataProvider
      * @param string $schemaVersion
      * @param string $schemaFile
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {

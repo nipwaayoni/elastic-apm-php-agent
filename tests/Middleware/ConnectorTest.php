@@ -51,10 +51,7 @@ class ConnectorTest extends TestCase
         $connector = new Connector($this->serverUrl, $this->secretToken, $this->client);
 
         $connector->putEvent(new Transaction('TestTransaction', []));
-        $isSuccess = $connector->commit();
-
-        // Response assertions
-        $this->assertTrue($isSuccess);
+        $connector->commit();
 
         // Transaction Assertions
         $this->assertCount(1, $this->container);

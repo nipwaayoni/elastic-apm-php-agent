@@ -3,7 +3,7 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\EventBean;
-use Nipwaayoni\Events\SamplingStrategy;
+use Nipwaayoni\Events\SampleStrategy;
 use Nipwaayoni\Events\Span;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Exception\Events\AlreadyStartedException;
@@ -71,7 +71,7 @@ class SpanTest extends SchemaTestCase
      * @dataProvider schemaVersionDataProvider
      * @param string $schemaVersion
      * @param string $schemaFile
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
@@ -141,7 +141,7 @@ class SpanTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testIsSampledIsReflectsParentStrategy(SamplingStrategy $strategy): void
+    public function testIsSampledIsReflectsParentStrategy(SampleStrategy $strategy): void
     {
         $parent = new Transaction('MyParent', []);
         $parent->sampleStrategy($strategy);
@@ -157,5 +157,12 @@ class SpanTest extends SchemaTestCase
             'include' => [$this->makeIncludeStrategy()],
             'exclude' => [$this->makeExcludeStrategy()],
         ];
+    }
+
+    public function testSpanIsSync(): void
+    {
+        $payload = json_decode(json_encode($this->span), true);
+
+        $this->assertTrue($payload['span']['sync']);
     }
 }

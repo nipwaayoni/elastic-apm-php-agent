@@ -3,7 +3,7 @@
 
 namespace Nipwaayoni\Events;
 
-class TransactionSamplingStrategy implements SamplingStrategy
+class TransactionSampleStrategy implements SampleStrategy
 {
     /**
      * @var float

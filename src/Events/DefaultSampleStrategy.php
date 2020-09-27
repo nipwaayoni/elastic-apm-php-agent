@@ -3,7 +3,7 @@
 
 namespace Nipwaayoni\Events;
 
-class DefaultSamplingStrategy implements SamplingStrategy
+class DefaultSampleStrategy implements SampleStrategy
 {
     public function sampleEvent(): bool
     {
