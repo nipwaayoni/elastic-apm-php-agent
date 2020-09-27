@@ -50,7 +50,7 @@ class Metadata extends EventBean implements \JsonSerializable
                     'name'    => Encoding::keywordField($this->config->serviceName()),
                     'version' => Encoding::keywordField($this->config->serviceVersion()),
                     'framework' => [
-                        'name' => $this->config->framework(),
+                        'name' => $this->config->frameworkName(),
                         'version' => $this->config->frameworkVersion(),
                     ],
                     'language' => [

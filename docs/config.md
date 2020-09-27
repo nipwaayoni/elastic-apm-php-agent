@@ -221,12 +221,12 @@ $builder->withCookieData(array $cookies);
 
 ## Logging
 
-The `Agent` can use a [PSR-3](https://www.php-fig.org/psr/psr-3/) compatible logger object. You must supply a valid object using the `logger` key in the `Config` constructor arguments:
+The `Agent` can use a [PSR-3](https://www.php-fig.org/psr/psr-3/) compatible logger object. You must supply a valid object using the `logger` key in the `Config` constructor arguments. You can also provide a `logLevel` ([PSR-3 compliant](https://www.php-fig.org/psr/psr-3/#5-psrlogloglevel)), allowing you to manage the package log level independent of the application log level.
 
 ```php
 $logger = new Logger('name');
 
-$agent = AgentBuilder::create(['logger' => $logger]);
+$agent = AgentBuilder::create(['logger' => $logger, 'logLevel' => 'error']);
 ```
 
 ## Example

@@ -229,7 +229,7 @@ class Config
         return $this->config['serviceVersion'];
     }
 
-    public function framework(): ?string
+    public function frameworkName(): ?string
     {
         return $this->config['frameworkName'];
     }
