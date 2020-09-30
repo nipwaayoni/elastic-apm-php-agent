@@ -12,6 +12,8 @@ use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Exception\Transaction\DuplicateTransactionNameException;
 use Nipwaayoni\Exception\Transaction\UnknownTransactionException;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  *
@@ -72,6 +74,9 @@ class Agent implements ApmAgent
      */
     private $connector;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * Setup the APM Agent
      *
@@ -100,6 +105,13 @@ class Agent implements ApmAgent
         $this->connector->useHttpUserAgentString($this->httpUserAgent());
         // TODO Why is the metadata added here and conditionally in the send() method?
         $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
+
+        $this->logger = new NullLogger();
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     public function agentMetadata(): array
@@ -137,6 +149,19 @@ class Agent implements ApmAgent
         return $this->connector->getInfo();
     }
 
+    // TODO drop any mention of support for pre-7.0 and v1
+    // TODO all event creation originates in Agent, and everything is tracked automatically (remove addEvent)
+    // TODO Agent must be aware of current Transaction and Transaction must be aware of current Span
+    // TODO implement Agent::startTransactionFromHttpRequest(RequestInterface $request): Transaction
+    // TODO implement Agent::createTransaction(TransactionData $data): Transaction
+    // TODO implement Agent::startTransaction(string $name, ...): TimedTransaction
+    // TODO implement Agent::captureError(ErrorData $data): Error (to Span, Transaction or global)
+    // TODO implement TimedTransaction::stop(): Transaction
+    // TODO implement Transaction::createSpan(SpanData $data): Span
+    // TODO implement Transaction::startSpan(...): TimedSpan
+    // TODO implement TimedSpan::stop(): Span
+    // TODO all Events should have explicit toJson() method (they may use json_encode internally)
+
     /**
      * Start the Transaction capturing
      *
@@ -160,6 +185,8 @@ class Agent implements ApmAgent
 
         $transaction->start($start);
 
+        $this->logger->debug('Started transaction: ' . $name);
+
         return $transaction;
     }
 
@@ -175,9 +202,11 @@ class Agent implements ApmAgent
      */
     public function stopTransaction(string $name, array $meta = [])
     {
-        $this->getTransaction($name)->setBacktraceLimit($this->config->get('backtraceLimit', 0));
+        $this->getTransaction($name)->setBacktraceLimit($this->config->stackTraceLimit());
         $this->getTransaction($name)->stop();
         $this->getTransaction($name)->setMeta($meta);
+
+        $this->logger->debug('Stopped transaction: ' . $name);
     }
 
     /**
@@ -215,6 +244,8 @@ class Agent implements ApmAgent
         $eventContext = $this->sharedContext->merge(new ContextCollection($context));
 
         $this->putEvent($this->factory()->newError($thrown, $eventContext->toArray(), $parent));
+
+        $this->logger->debug('Captured throwable: ' . $thrown->getMessage());
     }
 
     /**
@@ -222,7 +253,15 @@ class Agent implements ApmAgent
      */
     public function putEvent(EventBean $event)
     {
+        if (!$event->isSampled()) {
+            $this->logger->debug('Skipped adding event (not sampled): ' . $event->getEventType());
+            return;
+        }
+
+        // TODO reconcile putting directly vs accumulating in TransactionStore
         $this->connector->putEvent($event);
+
+        $this->logger->debug('Added event: ' . $event->getEventType());
     }
 
     /**
@@ -238,30 +277,35 @@ class Agent implements ApmAgent
     /**
      * Send Data to APM Service
      *
-     * @link https://github.com/philkra/elastic-apm-laravel/issues/22
-     * @link https://github.com/philkra/elastic-apm-laravel/issues/26
-     *
-     * @return bool
+     * @return void
      */
-    public function send(): bool
+    public function send(): void
     {
         // Is the Agent enabled ?
-        if ($this->config->get('active') === false) {
+        if ($this->config->notEnabled()) {
             $this->transactionsStore->reset();
-            return true;
+            $this->logger->debug('Agent is disabled, did not send data');
+            return;
         }
 
         // Put the preceding Metadata
         // TODO -- add context ?
         if ($this->connector->isPayloadSet() === false) {
             $this->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
+            $this->logger->debug('Payload is empty, added metadata');
         }
 
         // Start Payload commitment
         foreach ($this->transactionsStore->list() as $event) {
             $this->connector->putEvent($event);
         }
+
+        $this->logger->debug('Added transactions to connector');
+
         $this->transactionsStore->reset();
-        return $this->connector->commit();
+
+        $this->connector->commit();
+
+        $this->logger->debug('Sent data to Elastic APM host');
     }
 }

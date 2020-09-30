@@ -2,6 +2,7 @@
 
 namespace Nipwaayoni\Middleware;
 
+use Http\Client\HttpAsyncClient;
 use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Nipwaayoni\Agent;
@@ -14,13 +15,16 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 /**
  *
  * Connector which Transmits the Data to the Endpoints
  *
  */
-class Connector
+class Connector implements LoggerAwareInterface
 {
     public const APM_V2_ENDPOINT = 'intake/v2/events';
 
@@ -66,6 +70,9 @@ class Connector
      */
     private $payload = [];
 
+    /** @var LoggerInterface */
+    private $logger;
+
     /**
      * @param string $serverUrl
      * @param string $secretToken
@@ -91,6 +98,13 @@ class Connector
         $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
         $this->preCommitCallback = $preCommitCallback;
         $this->postCommitCallback = $postCommitCallback;
+
+        $this->logger = new NullLogger();
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     public function useHttpUserAgentString(string $userAgent): void
@@ -121,11 +135,12 @@ class Connector
     /**
      * Commit the Events to the APM server
      *
-     * @return bool
+     * @return void
      * @throws ClientExceptionInterface
      */
-    public function commit(): bool
+    public function commit(): void
     {
+        $eventCount = count($this->payload);
         $body = '';
         foreach ($this->payload as $line) {
             $body .= $line . "\n";
@@ -138,13 +153,23 @@ class Connector
 
         $request = $this->populateRequestWithHeaders($request);
 
+        $this->logger->debug(sprintf('Prepared request with %s events.', $eventCount));
+
+        $this->sendRequest($request);
+    }
+
+    private function sendRequest(RequestInterface $request): void
+    {
         $this->preCommit($request);
 
-        $response = $this->client->sendRequest($request);
-
-        $this->postCommit($response);
-
-        return ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300);
+        try {
+            $response = $this->client->sendRequest($request);
+            $this->logger->debug(sprintf('Sent request, response status: %s', $response->getStatusCode()));
+            $this->postCommit($response);
+        } catch (ClientExceptionInterface $e) {
+            $this->logger->error(sprintf('Sending to APM failed, request error: %s', $e->getMessage()));
+            $this->postCommit(null, $e);
+        }
     }
 
     private function preCommit(RequestInterface $request): void
@@ -153,16 +178,20 @@ class Connector
             return;
         }
 
+        $this->logger->debug('Calling pre-commit callback.');
+
         call_user_func($this->preCommitCallback, $request);
     }
 
-    private function postCommit(ResponseInterface $response): void
+    private function postCommit(?ResponseInterface $response = null, \Throwable $e = null): void
     {
         if (null === $this->postCommitCallback) {
             return;
         }
 
-        call_user_func($this->postCommitCallback, $response);
+        $this->logger->debug('Calling post-commit callback.');
+
+        call_user_func($this->postCommitCallback, $response, $e);
     }
 
     /**

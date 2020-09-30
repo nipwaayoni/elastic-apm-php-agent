@@ -4,6 +4,14 @@ namespace Nipwaayoni\Events;
 
 final class DefaultEventFactory implements EventFactoryInterface
 {
+    /** @var SampleStrategy */
+    private $transactionSamplingStrategy;
+
+    public function __construct()
+    {
+        $this->transactionSamplingStrategy = new DefaultSampleStrategy();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -13,11 +21,24 @@ final class DefaultEventFactory implements EventFactoryInterface
     }
 
     /**
+     * Sets the SamplingStrategy to use for Transactions
+     *
+     * @param SampleStrategy $strategy
+     */
+    public function setTransactionSampleStrategy(SampleStrategy $strategy): void
+    {
+        $this->transactionSamplingStrategy = $strategy;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function newTransaction(string $name, array $contexts): Transaction
     {
-        return new Transaction($name, $contexts);
+        $transaction = new Transaction($name, $contexts);
+        $transaction->sampleStrategy($this->transactionSamplingStrategy);
+
+        return $transaction;
     }
 
     /**
@@ -26,6 +47,14 @@ final class DefaultEventFactory implements EventFactoryInterface
     public function newSpan(string $name, EventBean $parent): Span
     {
         return new Span($name, $parent);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function newAsyncSpan(string $name, EventBean $parent): AsyncSpan
+    {
+        return new AsyncSpan($name, $parent);
     }
 
     /**

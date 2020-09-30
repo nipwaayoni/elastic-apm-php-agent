@@ -4,7 +4,11 @@ namespace Nipwaayoni\Tests;
 
 use Nipwaayoni\Agent;
 use Nipwaayoni\Config;
+use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Factory\ConnectorFactory;
+use Nipwaayoni\Middleware\Connector;
 use Nipwaayoni\Stores\TransactionsStore;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test Case for @see \Nipwaayoni\Agent
@@ -16,7 +20,7 @@ final class AgentTest extends TestCase
      */
     public function testReturnsMetaData(): void
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])]);
 
         $metadata = $agent->agentMetadata();
 
@@ -28,7 +32,7 @@ final class AgentTest extends TestCase
      */
     public function testReturnsHttpUserAgent(): void
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1' ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])]);
 
         $this->assertEquals(Agent::NAME . '/' . Agent::VERSION, $agent->httpUserAgent());
     }
@@ -41,7 +45,7 @@ final class AgentTest extends TestCase
      */
     public function testStartAndStopATransaction()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1', 'active' => false, ])]);
 
         // Create a Transaction, wait and Stop it
         $name = 'trx';
@@ -68,7 +72,7 @@ final class AgentTest extends TestCase
      */
     public function testStartAndStopATransactionWithExplicitStart()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_1', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1', 'active' => false, ])]);
 
         // Create a Transaction, wait and Stop it
         $name = 'trx';
@@ -95,7 +99,7 @@ final class AgentTest extends TestCase
      */
     public function testForceErrorOnUnknownTransaction()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_x', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_x', 'active' => false, ])]);
 
         $this->expectException(\Nipwaayoni\Exception\Transaction\UnknownTransactionException::class);
 
@@ -111,11 +115,51 @@ final class AgentTest extends TestCase
      */
     public function testForceErrorOnUnstartedTransaction()
     {
-        $agent = $this->makeAgent(['config' => new Config([ 'appName' => 'phpunit_2', 'active' => false, ])]);
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_2', 'active' => false, ])]);
 
         $this->expectException(\Nipwaayoni\Exception\Transaction\UnknownTransactionException::class);
 
         // Stop an unstarted Transaction and let it go boom!
         $agent->stopTransaction('unknown');
+    }
+
+    public function testAddsSampledEvents(): void
+    {
+        /** @var Connector|MockObject $connector */
+        $connector = $this->createMock(Connector::class);
+        $connector->expects($this->exactly(2))->method('putEvent');
+
+        /** @var ConnectorFactory|MockObject $connectorFactory */
+        $connectorFactory = $this->createMock(ConnectorFactory::class);
+        $connectorFactory->expects($this->once())->method('makeConnector')
+            ->willreturn($connector);
+
+        /** @var EventBean|MockObject $event */
+        $event = $this->createMock(EventBean::class);
+        $event->expects($this->once())->method('isSampled')->willReturn(true);
+
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])], $connectorFactory);
+
+        $agent->putEvent($event);
+    }
+
+    public function testDoesNotAddNonSampledEvents(): void
+    {
+        /** @var Connector|MockObject $connector */
+        $connector = $this->createMock(Connector::class);
+        $connector->expects($this->once())->method('putEvent');
+
+        /** @var ConnectorFactory|MockObject $connectorFactory */
+        $connectorFactory = $this->createMock(ConnectorFactory::class);
+        $connectorFactory->expects($this->once())->method('makeConnector')
+            ->willreturn($connector);
+
+        /** @var EventBean|MockObject $event */
+        $event = $this->createMock(EventBean::class);
+        $event->expects($this->once())->method('isSampled')->willReturn(false);
+
+        $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])], $connectorFactory);
+
+        $agent->putEvent($event);
     }
 }

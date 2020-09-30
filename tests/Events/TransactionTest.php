@@ -2,6 +2,7 @@
 
 namespace Nipwaayoni\Tests\Events;
 
+use Nipwaayoni\Events\SampleStrategy;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Factory\TimerFactory;
 use Nipwaayoni\Helper\Timer;
@@ -63,7 +64,7 @@ final class TransactionTest extends SchemaTestCase
      * @dataProvider schemaVersionDataProvider
      * @param string $schemaVersion
      * @param string $schemaFile
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
@@ -159,5 +160,81 @@ final class TransactionTest extends SchemaTestCase
             'null start time' => [null],
             'set start time' => [microtime(true)],
         ];
+    }
+
+    /**
+     * @dataProvider includeSamplesChecks
+     */
+    public function testIncludeSamplesReflectsSampleStrategy(SampleStrategy $strategy, bool $expected): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $this->assertEquals($expected, $this->transaction->includeSamples());
+    }
+
+    public function includeSamplesChecks(): array
+    {
+        return [
+            'include' => [$this->makeIncludeStrategy(), true],
+            'exclude' => [$this->makeExcludeStrategy(), false],
+        ];
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testIsSampledIsAlwaysTrue(SampleStrategy $strategy): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $this->assertTrue($this->transaction->isSampled());
+    }
+
+    public function isSampledChecks(): array
+    {
+        return [
+            'include' => [$this->makeIncludeStrategy()],
+            'exclude' => [$this->makeExcludeStrategy()],
+        ];
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testSampledAttributeReflectsStrategy(SampleStrategy $strategy): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $payload = json_decode(json_encode($this->transaction), true);
+
+        $this->assertEquals($strategy->sampleEvent(), $payload['transaction']['sampled']);
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testContextAttributeReflectsStrategy(SampleStrategy $strategy): void
+    {
+        $this->transaction->sampleStrategy($strategy);
+
+        $payload = json_decode(json_encode($this->transaction), true);
+
+        $this->assertNotEquals($strategy->sampleEvent(), empty($payload['transaction']['context']));
+    }
+
+    public function testDoesNotIncludeElasticApmEnvironmentVariablesInData(): void
+    {
+        // Add directly to $_SERVER since PHP has already populated it
+        $_SERVER['ELASTIC_APM_SECRET_TOKEN'] = 'abc123';
+        $_SERVER['ANOTHER_VARIABLE_TO_INCLUDE'] = 'xyz987';
+
+        $transaction = new Transaction('MyTransaction', []);
+
+        $json = json_encode($transaction);
+
+        $this->assertNotContains('ELASTIC_APM_SECRET_TOKEN', $json);
+        $this->assertNotContains('abc123', $json);
+        $this->assertContains('ANOTHER_VARIABLE_TO_INCLUDE', $json);
+        $this->assertContains('xyz987', $json);
     }
 }

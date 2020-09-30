@@ -32,9 +32,9 @@ class Span extends TraceableEvent implements \JsonSerializable
     private $timer;
 
     /**
-     * @var int
+     * @var float
      */
-    private $duration = 0;
+    private $duration = 0.0;
 
     /**
      * @var string
@@ -56,16 +56,25 @@ class Span extends TraceableEvent implements \JsonSerializable
      */
     private $timerFactory;
 
+    /** @var float */
+    private $startOffset;
+
+    /** @var bool  */
+    protected $isBlocking = true;
+
     /**
      * @param string $name
-     * @param EventBean $parent
+     * @param TraceableEvent $parent
      * @param TimerFactory|null $timerFactory
      */
     public function __construct(string $name, EventBean $parent, TimerFactory $timerFactory = null)
     {
-        parent::__construct([]);
+        parent::__construct([], $parent);
         $this->name  = trim($name);
-        $this->setParent($parent);
+
+        // Spans are only included when the parent transaction is sampled.
+        $this->includeAsSample = $parent->includeSamples();
+
         $this->timerFactory = $timerFactory ?? new TimerFactory();
     }
 
@@ -76,7 +85,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      * @return void
      * @throws \Nipwaayoni\Exception\Timer\AlreadyRunningException
      */
-    public function start(float $startTime = null)
+    public function start(float $startTime = null) // TODO separate out timing from Event
     {
         if (null !== $this->timer) {
             throw new AlreadyStartedException();
@@ -96,10 +105,16 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function stop(int $duration = null)
+    public function stop(int $duration = null) // TODO separate out timing from Event
     {
         $this->timer->stop();
         $this->duration = $duration ?? round($this->timer->getDurationInMilliseconds(), 3);
+    }
+
+    public function setStartOffset(float $offset): void  // TODO separate out timing from Event
+    {
+        $this->startOffset = $offset;
+        $this->timestamp = $this->timestamp->asMicroSeconds() + $offset * 1000;
     }
 
     /**
@@ -107,7 +122,7 @@ class Span extends TraceableEvent implements \JsonSerializable
     *
     * @return string
     */
-    public function getName(): string
+    public function getName(): string // TODO move to parent, share with Transaction
     {
         return $this->name;
     }
@@ -132,7 +147,7 @@ class Span extends TraceableEvent implements \JsonSerializable
         $this->type = trim($type);
     }
 
-    public function setDuration(int $duration)
+    public function setDuration(float $duration)  // TODO separate out timing from Event
     {
         $this->duration = $duration;
     }
@@ -167,11 +182,12 @@ class Span extends TraceableEvent implements \JsonSerializable
                 'type'           => Encoding::keywordField($this->type),
                 'action'         => Encoding::keywordField($this->action),
                 'context'        => $this->getContext(),
+                'start'          => $this->startOffset,
                 'duration'       => $this->duration,
                 'name'           => Encoding::keywordField($this->getName()),
                 'stacktrace'     => $this->stacktrace,
-                'sync'           => false,
-                'timestamp'      => $this->getTimestamp(),
+                'sync'           => $this->isBlocking,
+                'timestamp'      => $this->timestamp,
             ]
         ];
     }

@@ -3,7 +3,9 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Events\SampleStrategy;
 use Nipwaayoni\Events\Span;
+use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Exception\Events\AlreadyStartedException;
 use Nipwaayoni\Helper\Timer;
 use Nipwaayoni\Factory\TimerFactory;
@@ -69,7 +71,7 @@ class SpanTest extends SchemaTestCase
      * @dataProvider schemaVersionDataProvider
      * @param string $schemaVersion
      * @param string $schemaFile
-     * @throws \Nipwaayoni\Exception\MissingAppNameException
+     * @throws \Nipwaayoni\Exception\MissingServiceNameException
      */
     public function testProducesValidJson(string $schemaVersion, string $schemaFile): void
     {
@@ -134,5 +136,33 @@ class SpanTest extends SchemaTestCase
             'null start time' => [null],
             'set start time' => [microtime(true)],
         ];
+    }
+
+    /**
+     * @dataProvider isSampledChecks
+     */
+    public function testIsSampledIsReflectsParentStrategy(SampleStrategy $strategy): void
+    {
+        $parent = new Transaction('MyParent', []);
+        $parent->sampleStrategy($strategy);
+
+        $this->span = new Span('MySpan', $parent, $this->timerFactory);
+
+        $this->assertEquals($strategy->sampleEvent(), $this->span->isSampled());
+    }
+
+    public function isSampledChecks(): array
+    {
+        return [
+            'include' => [$this->makeIncludeStrategy()],
+            'exclude' => [$this->makeExcludeStrategy()],
+        ];
+    }
+
+    public function testSpanIsSync(): void
+    {
+        $payload = json_decode(json_encode($this->span), true);
+
+        $this->assertTrue($payload['span']['sync']);
     }
 }
