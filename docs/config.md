@@ -28,7 +28,7 @@ The name of your service. This is the primary point of aggregation when viewing 
 
 This is the only configuration option you are required to provide when creating an Agent.
 
-**Note:** The service name must confirm to the regular expression `^[a-zA-Z0-9 _-]+$` (ASCII alphabet, numbers, dashes, underscores and spaces).
+**Note:** The service name must conform to the regular expression `^[a-zA-Z0-9 _-]+$` (ASCII alphabet, numbers, dashes, underscores and spaces).
 
 #### Server URL
 
