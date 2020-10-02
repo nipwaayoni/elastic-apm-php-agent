@@ -1,6 +1,6 @@
 <?php
 
-namespace Nipwaayoni\Tests\Helper;
+namespace Nipwaayoni\Tests;
 
 use Nipwaayoni\Exception\ConfigurationException;
 use Nipwaayoni\Exception\Helper\UnsupportedConfigurationValueException;
@@ -54,7 +54,7 @@ final class ConfigTest extends TestCase
         $this->assertFalse($config['enabled']);
         $this->assertEquals(10, $config['timeout']);
         $this->assertEquals('development', $config['environment']);
-        $this->assertEquals(0, $config['stackTraceLimit']);
+        $this->assertEquals(50, $config['stackTraceLimit']);
         $this->assertEquals(1, $config['transactionSampleRate']);
     }
 
