@@ -5,6 +5,7 @@ namespace Nipwaayoni\Tests\Events;
 use GuzzleHttp\Psr7\Request;
 use Nipwaayoni\Events\TraceableEvent;
 use Nipwaayoni\Events\Transaction;
+use Nipwaayoni\Helper\DistributedTracing;
 use Nipwaayoni\Tests\TestCase;
 
 class TraceableEventTest extends TestCase
@@ -67,7 +68,8 @@ class TraceableEventTest extends TestCase
 
         $header = $event->traceHeaderAsArray();
 
-        $this->assertArrayHasKey(TraceableEvent::TRACEPARENT_HEADER_NAME, $header);
+        $this->assertEquals(DistributedTracing::HEADER_NAME, $header['name']);
+        $this->assertNotNull($header['value']);
     }
 
     public function testProvidesTraceParentHeaderAsString(): void
@@ -76,7 +78,7 @@ class TraceableEventTest extends TestCase
 
         $header = $event->traceHeaderAsString();
 
-        $this->assertTrue(strpos($header, TraceableEvent::TRACEPARENT_HEADER_NAME) === 0);
+        $this->assertTrue(strpos($header, DistributedTracing::HEADER_NAME) === 0);
     }
 
     public function testAddsTraceParentHeaderAsStringHttpRequest(): void
@@ -86,6 +88,6 @@ class TraceableEventTest extends TestCase
 
         $request = $event->addTraceHeaderToRequest($originalRequest);
 
-        $this->assertTrue($request->hasHeader(TraceableEvent::TRACEPARENT_HEADER_NAME));
+        $this->assertTrue($request->hasHeader(DistributedTracing::HEADER_NAME));
     }
 }

@@ -13,8 +13,6 @@ use Psr\Http\Message\RequestInterface;
  */
 class TraceableEvent extends EventBean // TODO refactor to DistributedTrace or something
 {
-    public const TRACEPARENT_HEADER_NAME = 'traceparent';
-
     /**
      * @var EventBean
      */
@@ -81,16 +79,19 @@ class TraceableEvent extends EventBean // TODO refactor to DistributedTrace or s
 
     public function traceHeaderAsArray(): array
     {
-        return [self::TRACEPARENT_HEADER_NAME => $this->getDistributedTracing()];
+        return [
+            'name' => DistributedTracing::HEADER_NAME,
+            'value' => $this->getDistributedTracing()
+        ];
     }
 
     public function traceHeaderAsString(): string
     {
-        return sprintf('%s: %s', self::TRACEPARENT_HEADER_NAME, $this->getDistributedTracing());
+        return sprintf('%s: %s', DistributedTracing::HEADER_NAME, $this->getDistributedTracing());
     }
 
     public function addTraceHeaderToRequest(RequestInterface $request): RequestInterface
     {
-        return $request->withHeader(self::TRACEPARENT_HEADER_NAME, $this->getDistributedTracing());
+        return $request->withHeader(DistributedTracing::HEADER_NAME, $this->getDistributedTracing());
     }
 }

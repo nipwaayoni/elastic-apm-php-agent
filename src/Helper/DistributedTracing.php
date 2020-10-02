@@ -12,7 +12,7 @@ class DistributedTracing
      *
      * @link https://www.w3.org/TR/trace-context/#header-name
      */
-    const HEADER_NAME = 'ELASTIC-APM-TRACEPARENT';
+    const HEADER_NAME = 'traceparent';
 
     /**
      * @link https://www.w3.org/TR/trace-context/#version

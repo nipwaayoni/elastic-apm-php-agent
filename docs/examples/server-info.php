@@ -9,8 +9,8 @@ require __DIR__ . '/vendor/autoload.php';
 use Nipwaayoni\Agent;
 
 $config = [
-    'appName'    => 'examples',
-    'appVersion' => '1.0.0-beta',
+    'serviceName'    => 'examples',
+    'serviceVersion' => '1.0.0-beta',
 ];
 
 $agent = (new \Nipwaayoni\AgentBuilder())
