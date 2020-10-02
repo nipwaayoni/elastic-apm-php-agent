@@ -7,7 +7,7 @@ You will need to create an `Agent` object to manage events and send data to APM.
 The static `AgentBuilder::create()` method is the easiest approach if you only need to pass some configuration values to `Agent`.
 
 ```php
-$agent = AgentBuilder::create(['appName' => 'My Application']);
+$agent = AgentBuilder::create(['serviceName' => 'My Application']);
 ```
 
 The `create` method only accepts an array of valid configuration options. For more advanced `Agent` constructions, you must use the various `AgentBuilder` object methods.
