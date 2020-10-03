@@ -1,74 +1,33 @@
-# Distributed tracing
-Distributed tracing headers are automatically captured by transactions.
-Elastic's `elastic-apm-traceparent` and W3C's `traceparent` headers are both supported.
+# Distributed Tracing
 
-This example illustrates the forward propagtion of the tracing Id, by showing how the invoked service queries another service.
-
-**TL:DR** Passing the distributed tracing id to another service, you need to add the header `elastic-apm-traceparent` with the value of `getDistributedTracing()` of a `Span` or a `Transaction`.
+Distributed tracing allows Elastic APM to associate sub-transactions from other systems which are involved in fullfilling a transaction with a primary system. For example, your web application may call multiple other systems via REST when responding to a request for a web page. Your web application transaction can record a span representing the HTTP request to a REST resource, but cannot directly know how that request is fulfilled. If the remove REST service also records application data to APM, distributed tracing allows APM to associate the two requests when you view the parent.
 
 ## Screenshots
 ![Dashboard](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/examples/blob/dt_dashboard.png "Distributed Tracing Dashboard")
 
+You enable distributed tracing by including a `traceparent` header containing an appropriate ID when you request another resource. Elastic APM has [adopted the W3C TraceContext](https://www.elastic.co/blog/elastic-apm-adopts-w3c-tracecontext) for this purpose.
+
+`TraceableEvent` objects (`Transaction` and `Span` objects) provide helper methods to assist in constructing the required `traceparent` header. 
+
 ## Example Code
 ```php
-// Setup Agent
-$config = [
-    'appName'    => 'examples',
-    'appVersion' => '1.0.0',
-];
+// Assume we have an existing transaction, and let it help us
 
-$agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new Nipwaayoni\Config($config))
-    ->build();
-
-// Wrap everything in a Parent transaction
-$parent = $agent->startTransaction('GET /data/12345');
-$spanCache = $agent->factory()->newSpan('DB User Lookup', $parent);
-$spanCache->setType('db.redis.query');
-$spanCache->start();
-
-// do some db.mysql.query action ..
-usleep(rand(250, 450));
-
-$spanCache->stop();
-$spanCache->setContext(['db' => [
-    'instance'  => 'redis01.example.foo',
-    'statement' => 'GET data_12345',
-]]);
-$agent->putEvent($spanCache);
-
-// Query microservice with Traceparent Header
-$spanHttp = $agent->factory()->newSpan('Query DataStore Service', $parent);
-$spanHttp->setType('external.http');
-$spanHttp->start();
-
-$url = 'http://127.0.0.1:5001';
+// Get a string if using something like curl
 $curl = curl_init();
 curl_setopt_array($curl, [
     CURLOPT_RETURNTRANSFER => 1,
-    CURLOPT_URL            => $url,
-    CURLOPT_HTTPHEADER     => [
-        sprintf('%s: %s', DistributedTracing::HEADER_NAME, $spanHttp->getDistributedTracing()),
-    ],
+    CURLOPT_URL            => 'http://127.0.0.1:5001',
+    CURLOPT_HTTPHEADER     => [$transaction->traceHeaderAsString()],
 ]);
-$resp = curl_exec($curl);
-//$info = curl_getinfo($curl);
 
-$spanHttp->stop();
-$spanHttp->setContext(['http' => [
-    'instance'  => $url,
-    'statement' => 'GET /',
-]]);
-$agent->putEvent($spanHttp);
+// Or use a \Psr\Http\Message\RequestInterface compatible object
+$request = new \GuzzleHttp\Psr7\Request('GET', 'https://example.com');
 
-// do something with the file
-$span = $agent->factory()->newSpan('do something', $parent);
-$span->start();
-usleep(rand(2500, 3500));
-$span->stop();
-$agent->putEvent($span);
+// Get an array representation
+$headerParts = $transaction->traceHeaderAsArray();
+$request = $request->withHeader($headerParts['name'], $headerParts['value']);
 
-$agent->stopTransaction($parent->getTransactionName());
+// Or let the event do the work on a RequestInterface
+$request = $transaction->addTraceHeaderToRequest($request);
 ```
-
-Big thanks to [samuelbednarcik](https://github.com/samuelbednarcik) because the idea comes from his [elastic-apm-php-agent](https://github.com/samuelbednarcik/elastic-apm-php-agent).

@@ -6,8 +6,8 @@ By doing so you increase the tracability of the error.
 ```php
 // Setup Agent
 $config = [
-    'appName'    => 'examples',
-    'appVersion' => '1.0.0-beta',
+    'serviceName'    => 'examples',
+    'serviceVersion' => '1.0.0-beta',
 ];
 
 $agent = (new \Nipwaayoni\AgentBuilder())

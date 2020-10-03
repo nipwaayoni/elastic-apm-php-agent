@@ -17,7 +17,7 @@ use Nipwaayoni\Helper\StackTrace;
 
 // create the agent
 $agent = (new \Nipwaayoni\AgentBuilder())
-    ->withConfig(new Nipwaayoni\Config(['appName' => 'examples']))
+    ->withConfig(new Nipwaayoni\Config(['serviceName' => 'examples']))
     ->build();
 
 // Span

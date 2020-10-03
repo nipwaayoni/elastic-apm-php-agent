@@ -4,6 +4,7 @@ namespace Nipwaayoni\Events;
 
 use Nipwaayoni\Exception\InvalidTraceContextHeaderException;
 use Nipwaayoni\Helper\DistributedTracing;
+use Psr\Http\Message\RequestInterface;
 
 /**
  *
@@ -74,5 +75,23 @@ class TraceableEvent extends EventBean // TODO refactor to DistributedTrace or s
         } else {
             $this->setTraceId(self::generateRandomBitsInHex(self::TRACE_ID_BITS));
         }
+    }
+
+    public function traceHeaderAsArray(): array
+    {
+        return [
+            'name' => DistributedTracing::HEADER_NAME,
+            'value' => $this->getDistributedTracing()
+        ];
+    }
+
+    public function traceHeaderAsString(): string
+    {
+        return sprintf('%s: %s', DistributedTracing::HEADER_NAME, $this->getDistributedTracing());
+    }
+
+    public function addTraceHeaderToRequest(RequestInterface $request): RequestInterface
+    {
+        return $request->withHeader(DistributedTracing::HEADER_NAME, $this->getDistributedTracing());
     }
 }

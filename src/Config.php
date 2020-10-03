@@ -37,7 +37,7 @@ class Config
         'active' => ['name' => 'enabled', 'default' => true],
         'appName' => ['name' => 'serviceName', 'default' => null],
         'appVersion' => ['name' => 'serviceVersion', 'default' => null],
-        'backtraceLimit' => ['name' => 'stackTraceLimit', 'default' => 0],
+        'backtraceLimit' => ['name' => 'stackTraceLimit', 'default' => 50],
     ];
 
     /** @var string */
