@@ -222,6 +222,17 @@ final class TransactionTest extends SchemaTestCase
         $this->assertNotEquals($strategy->sampleEvent(), empty($payload['transaction']['context']));
     }
 
+    public function testTransactionSetsFixedSampledIndicator(): void
+    {
+        $sampled = true;
+        $strategy = $this->createMock(SampleStrategy::class);
+        $strategy->expects($this->once())->method('sampleEvent')->willReturn($sampled);
+
+        $this->transaction->sampleStrategy($strategy);
+
+        $this->assertEquals($sampled, $this->transaction->isSampled());
+    }
+
     public function testDoesNotIncludeElasticApmEnvironmentVariablesInData(): void
     {
         // Add directly to $_SERVER since PHP has already populated it

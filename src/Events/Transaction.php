@@ -52,6 +52,9 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      */
     private $backtraceLimit = 0;
 
+    /** @var bool  */
+    private $isSampled = true;
+
     /**
      * Create the Transaction
      *
@@ -151,9 +154,17 @@ class Transaction extends TraceableEvent implements \JsonSerializable
         $this->backtraceLimit = $limit;
     }
 
+    public function sampleStrategy(SampleStrategy $strategy): void
+    {
+        parent::sampleStrategy($strategy);
+
+        // Set the isSampled indicator for this transaction
+        $this->isSampled = $this->sampleStrategy->sampleEvent();
+    }
+
     public function includeSamples(): bool
     {
-        return $this->sampleStrategy->sampleEvent();
+        return $this->isSampled;
     }
 
     /**
@@ -180,7 +191,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
                 'result'     => $this->getMetaResult(),
                 'name'       => Encoding::keywordField($this->getTransactionName()),
                 'context'    => $context,
-                'sampled'    => $this->includeSamples(),
+                'sampled'    => $this->isSampled,
                 'span_count' => [
                     // TODO track started transactions
                     'started' => 0,
