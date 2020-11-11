@@ -20,8 +20,7 @@ jobs:
           - 7.4
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -42,8 +41,7 @@ jobs:
           - 7.3
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -76,21 +74,19 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - name: Cache dependencies installed with composer
-        uses: actions/cache@v1
+      - name: Cache dependencies
+        uses: actions/cache@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php${{ matrix.php-version }}-${{ matrix.dependencies }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            php${{ matrix.php-version }}-${{ matrix.dependencies }}-composer-
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install Composer dependencies
-        run: composer install --no-progress
+      - name: Install dependencies
+        run: composer install --prefer-dist
 
       - name: Run Command
         run: composer ci:${{ matrix.command }}
@@ -109,9 +105,6 @@ jobs:
           - 7.2
           - 7.3
           - 7.4
-        dependencies:
-          - lowest
-          - highest
 
     steps:
       - name: Checkout
@@ -123,28 +116,19 @@ jobs:
           php-version: ${{ matrix.php-version }}
           ini-values: xdebug.max_nesting_level=500
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Get composer cache directory
+        id: composercache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
-      - name: Cache dependencies installed with composer
-        uses: actions/cache@v1
+      - name: Cache dependencies
+        uses: actions/cache@v2
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php${{ matrix.php-version }}-${{ matrix.dependencies }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            php${{ matrix.php-version }}-${{ matrix.dependencies }}-composer-
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install Composer dependencies
-        run: |
-          if [[ "${{ matrix.dependencies }}" == 'lowest' ]]; then
-            DEPENDENCIES='--prefer-lowest';
-          else
-            DEPENDENCIES='';
-          fi;
-          composer update --no-progress "${DEPENDENCIES}";
-          composer show;
+      - name: Install dependencies
+        run: composer install --prefer-dist
 
       - name: Run Tests
         run: composer ci:tests
