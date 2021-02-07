@@ -95,7 +95,7 @@ class TraceableEvent extends EventBean // TODO refactor to DistributedTrace or s
         return $request->withHeader(DistributedTracing::HEADER_NAME, $this->getDistributedTracing());
     }
     
-    public function getParent()
+    public function getParent(): ?EventBean
     {
         return $this->parent;
     }
