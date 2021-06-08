@@ -67,7 +67,7 @@ class Error extends EventBean implements \JsonSerializable
      *
      * @return array
      */
-    final private function mapStacktrace(): array
+    private function mapStacktrace(): array
     {
         $stacktrace = [];
 
