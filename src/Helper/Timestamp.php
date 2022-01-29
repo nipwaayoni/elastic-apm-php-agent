@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni\Helper;
 
 class Timestamp implements \JsonSerializable

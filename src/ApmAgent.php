@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni;
 
 use Nipwaayoni\Events\EventBean;

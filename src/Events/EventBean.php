@@ -15,7 +15,7 @@ class EventBean implements Samplable
     /**
      * Bit Size of ID's
      */
-    const
+    public const
         EVENT_ID_BITS  = 64,
         TRACE_ID_BITS = 128;
 

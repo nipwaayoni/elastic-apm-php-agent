@@ -73,6 +73,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          tools: composer:v2, phive
 
       - name: Get composer cache directory
         id: composercache
@@ -86,7 +87,9 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist
+        run: |
+          composer install --prefer-dist
+          phive install --trust-gpg-keys 4AA394086372C20A,CF1A108D0E7AE720,E82B2FB314E9906E
 
       - name: Run Command
         run: composer ci:${{ matrix.command }}
@@ -101,8 +104,6 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - 7.1
-          - 7.2
           - 7.3
           - 7.4
 
@@ -114,6 +115,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
+          tools: composer:v2, phive
           ini-values: xdebug.max_nesting_level=500
 
       - name: Get composer cache directory
@@ -128,7 +130,9 @@ jobs:
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist
+        run: |
+          composer install --prefer-dist
+          phive install --trust-gpg-keys 4AA394086372C20A,CF1A108D0E7AE720,E82B2FB314E9906E
 
       - name: Run Tests
         run: composer ci:tests

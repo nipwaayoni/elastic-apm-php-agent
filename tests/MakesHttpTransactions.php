@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni\Tests;
 
 use GuzzleHttp\Handler\MockHandler;

@@ -7,11 +7,10 @@ namespace Nipwaayoni\Helper;
  */
 class Encoding
 {
-
     /**
      * The maximum number of characters that are accepted in a keyword field.
      */
-    const KEYWORD_MAX_LENGTH = 1024;
+    public const KEYWORD_MAX_LENGTH = 1024;
 
 
     /**

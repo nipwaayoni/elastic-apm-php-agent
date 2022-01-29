@@ -10,7 +10,6 @@ use Nipwaayoni\Tests\TestCase;
  */
 final class DistributedTracingTest extends TestCase
 {
-
     /**
      * @covers \Nipwaayoni\Helper\DistributedTracing::__construct
      * @covers \Nipwaayoni\Helper\DistributedTracing::isValidHeader

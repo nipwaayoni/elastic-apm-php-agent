@@ -9,7 +9,6 @@ namespace Nipwaayoni\Helper;
  */
 class StackTrace
 {
-
     /**
      * Function to convert debug_backtrace results to an array of stack frames
      *

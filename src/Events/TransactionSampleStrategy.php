@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni\Events;
 
 class TransactionSampleStrategy implements SampleStrategy

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni\Factory;
 
 use Nipwaayoni\Middleware\Connector;

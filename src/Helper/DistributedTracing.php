@@ -6,18 +6,17 @@ use Nipwaayoni\Exception\InvalidTraceContextHeaderException;
 
 class DistributedTracing
 {
-
     /**
      * Supporting Elastic's Traceparent Header until W3C goes GA
      *
      * @link https://www.w3.org/TR/trace-context/#header-name
      */
-    const HEADER_NAME = 'traceparent';
+    public const HEADER_NAME = 'traceparent';
 
     /**
      * @link https://www.w3.org/TR/trace-context/#version
      */
-    const VERSION = '00';
+    public const VERSION = '00';
 
     /**
      * @var string

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni\Tests;
 
 use JsonSchema\Validator;

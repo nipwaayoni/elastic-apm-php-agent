@@ -24,7 +24,6 @@ use Psr\Log\NullLogger;
  */
 class Agent implements ApmAgent
 {
-
     /**
      * Agent Version
      *

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni\Contexts;
 
 use Nipwaayoni\Exception\Contexts\UnsupportedContextKeyException;

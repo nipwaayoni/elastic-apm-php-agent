@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni\Events;
 
 interface Samplable

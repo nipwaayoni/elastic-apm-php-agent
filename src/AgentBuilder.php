@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Nipwaayoni;
 
 use Nipwaayoni\Contexts\ContextCollection;
