@@ -101,11 +101,11 @@ class Span extends TraceableEvent implements \JsonSerializable
     /**
      * Stop the Timer
      *
-     * @param integer|null $duration
+     * @param float|null $duration
      *
      * @return void
      */
-    public function stop(int $duration = null) // TODO separate out timing from Event
+    public function stop(float $duration = null) // TODO separate out timing from Event
     {
         $this->timer->stop();
         $this->duration = $duration ?? round($this->timer->getDurationInMilliseconds(), 3);
