@@ -101,7 +101,7 @@ class Span extends TraceableEvent implements \JsonSerializable
     /**
      * Stop the Timer
      *
-     * @param int|null $duration
+     * @param integer|null $duration
      *
      * @return void
      */
