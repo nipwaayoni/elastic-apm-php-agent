@@ -52,6 +52,7 @@ final class TransactionTest extends SchemaTestCase
             '6.7 v2 transaction' => ['6.7', 'transactions/v2_transaction.json'],
             '7.6' => ['7.6', 'transactions/transaction.json'],
             '7.8' => ['7.8', 'transactions/transaction.json'],
+            '8.3' => ['8.3', 'v2/transaction.json'],
         ];
     }
 

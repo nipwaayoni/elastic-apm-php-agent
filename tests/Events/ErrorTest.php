@@ -15,6 +15,7 @@ class ErrorTest extends SchemaTestCase
             '6.7 v2 errors' => ['6.7', 'errors/v2_error.json'],
             '7.6' => ['7.6', 'errors/error.json'],
             '7.8' => ['7.8', 'errors/error.json'],
+            '8.3' => ['8.3', 'v2/error.json'],
         ];
     }
 

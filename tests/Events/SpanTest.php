@@ -59,6 +59,7 @@ class SpanTest extends SchemaTestCase
             '6.7 v2 span' => ['6.7', 'spans/v2_span.json'],
             '7.6' => ['7.6', 'spans/span.json'],
             '7.8' => ['7.8', 'spans/span.json'],
+            '8.3' => ['8.3', 'v2/span.json'],
         ];
     }
 

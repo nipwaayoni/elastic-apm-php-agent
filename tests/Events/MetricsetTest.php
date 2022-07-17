@@ -15,6 +15,7 @@ class MetricsetTest extends SchemaTestCase
             '6.7 v2 metricset' => ['6.7', 'metricsets/v2_metricset.json'],
             '7.6' => ['7.6', 'metricsets/metricset.json'],
             '7.8' => ['7.8', 'metricsets/metricset.json'],
+            '8.3' => ['8.3', 'v2/metricset.json'],
         ];
     }
 
