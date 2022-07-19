@@ -45,7 +45,7 @@ class ApmLogger extends \Psr\Log\AbstractLogger
     /**
      * @inheritDoc
      */
-    public function log($level, $message, array $context = array()): void
+    public function log($level, $message, array $context = []): void
     {
         if ($this->doNotLog($level)) {
             return;
