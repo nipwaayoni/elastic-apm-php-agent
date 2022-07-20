@@ -3,6 +3,7 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\Error;
+use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Tests\SchemaTestCase;
 
 class ErrorTest extends SchemaTestCase
@@ -39,5 +40,28 @@ class ErrorTest extends SchemaTestCase
         $error = new Error(new \Exception(), []);
 
         $this->validateObjectAgainstSchema($error, $schemaVersion, $schemaFile);
+    }
+
+    public function testErrorContainsTransactionData(): void
+    {
+        $transaction  = new Transaction('active-transaction', []);
+        $transaction->setMeta(['type' => 'request']);
+
+        $error = new Error(new \Exception(), [], $transaction);
+
+        $data = json_decode(json_encode($error), true);
+
+        $this->assertEquals('active-transaction', $data['transaction']['name']);
+        $this->assertTrue($data['transaction']['sampled']);
+        $this->assertEquals('request', $data['transaction']['type']);
+    }
+
+    public function testErrorDoesNotContainTransactionObjectWithoutParentTransaction(): void
+    {
+        $error = new Error(new \Exception(), []);
+
+        $data = json_decode(json_encode($error), true);
+
+        $this->assertArrayNotHasKey('transaction', $data);
     }
 }

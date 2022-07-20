@@ -4,6 +4,7 @@ namespace Nipwaayoni\Events;
 
 use Nipwaayoni\Helper\Encoding;
 use Nipwaayoni\Traits\Events\Stacktrace;
+use Throwable;
 
 /**
  *
@@ -27,13 +28,19 @@ class Error extends EventBean implements \JsonSerializable
     private $throwable;
 
     /**
+     * @var Transaction|null
+     */
+    private $transaction;
+
+    /**
      * @param Throwable $throwable
      * @param array $contexts
      */
-    public function __construct(\Throwable $throwable, array $contexts, ?Transaction $transaction = null)
+    public function __construct(Throwable $throwable, array $contexts, ?Transaction $transaction = null)
     {
         parent::__construct($contexts, $transaction);
         $this->throwable = $throwable;
+        $this->transaction = $transaction;
     }
 
     /**
@@ -43,7 +50,7 @@ class Error extends EventBean implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
+        return array_merge([
             $this->eventType => [
                 'id'             => $this->getId(),
                 'transaction_id' => $this->getParentId(),
@@ -59,9 +66,23 @@ class Error extends EventBean implements \JsonSerializable
                     'stacktrace' => $this->mapStacktrace(),
                 ],
             ]
-        ];
+        ], $this->transactionData());
     }
 
+    private function transactionData(): array
+    {
+        if (null === $this->transaction) {
+            return [];
+        }
+
+        return [
+            'transaction' => [
+                'name' => $this->transaction->getTransactionName(),
+                'sampled' => $this->transaction->isSampled(),
+                'type' => $this->transaction->getMetaType(),
+            ]
+        ];
+    }
     /**
      * Map the Stacktrace to Schema
      *
