@@ -50,8 +50,8 @@ class Error extends EventBean implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return array_merge([
-            $this->eventType => [
+        return [
+            $this->eventType => array_merge([
                 'id'             => $this->getId(),
                 'transaction_id' => $this->getParentId(),
                 'parent_id'      => $this->getParentId(),
@@ -65,8 +65,8 @@ class Error extends EventBean implements \JsonSerializable
                     'code'       => $this->throwable->getCode(),
                     'stacktrace' => $this->mapStacktrace(),
                 ],
-            ]
-        ], $this->transactionData());
+            ], $this->transactionData())
+        ];
     }
 
     private function transactionData(): array

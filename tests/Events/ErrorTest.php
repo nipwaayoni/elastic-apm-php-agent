@@ -51,9 +51,9 @@ class ErrorTest extends SchemaTestCase
 
         $data = json_decode(json_encode($error), true);
 
-        $this->assertEquals('active-transaction', $data['transaction']['name']);
-        $this->assertTrue($data['transaction']['sampled']);
-        $this->assertEquals('request', $data['transaction']['type']);
+        $this->assertEquals('active-transaction', $data['error']['transaction']['name']);
+        $this->assertTrue($data['error']['transaction']['sampled']);
+        $this->assertEquals('request', $data['error']['transaction']['type']);
     }
 
     public function testErrorDoesNotContainTransactionObjectWithoutParentTransaction(): void
@@ -62,6 +62,6 @@ class ErrorTest extends SchemaTestCase
 
         $data = json_decode(json_encode($error), true);
 
-        $this->assertArrayNotHasKey('transaction', $data);
+        $this->assertArrayNotHasKey('transaction', $data['error']);
     }
 }
