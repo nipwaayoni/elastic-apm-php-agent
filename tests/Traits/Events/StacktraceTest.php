@@ -3,8 +3,8 @@
 namespace Nipwaayoni\Tests\Traits\Events;
 
 use Nipwaayoni\Traits\Events\Stacktrace;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
 use Nipwaayoni\Tests\PHPUnitUtils;
 
 /**
@@ -13,15 +13,15 @@ use Nipwaayoni\Tests\PHPUnitUtils;
 final class StacktraceTest extends TestCase
 {
 
-    /** @var Stacktrace|PHPUnit_Framework_MockObject_MockObject */
+    /** @var Stacktrace|MockObject */
     private $stacktraceMock;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->stacktraceMock = $this->getMockForTrait(Stacktrace::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->stacktraceMock = null;
     }

@@ -13,6 +13,7 @@ abstract class SchemaTestCase extends TestCase
         // '6.7',
         '7.6',
         '7.8',
+        '8.3',
     ];
 
     /**

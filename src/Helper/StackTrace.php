@@ -18,7 +18,7 @@ class StackTrace
      */
     public static function convertBacktraceToStackFrames(array $backtrace)
     {
-        $return_value = array();
+        $return_value = [];
         foreach ($backtrace as $single_backtrace) {
             $return_value[] = [
                 'abs_path' => $single_backtrace['file'],

@@ -52,6 +52,7 @@ final class TransactionTest extends SchemaTestCase
             '6.7 v2 transaction' => ['6.7', 'transactions/v2_transaction.json'],
             '7.6' => ['7.6', 'transactions/transaction.json'],
             '7.8' => ['7.8', 'transactions/transaction.json'],
+            '8.3' => ['8.3', 'v2/transaction.json'],
         ];
     }
 
@@ -243,9 +244,9 @@ final class TransactionTest extends SchemaTestCase
 
         $json = json_encode($transaction);
 
-        $this->assertNotContains('ELASTIC_APM_SECRET_TOKEN', $json);
-        $this->assertNotContains('abc123', $json);
-        $this->assertContains('ANOTHER_VARIABLE_TO_INCLUDE', $json);
-        $this->assertContains('xyz987', $json);
+        $this->assertStringNotContainsString('ELASTIC_APM_SECRET_TOKEN', $json);
+        $this->assertStringNotContainsString('abc123', $json);
+        $this->assertStringContainsString('ANOTHER_VARIABLE_TO_INCLUDE', $json);
+        $this->assertStringContainsString('xyz987', $json);
     }
 }

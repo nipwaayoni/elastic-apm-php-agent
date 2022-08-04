@@ -3,6 +3,7 @@
 namespace Nipwaayoni\Tests\Events;
 
 use Nipwaayoni\Events\Error;
+use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Tests\SchemaTestCase;
 
 class ErrorTest extends SchemaTestCase
@@ -15,6 +16,7 @@ class ErrorTest extends SchemaTestCase
             '6.7 v2 errors' => ['6.7', 'errors/v2_error.json'],
             '7.6' => ['7.6', 'errors/error.json'],
             '7.8' => ['7.8', 'errors/error.json'],
+            '8.3' => ['8.3', 'v2/error.json'],
         ];
     }
 
@@ -38,5 +40,28 @@ class ErrorTest extends SchemaTestCase
         $error = new Error(new \Exception(), []);
 
         $this->validateObjectAgainstSchema($error, $schemaVersion, $schemaFile);
+    }
+
+    public function testErrorContainsTransactionData(): void
+    {
+        $transaction  = new Transaction('active-transaction', []);
+        $transaction->setMeta(['type' => 'request']);
+
+        $error = new Error(new \Exception(), [], $transaction);
+
+        $data = json_decode(json_encode($error), true);
+
+        $this->assertEquals('active-transaction', $data['error']['transaction']['name']);
+        $this->assertTrue($data['error']['transaction']['sampled']);
+        $this->assertEquals('request', $data['error']['transaction']['type']);
+    }
+
+    public function testErrorDoesNotContainTransactionObjectWithoutParentTransaction(): void
+    {
+        $error = new Error(new \Exception(), []);
+
+        $data = json_decode(json_encode($error), true);
+
+        $this->assertArrayNotHasKey('transaction', $data['error']);
     }
 }

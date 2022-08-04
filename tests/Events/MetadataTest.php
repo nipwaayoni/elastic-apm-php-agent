@@ -14,6 +14,7 @@ class MetadataTest extends SchemaTestCase
             '6.7' => ['6.7', 'metadata.json'],
             '7.6' => ['7.6', 'metadata.json'],
             '7.8' => ['7.8', 'metadata.json'],
+            '8.3' => ['8.3', 'v2/metadata.json'],
         ];
     }
 

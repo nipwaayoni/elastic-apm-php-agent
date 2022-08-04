@@ -5,5 +5,5 @@ composer.phar
 .DS_STORE
 .idea
 .phpunit.result.cache
-tools/*.phar
+tools
 .php_cs.cache
