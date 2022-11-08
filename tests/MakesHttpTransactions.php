@@ -29,6 +29,6 @@ trait MakesHttpTransactions
         $handlerStack->push($history);
 
         $client = new \GuzzleHttp\Client(['handler' => $handlerStack]);
-        $this->client = new \Http\Adapter\Guzzle6\Client($client);
+        $this->client = new \Http\Adapter\Guzzle7\Client($client);
     }
 }
