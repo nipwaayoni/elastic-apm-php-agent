@@ -42,4 +42,21 @@ final class EncodingTest extends TestCase
 
         $this->assertEquals($output, Encoding::keywordField($input));
     }
+
+    /**
+     * @dataProvider emptyInputChecks
+     * @covers \Nipwaayoni\Helper\Encoding::keywordField
+     */
+    public function testEmptyInput($input)
+    {
+        $this->assertEquals($input, Encoding::keywordField($input));
+    }
+
+    public function emptyInputChecks(): array
+    {
+        return [
+            'empty string' => [''],
+            'null' => [null],
+        ];
+    }
 }
