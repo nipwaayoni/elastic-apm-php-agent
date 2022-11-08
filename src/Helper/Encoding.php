@@ -22,6 +22,10 @@ class Encoding
      */
     public static function keywordField($value)
     {
+        if (empty($value)) {
+            return $value;
+        }
+
         if (strlen($value) > self::KEYWORD_MAX_LENGTH && mb_strlen($value, 'UTF-8') > self::KEYWORD_MAX_LENGTH) { // strlen is faster (O(1)), so we prefer to first check using it, and then double-checking with the slower mb_strlen (O(n)) only when necessary
             return mb_substr($value, 0, self::KEYWORD_MAX_LENGTH - 1, 'UTF-8') . '…';
         }
