@@ -6,7 +6,6 @@ use Nipwaayoni\Exception\InvalidTraceContextHeaderException;
 
 class DistributedTracing
 {
-
     /**
      * Supporting Elastic's Traceparent Header until W3C goes GA
      *

@@ -11,13 +11,12 @@ use Nipwaayoni\Tests\TestCase;
  */
 final class TimerTest extends TestCase
 {
-
-  /**
-   * @covers \Nipwaayoni\Helper\Timer::start
-   * @covers \Nipwaayoni\Helper\Timer::stop
-   * @covers \Nipwaayoni\Helper\Timer::getDuration
-   * @covers \Nipwaayoni\Helper\Timer::toMicro
-   */
+    /**
+     * @covers \Nipwaayoni\Helper\Timer::start
+     * @covers \Nipwaayoni\Helper\Timer::stop
+     * @covers \Nipwaayoni\Helper\Timer::getDuration
+     * @covers \Nipwaayoni\Helper\Timer::toMicro
+     */
     public function testCanBeStartedAndStoppedWithDuration()
     {
         $timer = new Timer();

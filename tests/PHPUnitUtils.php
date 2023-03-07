@@ -4,7 +4,6 @@ namespace Nipwaayoni\Tests;
 
 class PHPUnitUtils
 {
-
     /**
      * Credit @link https://stackoverflow.com/a/8702347
      */
