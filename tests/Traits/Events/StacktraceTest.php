@@ -12,7 +12,6 @@ use Nipwaayoni\Tests\PHPUnitUtils;
  */
 final class StacktraceTest extends TestCase
 {
-
     /** @var Stacktrace|MockObject */
     private $stacktraceMock;
 
@@ -48,14 +47,14 @@ final class StacktraceTest extends TestCase
         $this->assertStringEndsWith('tests/PHPUnitUtils.php', $result[0]['abs_path']);
         $this->assertEquals('PHPUnitUtils.php', $result[0]['filename']);
         $this->assertEquals('invokeArgs', $result[0]['function']);
-        $this->assertEquals(16, $result[0]['lineno']);
+        $this->assertEquals(15, $result[0]['lineno']);
         $this->assertEquals('ReflectionMethod', $result[0]['module']);
         $this->assertEquals($n, $result[0]['vars'][1][0]);
 
         $this->assertStringEndsWith('tests/Traits/Events/StacktraceTest.php', $result[1]['abs_path']);
         $this->assertEquals('StacktraceTest.php', $result[1]['filename']);
         $this->assertEquals('callMethod', $result[1]['function']);
-        $this->assertEquals(35, $result[1]['lineno']);
+        $this->assertEquals(34, $result[1]['lineno']);
         $this->assertEquals('Nipwaayoni\Tests\PHPUnitUtils', $result[1]['module']);
     }
 }

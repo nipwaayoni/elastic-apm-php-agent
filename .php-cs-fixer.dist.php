@@ -5,10 +5,12 @@ $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests')
 ;
 
-return PhpCsFixer\Config::create()
-    ->setRules([
+$config = new PhpCsFixer\Config();
+$config->setRules([
         '@PSR2' => true,
         'array_syntax' => ['syntax' => 'short'],
     ])
     ->setFinder($finder)
     ;
+
+return $config;

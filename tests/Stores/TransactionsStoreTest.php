@@ -11,11 +11,10 @@ use Nipwaayoni\Tests\TestCase;
  */
 final class TransactionsStoreTest extends TestCase
 {
-
-  /**
-   * @covers \Nipwaayoni\Stores\TransactionsStore::register
-   * @covers \Nipwaayoni\Stores\TransactionsStore::fetch
-   */
+    /**
+     * @covers \Nipwaayoni\Stores\TransactionsStore::register
+     * @covers \Nipwaayoni\Stores\TransactionsStore::fetch
+     */
     public function testTransactionRegistrationAndFetch()
     {
         $store = new TransactionsStore();

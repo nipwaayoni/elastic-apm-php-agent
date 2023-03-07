@@ -7,7 +7,6 @@ namespace Nipwaayoni\Helper;
  */
 class Encoding
 {
-
     /**
      * The maximum number of characters that are accepted in a keyword field.
      */

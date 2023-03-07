@@ -10,7 +10,6 @@ use Nipwaayoni\Tests\TestCase;
  */
 final class EncodingTest extends TestCase
 {
-
     /**
      * @covers \Nipwaayoni\Helper\Encoding::keywordField
      */
