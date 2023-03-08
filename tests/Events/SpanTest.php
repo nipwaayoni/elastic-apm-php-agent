@@ -112,7 +112,7 @@ class SpanTest extends SchemaTestCase
 
         $timestamp = new Timestamp($this->timestamp);
 
-        $this->assertEquals(floor($timestamp->asMicroSeconds()), $payload['span']['timestamp']);
+        $this->assertEquals($timestamp->asMicroSeconds(), $payload['span']['timestamp']);
         $this->assertEquals($duration, $payload['span']['duration']);
     }
 
