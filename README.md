@@ -12,6 +12,8 @@ Please note: This agent is not officially supported by [Elastic](https://www.ela
 This package is a continuation of the excellent work done by [philkra](https://github.com/philkra) at
 [philkra/elastic-apm-php-agent](https://github.com/philkra/elastic-apm-php-agent).
 
+**Important Note:** As of v8.1.0, this package requires a 64bit version of PHP. This requirement is due to the use of int values for the timestamps expected by APM. 
+
 ## Documentation
 * [Installation](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/install.md)
 * [Breaking Changes](https://github.com/nipwaayoni/elastic-apm-php-agent/blob/master/docs/breaking-changes.md)
