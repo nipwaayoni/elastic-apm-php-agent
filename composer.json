@@ -3,7 +3,7 @@
     "description": "A php agent for Elastic APM v2 Intake API",
     "license": "MIT",
     "require" : {
-        "php" : ">= 7.1",
+        "php-64bit" : ">= 7.1",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
         "php-http/discovery": "^1.7",

@@ -9,7 +9,6 @@ namespace Nipwaayoni\Traits\Events;
  */
 trait Stacktrace
 {
-
     /**
      * Creates a backtrace, converts it to a stacktrace and sets the Stacktrace for the span
      *

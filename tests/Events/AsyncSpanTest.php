@@ -13,25 +13,28 @@ class AsyncSpanTest extends SchemaTestCase
     /** @var AsyncSpan  */
     private $span;
 
+    /** @var float */
+    private $timestamp;
+
     public function setUp(): void
     {
         parent::setUp();
 
         $this->timestamp = microtime(true);
-        $this->timer = $this->createMock(Timer::class);
-        $this->timer->method('getStartTime')
+        $timer = $this->createMock(Timer::class);
+        $timer->method('getStartTime')
             ->willReturnCallback(function () {
                 return $this->timestamp;
             });
 
-        $this->timerFactory = $this->createMock(TimerFactory::class);
-        $this->timerFactory->method('newtimer')->willReturn($this->timer);
+        $timerFactory = $this->createMock(TimerFactory::class);
+        $timerFactory->method('newtimer')->willReturn($timer);
 
-        $this->parent = $this->createMock(EventBean::class);
-        $this->parent->method('getId')->willReturn('123');
-        $this->parent->method('getTraceId')->willReturn('456');
+        $parent = $this->createMock(EventBean::class);
+        $parent->method('getId')->willReturn('123');
+        $parent->method('getTraceId')->willReturn('456');
 
-        $this->span = new AsyncSpan('MySpan', $this->parent, $this->timerFactory);
+        $this->span = new AsyncSpan('MySpan', $parent, $timerFactory);
     }
 
     public function schemaVersionDataProvider(): array
