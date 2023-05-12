@@ -19,6 +19,7 @@ class Config
     public const CONFIG_NAME_MAP = [
         'serverUrl'             => 'server_url',
         'secretToken'           => 'secret_token',
+        'apiKey'                => 'api_key',
         'hostname'              => 'hostname',
         'serviceName'           => 'service_name',
         'serviceVersion'        => 'service_version',
@@ -31,7 +32,7 @@ class Config
         'transactionSampleRate' => 'transaction_sample_rate',
     ];
 
-    private $maskedOptions = ['secretToken'];
+    private $maskedOptions = ['secretToken', 'apiKey'];
 
     private $legacyOptions = [
         'active' => ['name' => 'enabled', 'default' => true],
@@ -220,6 +221,11 @@ class Config
         return $this->config['secretToken'];
     }
 
+    public function apiKey(): ?string
+    {
+        return $this->config['apiKey'];
+    }
+
     public function transactionSampleRate(): float
     {
         return $this->config['transactionSampleRate'];
@@ -285,6 +291,7 @@ class Config
         $this->config = [
             'serverUrl'             => $this->findServerUrl(),
             'secretToken'           => $this->findSecretToken(),
+            'apiKey'                => $this->findApiKey(),
             'hostname'              => $this->findHostname(),
             'serviceName'           => $this->findServiceName(),
             'serviceVersion'        => $this->findServiceVersion(),
@@ -306,6 +313,11 @@ class Config
     private function findSecretToken(): ?string
     {
         return $this->findConfigValue('secretToken');
+    }
+
+    private function findApiKey(): ?string
+    {
+        return $this->findConfigValue('apiKey');
     }
 
     private function findHostname(): ?string

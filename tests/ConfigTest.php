@@ -38,6 +38,7 @@ final class ConfigTest extends TestCase
 
         $this->assertArrayHasKey('serviceName', $config);
         $this->assertArrayHasKey('secretToken', $config);
+        $this->assertArrayHasKey('apiKey', $config);
         $this->assertArrayHasKey('serverUrl', $config);
         $this->assertArrayHasKey('hostname', $config);
         $this->assertArrayHasKey('enabled', $config);
@@ -49,6 +50,7 @@ final class ConfigTest extends TestCase
 
         $this->assertEquals($appName, $config['serviceName']);
         $this->assertNull($config['secretToken']);
+        $this->assertNull($config['apiKey']);
         $this->assertEquals('http://localhost:8200', $config['serverUrl']);
         $this->assertEquals(gethostname(), $config['hostname']);
         $this->assertFalse($config['enabled']);
@@ -70,6 +72,7 @@ final class ConfigTest extends TestCase
         $init = [
             'serviceName'     => sprintf('app_name_%d', rand(10, 99)),
             'secretToken'     => hash('tiger128,3', time()),
+            'apiKey'          => hash('tiger128,3', time() . 'abc123'),
             'serverUrl'       => sprintf('https://node%d.domain.tld:%d', rand(10, 99), rand(1000, 9999)),
             'serviceVersion'  => sprintf('%d.%d.42', rand(0, 3), rand(0, 10)),
             'frameworkName'   => uniqid(),
@@ -243,6 +246,12 @@ final class ConfigTest extends TestCase
                 'secretToken',
                 'abc123',
             ],
+            'api key' => [
+                'api_key',
+                'abc123',
+                'apiKey',
+                'abc123',
+            ],
             'hostname' => [
                 'hostname',
                 'node1.example.com',
@@ -333,6 +342,12 @@ final class ConfigTest extends TestCase
                 'secretToken',
                 'abc123',
                 'secretToken',
+                'abc123',
+            ],
+            'api key' => [
+                'apiKey',
+                'abc123',
+                'apiKey',
                 'abc123',
             ],
             'hostname' => [
@@ -454,6 +469,20 @@ final class ConfigTest extends TestCase
         ]);
 
         $this->assertTrue($logger->hasDebugThatMatches('/"secretToken":"a\*\*\*z"/'));
+    }
+
+    public function testLoggingConfigValuesMasksApiKey(): void
+    {
+        $logger = new TestLogger();
+
+        new Config([
+            'serviceName' => 'Test',
+            'apiKey' => 'abc123xyz',
+            'logger' => $logger,
+            'logLevel' => 'debug',
+        ]);
+
+        $this->assertTrue($logger->hasDebugThatMatches('/"apiKey":"a\*\*\*z"/'));
     }
 
     /**
