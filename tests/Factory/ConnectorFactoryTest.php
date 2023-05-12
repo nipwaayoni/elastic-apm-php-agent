@@ -41,9 +41,9 @@ class ConnectorFactoryTest extends TestCase
     public function credentialChecks(): array
     {
         return [
-            'secret token' => [['secretToken' => 'abc123'], 'Bearer: abc123'],
-            'api key' => [['apiKey' => 'xyz456'], 'ApiKey: xyz456'],
-            'token and api key' => [['secretToken' => 'abc123', 'apiKey' => 'xyz456'], 'ApiKey: xyz456'],
+            'secret token' => [['secretToken' => 'abc123'], 'Bearer abc123'],
+            'api key' => [['apiKey' => 'xyz456'], 'ApiKey xyz456'],
+            'token and api key' => [['secretToken' => 'abc123', 'apiKey' => 'xyz456'], 'ApiKey xyz456'],
         ];
     }
 

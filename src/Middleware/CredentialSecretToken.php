@@ -19,6 +19,6 @@ class CredentialSecretToken implements Credential
 
     public function authorizationHeaderValue(): string
     {
-        return sprintf('Bearer: %s', $this->secretToken);
+        return sprintf('Bearer %s', $this->secretToken);
     }
 }

@@ -30,7 +30,7 @@ class ConnectorFactory
 
     public function makeConnector(
         string $serverUrl,
-        ?string $secretToken, // TODO replace with Credential
+        Credential $credential,
         ClientInterface $httpClient = null,
         RequestFactoryInterface $requestFactory = null,
         StreamFactoryInterface $streamFactory = null,
@@ -39,7 +39,7 @@ class ConnectorFactory
     ): Connector {
         return new Connector(
             $serverUrl,
-            $secretToken,
+            $credential,
             $httpClient,
             $requestFactory,
             $streamFactory,

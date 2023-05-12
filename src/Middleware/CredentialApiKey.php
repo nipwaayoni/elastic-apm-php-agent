@@ -19,6 +19,6 @@ class CredentialApiKey implements Credential
 
     public function authorizationHeaderValue(): string
     {
-        return sprintf('ApiKey: %s', $this->apiKey);
+        return sprintf('ApiKey %s', $this->apiKey);
     }
 }
