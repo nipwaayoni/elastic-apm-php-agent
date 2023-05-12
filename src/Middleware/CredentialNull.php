@@ -15,5 +15,4 @@ class CredentialNull implements Credential
     {
         throw new ElasticApmException('Credential does not support Authorization header usage');
     }
-
 }

@@ -62,6 +62,5 @@ class ConnectorFactoryTest extends TestCase
         ], $overrides);
 
         return new Config($options);
-
     }
 }
