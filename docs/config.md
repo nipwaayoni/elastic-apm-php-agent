@@ -70,7 +70,15 @@ The version of your deployed service.
 |-------------|------------|---------|
 | ELASTIC_APM_SECRET_TOKEN | secretToken | none |
 
-The secret token required to send data to your APM service.
+The secret token required to send data to your APM service. Note that if both a secret token and API Key are supplied, the API Key will be preferred.
+
+#### API Key
+
+| Environment         | Config Key | Default |
+|---------------------|------------|---------|
+| ELASTIC_APM_API_KEY | apiKey     | none    |
+
+The API Key required to send data to your APM service. Note that if both a secret token and API Key are supplied, the API Key will be preferred.
 
 #### Hostname
 

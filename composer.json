@@ -6,20 +6,20 @@
         "php-64bit" : ">= 7.1",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0",
-        "php-http/discovery": "^1.7",
+        "php-http/discovery": "^1.18",
         "ralouphie/getallheaders": "2.*|3.*",
         "ext-curl" : "*",
         "ext-json": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
-        "http-interop/http-factory-guzzle": "^1.0",
+        "http-interop/http-factory-guzzle": "^1.2",
         "justinrainbow/json-schema": "^5.2",
         "psr/log": "^1.1",
         "php-http/guzzle7-adapter": "^1.0"
     },
     "suggest": {
-        "php-http/guzzle6-adapter": "PSR-18 compatible Guzzle6 adapter",
+        "php-http/guzzle7-adapter": "PSR-18 compatible Guzzle7 adapter",
         "http-interop/http-factory-guzzle": "PSR-17 compatible factories for usage with PSR-18"
     },
     "autoload" : {
