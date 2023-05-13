@@ -2,13 +2,9 @@
 
 namespace Nipwaayoni\Middleware;
 
-use Http\Client\HttpAsyncClient;
-use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
-use Nipwaayoni\Agent;
+use Http\Discovery\Psr18ClientDiscovery;
 use Nipwaayoni\Events\EventBean;
-use Nipwaayoni\Stores\TransactionsStore;
-use Nipwaayoni\Config;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -93,7 +89,7 @@ class Connector implements LoggerAwareInterface
     ) {
         $this->serverUrl = $serverUrl;
         $this->credential = $credential;
-        $this->client = $client ?? HttpClientDiscovery::find();
+        $this->client = $client ?? Psr18ClientDiscovery::find();
         $this->requestFactory = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
         $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
         $this->preCommitCallback = $preCommitCallback;
