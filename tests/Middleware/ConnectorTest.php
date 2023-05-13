@@ -5,6 +5,8 @@ namespace Nipwaayoni\Tests\Middleware;
 use GuzzleHttp\Psr7\Response;
 use Nipwaayoni\Events\Transaction;
 use Nipwaayoni\Middleware\Connector;
+use Nipwaayoni\Middleware\Credential;
+use Nipwaayoni\Middleware\CredentialSecretToken;
 use Nipwaayoni\Tests\MakesHttpTransactions;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +17,17 @@ class ConnectorTest extends TestCase
     private $serverUrl = 'http://apm.example.com:8200';
     private $secretToken = 'abc123';
 
+    /** @var Credential */
+    private $credential;
+
     // TODO Requests to APM are the most important function of this package, we need more test coverage here
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->credential = new CredentialSecretToken($this->secretToken);
+    }
 
     public function testGetsInfoFromServerUrl(): void
     {
@@ -27,7 +39,7 @@ class ConnectorTest extends TestCase
   }
 }'));
 
-        $connector = new Connector($this->serverUrl, $this->secretToken, $this->client);
+        $connector = new Connector($this->serverUrl, $this->credential, $this->client);
 
         $response = $connector->getInfo();
 
@@ -48,7 +60,7 @@ class ConnectorTest extends TestCase
     {
         $this->prepareClientWithResponses(new Response(202, []));
 
-        $connector = new Connector($this->serverUrl, $this->secretToken, $this->client);
+        $connector = new Connector($this->serverUrl, $this->credential, $this->client);
 
         $connector->putEvent(new Transaction('TestTransaction', []));
         $connector->commit();
@@ -71,7 +83,7 @@ class ConnectorTest extends TestCase
     {
         $this->prepareClientWithResponses(new Response(202, []));
 
-        $connector = new Connector($this->serverUrl, $this->secretToken, $this->client);
+        $connector = new Connector($this->serverUrl, $this->credential, $this->client);
         $connector->useHttpUserAgentString('my-agent/1.0');
 
         $connector->putEvent(new Transaction('TestTransaction', []));

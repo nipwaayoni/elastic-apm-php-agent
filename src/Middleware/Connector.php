@@ -2,13 +2,9 @@
 
 namespace Nipwaayoni\Middleware;
 
-use Http\Client\HttpAsyncClient;
-use Http\Discovery\HttpClientDiscovery;
 use Http\Discovery\Psr17FactoryDiscovery;
-use Nipwaayoni\Agent;
+use Http\Discovery\Psr18ClientDiscovery;
 use Nipwaayoni\Events\EventBean;
-use Nipwaayoni\Stores\TransactionsStore;
-use Nipwaayoni\Config;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -36,9 +32,9 @@ class Connector implements LoggerAwareInterface
     private $serverUrl;
 
     /**
-     * @var string|null
+     * @var Credential
      */
-    private $secretToken;
+    private $credential;
 
     /**
      * @var ClientInterface
@@ -75,7 +71,7 @@ class Connector implements LoggerAwareInterface
 
     /**
      * @param string $serverUrl
-     * @param string $secretToken
+     * @param Credential $credential
      * @param ClientInterface $client
      * @param RequestFactoryInterface $requestFactory
      * @param StreamFactoryInterface $streamFactory
@@ -84,7 +80,7 @@ class Connector implements LoggerAwareInterface
      */
     public function __construct(
         string $serverUrl,
-        ?string $secretToken,
+        Credential $credential,
         ClientInterface $client = null,
         RequestFactoryInterface $requestFactory = null,
         StreamFactoryInterface $streamFactory = null,
@@ -92,8 +88,8 @@ class Connector implements LoggerAwareInterface
         callable $postCommitCallback = null
     ) {
         $this->serverUrl = $serverUrl;
-        $this->secretToken = $secretToken;
-        $this->client = $client ?? HttpClientDiscovery::find();
+        $this->credential = $credential;
+        $this->client = $client ?? Psr18ClientDiscovery::find();
         $this->requestFactory = $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory();
         $this->streamFactory = $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory();
         $this->preCommitCallback = $preCommitCallback;
@@ -251,9 +247,8 @@ class Connector implements LoggerAwareInterface
             'Accept'           => 'application/json',
         ];
 
-        // Add Secret Token to Header
-        if ($this->secretToken !== null) {
-            $headers['Authorization'] = sprintf('Bearer %s', $this->secretToken);
+        if ($this->credential->includeAuthorizationHeader()) {
+            $headers['Authorization'] = $this->credential->authorizationHeaderValue();
         }
 
         return $headers;

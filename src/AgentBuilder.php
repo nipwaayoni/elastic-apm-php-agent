@@ -92,7 +92,7 @@ class AgentBuilder
     {
         $connector = $this->connectorFactory->makeConnector(
             $this->config->serverUrl(),
-            $this->config->secretToken(),
+            $this->connectorFactory->makeCredential($this->config),
             $this->httpClient,
             $this->requestFactory,
             $this->streamFactory,
