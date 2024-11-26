@@ -25,7 +25,7 @@ class Timer
      */
     private $stoppedOn = null;
 
-    public function __construct(float $startTime = null)
+    public function __construct(?float $startTime = null)
     {
         $this->startedOn = $startTime;
     }

@@ -64,7 +64,7 @@ class AgentBuilder
         return (new self())->withConfigData($config)->build();
     }
 
-    public function __construct(ConnectorFactory $connectorFactory = null)
+    public function __construct(?ConnectorFactory $connectorFactory = null)
     {
         // We must have a valid Config object for some other tasks, so create one now.
         // This should be replaced later.

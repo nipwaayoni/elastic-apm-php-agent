@@ -30,7 +30,7 @@ class ApmLogger extends \Psr\Log\AbstractLogger
         'debug' => 7,
     ];
 
-    public function __construct(LoggerInterface $logger = null, string $level = LogLevel::INFO)
+    public function __construct(?LoggerInterface $logger = null, string $level = LogLevel::INFO)
     {
         $this->logger = $logger ?? new NullLogger();
         $this->level = $level;

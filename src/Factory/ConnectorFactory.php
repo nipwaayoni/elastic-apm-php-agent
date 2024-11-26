@@ -31,11 +31,11 @@ class ConnectorFactory
     public function makeConnector(
         string $serverUrl,
         Credential $credential,
-        ClientInterface $httpClient = null,
-        RequestFactoryInterface $requestFactory = null,
-        StreamFactoryInterface $streamFactory = null,
-        callable $preCommitCallback = null,
-        callable $postCommitCallback = null
+        ?ClientInterface $httpClient = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
+        ?callable $preCommitCallback = null,
+        ?callable $postCommitCallback = null
     ): Connector {
         return new Connector(
             $serverUrl,

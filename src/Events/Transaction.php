@@ -62,7 +62,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      * @param array $contexts
      * @param TimerFactory|null $timerFactory
      */
-    public function __construct(string $name, array $contexts, TimerFactory $timerFactory = null)
+    public function __construct(string $name, array $contexts, ?TimerFactory $timerFactory = null)
     {
         parent::__construct($contexts);
         $this->setTransactionName($name);
@@ -76,7 +76,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      * @return void
      * @throws AlreadyStartedException
      */
-    public function start(float $startTime = null) // TODO separate out timing from Event
+    public function start(?float $startTime = null) // TODO separate out timing from Event
     {
         if (null !== $this->timer) {
             throw new AlreadyStartedException();
@@ -96,7 +96,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function stop(int $duration = null) // TODO separate out timing from Event
+    public function stop(?int $duration = null) // TODO separate out timing from Event
     {
         // Stop the Timer
         $this->timer->stop();

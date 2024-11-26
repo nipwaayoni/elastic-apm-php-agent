@@ -170,7 +170,7 @@ class Agent implements ApmAgent
      * @return Transaction
      * @throws DuplicateTransactionNameException
      */
-    public function startTransaction(string $name, array $context = [], float $start = null): Transaction
+    public function startTransaction(string $name, array $context = [], ?float $start = null): Transaction
     {
         $eventContext = $this->sharedContext->merge(new ContextCollection($context));
 
