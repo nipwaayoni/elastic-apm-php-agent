@@ -7,7 +7,7 @@ namespace Nipwaayoni\Exception;
  */
 class MissingServiceNameException extends ElasticApmException
 {
-    public function __construct(int $code = 0, \Throwable $previous = null)
+    public function __construct(int $code = 0, ?\Throwable $previous = null)
     {
         parent::__construct('No service name registered in agent config.', $code, $previous);
     }

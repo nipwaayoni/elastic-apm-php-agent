@@ -67,7 +67,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      * @param TraceableEvent $parent
      * @param TimerFactory|null $timerFactory
      */
-    public function __construct(string $name, EventBean $parent, TimerFactory $timerFactory = null)
+    public function __construct(string $name, EventBean $parent, ?TimerFactory $timerFactory = null)
     {
         parent::__construct([], $parent);
         $this->name  = trim($name);
@@ -85,7 +85,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      * @return void
      * @throws \Nipwaayoni\Exception\Timer\AlreadyRunningException
      */
-    public function start(float $startTime = null) // TODO separate out timing from Event
+    public function start(?float $startTime = null) // TODO separate out timing from Event
     {
         if (null !== $this->timer) {
             throw new AlreadyStartedException();
@@ -105,7 +105,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function stop(float $duration = null) // TODO separate out timing from Event
+    public function stop(?float $duration = null) // TODO separate out timing from Event
     {
         $this->timer->stop();
         $this->duration = $duration ?? round($this->timer->getDurationInMilliseconds(), 3);

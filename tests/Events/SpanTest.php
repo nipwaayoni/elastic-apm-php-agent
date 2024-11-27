@@ -93,7 +93,7 @@ class SpanTest extends SchemaTestCase
      * @throws \Nipwaayoni\Exception\Timer\AlreadyRunningException
      * @dataProvider spanStartTimes
      */
-    public function testPresentsCorrectTimestampAndDurationInJson(float $startTime = null): void
+    public function testPresentsCorrectTimestampAndDurationInJson(?float $startTime = null): void
     {
         $this->timestamp = 1591785019.5996;
         $duration = 2.34;
@@ -121,7 +121,7 @@ class SpanTest extends SchemaTestCase
      *
      * @dataProvider spanStartTimes
      */
-    public function testUsesCorrectStartTimeForTimer(float $startTime = null): void
+    public function testUsesCorrectStartTimeForTimer(?float $startTime = null): void
     {
         $this->timerFactory->expects($this->once())->method('newTimer')
             ->with($this->equalTo($startTime))

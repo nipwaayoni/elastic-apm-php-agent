@@ -12,7 +12,7 @@ class Timestamp implements \JsonSerializable
      */
     private $timestamp;
 
-    public function __construct(float $timestamp = null)
+    public function __construct(?float $timestamp = null)
     {
         if (null === $timestamp) {
             $timestamp = microtime(true);

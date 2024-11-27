@@ -81,11 +81,11 @@ class Connector implements LoggerAwareInterface
     public function __construct(
         string $serverUrl,
         Credential $credential,
-        ClientInterface $client = null,
-        RequestFactoryInterface $requestFactory = null,
-        StreamFactoryInterface $streamFactory = null,
-        callable $preCommitCallback = null,
-        callable $postCommitCallback = null
+        ?ClientInterface $client = null,
+        ?RequestFactoryInterface $requestFactory = null,
+        ?StreamFactoryInterface $streamFactory = null,
+        ?callable $preCommitCallback = null,
+        ?callable $postCommitCallback = null
     ) {
         $this->serverUrl = $serverUrl;
         $this->credential = $credential;
@@ -179,7 +179,7 @@ class Connector implements LoggerAwareInterface
         call_user_func($this->preCommitCallback, $request);
     }
 
-    private function postCommit(?ResponseInterface $response = null, \Throwable $e = null): void
+    private function postCommit(?ResponseInterface $response = null, ?\Throwable $e = null): void
     {
         if (null === $this->postCommitCallback) {
             return;

@@ -15,7 +15,7 @@ interface ApmAgent extends LoggerAwareInterface
     public function httpUserAgent(): string;
     public function factory(): EventFactoryInterface;
     public function info(): ResponseInterface;
-    public function startTransaction(string $name, array $context = [], float $start = null): Transaction;
+    public function startTransaction(string $name, array $context = [], ?float $start = null): Transaction;
     public function stopTransaction(string $name, array $meta = []);
     public function getTransaction(string $name);
     public function captureThrowable(\Throwable $thrown, array $context = [], ?Transaction $parent = null);

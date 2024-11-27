@@ -18,7 +18,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $this->assertLessThanOrEqual($maxOverhead, $overhead);
     }
 
-    protected function makeAgent(array $components = [], ConnectorFactory $connectorFactory = null): ApmAgent
+    protected function makeAgent(array $components = [], ?ConnectorFactory $connectorFactory = null): ApmAgent
     {
         $builder = new AgentBuilder($connectorFactory);
 
