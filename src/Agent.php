@@ -29,7 +29,7 @@ class Agent implements ApmAgent
      *
      * @var string
      */
-    public const VERSION = '8.2.0';
+    public const VERSION = '8.3.0';
 
     /**
      * Agent Name
