@@ -44,7 +44,7 @@ final class TransactionTest extends SchemaTestCase
         $this->transaction = new Transaction('MyTransactioon', [], $this->timerFactory);
     }
 
-    public function schemaVersionDataProvider(): array
+    public static function schemaVersionDataProvider(): array
     {
         return [
             // TODO add support for multiple schema versions
@@ -155,7 +155,7 @@ final class TransactionTest extends SchemaTestCase
         $this->transaction->stop();
     }
 
-    public function spanStartTimes(): array
+    public static function spanStartTimes(): array
     {
         return [
             'null start time' => [null],
@@ -166,44 +166,50 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider includeSamplesChecks
      */
-    public function testIncludeSamplesReflectsSampleStrategy(SampleStrategy $strategy, bool $expected): void
+    public function testIncludeSamplesReflectsSampleStrategy(bool $strategyType, bool $expected): void
     {
+        $strategy = $this->makeSampleStrategy($strategyType);
+
         $this->transaction->sampleStrategy($strategy);
 
         $this->assertEquals($expected, $this->transaction->includeSamples());
     }
 
-    public function includeSamplesChecks(): array
+    public static function includeSamplesChecks(): array
     {
         return [
-            'include' => [$this->makeIncludeStrategy(), true],
-            'exclude' => [$this->makeExcludeStrategy(), false],
+            'include' => [true, true],
+            'exclude' => [false, false],
         ];
     }
 
     /**
      * @dataProvider isSampledChecks
      */
-    public function testIsSampledIsAlwaysTrue(SampleStrategy $strategy): void
+    public function testIsSampledIsAlwaysTrue(bool $strategyType): void
     {
+        $strategy = $this->makeSampleStrategy($strategyType);
+
         $this->transaction->sampleStrategy($strategy);
 
         $this->assertTrue($this->transaction->isSampled());
     }
 
-    public function isSampledChecks(): array
+    public static function isSampledChecks(): array
     {
         return [
-            'include' => [$this->makeIncludeStrategy()],
-            'exclude' => [$this->makeExcludeStrategy()],
+            'include' => [true],
+            'exclude' => [false],
         ];
     }
 
     /**
      * @dataProvider isSampledChecks
      */
-    public function testSampledAttributeReflectsStrategy(SampleStrategy $strategy): void
+    public function testSampledAttributeReflectsStrategy(bool $strategyType): void
     {
+        $strategy = $this->makeSampleStrategy($strategyType);
+
         $this->transaction->sampleStrategy($strategy);
 
         $payload = json_decode(json_encode($this->transaction), true);
@@ -214,8 +220,10 @@ final class TransactionTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testContextAttributeReflectsStrategy(SampleStrategy $strategy): void
+    public function testContextAttributeReflectsStrategy(bool $strategyType): void
     {
+        $strategy = $this->makeSampleStrategy($strategyType);
+
         $this->transaction->sampleStrategy($strategy);
 
         $payload = json_decode(json_encode($this->transaction), true);

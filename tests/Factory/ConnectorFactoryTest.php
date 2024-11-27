@@ -38,7 +38,7 @@ class ConnectorFactoryTest extends TestCase
         $this->assertEquals($headerValue, $credentials->authorizationHeaderValue());
     }
 
-    public function credentialChecks(): array
+    public static function credentialChecks(): array
     {
         return [
             'secret token' => [['secretToken' => 'abc123'], 'Bearer abc123'],

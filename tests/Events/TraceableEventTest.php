@@ -46,7 +46,7 @@ class TraceableEventTest extends TestCase
         unset($_SERVER[$headerName]);
     }
 
-    public function traceParentChecks(): array
+    public static function traceParentChecks(): array
     {
         return [
             'elastic apm header' => [

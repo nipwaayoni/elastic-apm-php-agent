@@ -8,7 +8,7 @@ use Nipwaayoni\Tests\SchemaTestCase;
 
 class ErrorTest extends SchemaTestCase
 {
-    public function schemaVersionDataProvider(): array
+    public static function schemaVersionDataProvider(): array
     {
         return [
             // TODO add support for multiple schema versions

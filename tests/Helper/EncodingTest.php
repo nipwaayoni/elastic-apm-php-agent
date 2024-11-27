@@ -51,7 +51,7 @@ final class EncodingTest extends TestCase
         $this->assertEquals($input, Encoding::keywordField($input));
     }
 
-    public function emptyInputChecks(): array
+    public static function emptyInputChecks(): array
     {
         return [
             'empty string' => [''],

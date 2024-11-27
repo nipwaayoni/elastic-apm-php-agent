@@ -72,7 +72,7 @@ abstract class SchemaTestCase extends TestCase
      *
      * @return array
      */
-    abstract public function schemaVersionDataProvider(): array;
+    abstract public static function schemaVersionDataProvider(): array;
 
     protected function findUntestedSupportedSchemaVersions(): array
     {

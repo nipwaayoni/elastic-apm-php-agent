@@ -62,7 +62,7 @@ class AgentBuilderTest extends TestCase
         $this->assertEquals($expected, $transaction->includeSamples());
     }
 
-    public function transactionSamplingChecks(): array
+    public static function transactionSamplingChecks(): array
     {
         return [
             '100%' => [1.0, true],
