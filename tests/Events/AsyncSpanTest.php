@@ -37,7 +37,7 @@ class AsyncSpanTest extends SchemaTestCase
         $this->span = new AsyncSpan('MySpan', $parent, $timerFactory);
     }
 
-    public function schemaVersionDataProvider(): array
+    public static function schemaVersionDataProvider(): array
     {
         return [
             // TODO add support for multiple schema versions

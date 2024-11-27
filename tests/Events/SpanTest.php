@@ -51,7 +51,7 @@ class SpanTest extends SchemaTestCase
         $this->span = new Span('MySpan', $this->parent, $this->timerFactory);
     }
 
-    public function schemaVersionDataProvider(): array
+    public static function schemaVersionDataProvider(): array
     {
         return [
             // TODO add support for multiple schema versions
@@ -131,7 +131,7 @@ class SpanTest extends SchemaTestCase
         $this->span->stop();
     }
 
-    public function spanStartTimes(): array
+    public static function spanStartTimes(): array
     {
         return [
             'null start time' => [null],
@@ -142,8 +142,10 @@ class SpanTest extends SchemaTestCase
     /**
      * @dataProvider isSampledChecks
      */
-    public function testIsSampledIsReflectsParentStrategy(SampleStrategy $strategy): void
+    public function testIsSampledIsReflectsParentStrategy(bool $strategyType): void
     {
+        $strategy = $this->makeSampleStrategy($strategyType);
+
         $parent = new Transaction('MyParent', []);
         $parent->sampleStrategy($strategy);
 
@@ -152,11 +154,11 @@ class SpanTest extends SchemaTestCase
         $this->assertEquals($strategy->sampleEvent(), $this->span->isSampled());
     }
 
-    public function isSampledChecks(): array
+    public static function isSampledChecks(): array
     {
         return [
-            'include' => [$this->makeIncludeStrategy()],
-            'exclude' => [$this->makeExcludeStrategy()],
+            'include' => [true],
+            'exclude' => [false],
         ];
     }
 

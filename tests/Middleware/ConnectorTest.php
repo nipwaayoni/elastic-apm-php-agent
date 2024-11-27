@@ -22,9 +22,9 @@ class ConnectorTest extends TestCase
 
     // TODO Requests to APM are the most important function of this package, we need more test coverage here
 
-    public function __construct()
+    protected function setUp(): void
     {
-        parent::__construct();
+        parent::setUp();
 
         $this->credential = new CredentialSecretToken($this->secretToken);
     }

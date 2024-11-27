@@ -8,7 +8,7 @@ use Nipwaayoni\Tests\SchemaTestCase;
 
 class MetadataTest extends SchemaTestCase
 {
-    public function schemaVersionDataProvider(): array
+    public static function schemaVersionDataProvider(): array
     {
         return [
             '6.7' => ['6.7', 'metadata.json'],

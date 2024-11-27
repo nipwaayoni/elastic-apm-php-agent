@@ -149,7 +149,7 @@ final class ConfigTest extends TestCase
         ]);
     }
 
-    public function unsupportedConfigOptions(): array
+    public static function unsupportedConfigOptions(): array
     {
         return [
             'environment' => ['env'],
@@ -230,7 +230,7 @@ final class ConfigTest extends TestCase
         $this->assertEquals($configValue, $config->$configName());
     }
 
-    public function environmentVariableChecks(): array
+    public static function environmentVariableChecks(): array
     {
         // Service Name is tested separately
         return [
@@ -328,7 +328,7 @@ final class ConfigTest extends TestCase
         $this->assertEquals($configValue, $config->$configName());
     }
 
-    public function constructorArgumentsChecks(): array
+    public static function constructorArgumentsChecks(): array
     {
         // Service Name is tested separately
         return [
@@ -447,7 +447,7 @@ final class ConfigTest extends TestCase
         $this->assertEquals($optionValue, $config->$preferredOption());
     }
 
-    public function deprecatedOptionsChecks(): array
+    public static function deprecatedOptionsChecks(): array
     {
         return [
             'active/enabled' => ['active', true, 'enabled'],
@@ -519,7 +519,7 @@ final class ConfigTest extends TestCase
         $this->assertEquals($expected, $config->enabled());
     }
 
-    public function activeAndEnabledChecks(): array
+    public static function activeAndEnabledChecks(): array
     {
         return [
             'default' => [
@@ -622,7 +622,7 @@ final class ConfigTest extends TestCase
         ));
     }
 
-    public function logLevelChecks(): array
+    public static function logLevelChecks(): array
     {
         return [
             'debug' => ['debug', true],

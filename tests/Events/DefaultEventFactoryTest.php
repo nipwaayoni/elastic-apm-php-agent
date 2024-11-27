@@ -20,8 +20,10 @@ class DefaultEventFactoryTest extends TestCase
     /**
      * @dataProvider samplingStrategyChecks
      */
-    public function testAppliesSamplingStrategyToNewTransactions(SampleStrategy $strategy, bool $expected): void
+    public function testAppliesSamplingStrategyToNewTransactions(bool $strategyType, bool $expected): void
     {
+        $strategy = $this->makeSampleStrategy($strategyType);
+
         $factory = new DefaultEventFactory();
         $factory->setTransactionSampleStrategy($strategy);
 
@@ -29,11 +31,11 @@ class DefaultEventFactoryTest extends TestCase
 
         $this->assertEquals($expected, $transaction->includeSamples());
     }
-    public function samplingStrategyChecks(): array
+    public static function samplingStrategyChecks(): array
     {
         return [
-            'include' => [$this->makeIncludeStrategy(), true],
-            'exclude' => [$this->makeExcludeStrategy(), false],
+            'include' => [true, true],
+            'exclude' => [false, false],
         ];
     }
 }

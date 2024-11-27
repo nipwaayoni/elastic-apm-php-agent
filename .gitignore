@@ -8,3 +8,4 @@ composer.phar
 tools
 .php_cs.cache
 .php-cs-fixer.cache
+.phpunit.cache
