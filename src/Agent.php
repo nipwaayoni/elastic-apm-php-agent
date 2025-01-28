@@ -58,9 +58,9 @@ class Agent implements ApmAgent
      * @var array
      */
     private $sharedContext = [
-      'user'   => [],
-      'custom' => [],
-      'tags'   => []
+        'user'   => [],
+        'custom' => [],
+        'tags'   => []
     ];
 
     /**
@@ -103,7 +103,7 @@ class Agent implements ApmAgent
         $this->connector = $connector;
         $this->connector->useHttpUserAgentString($this->httpUserAgent());
         // TODO Why is the metadata added here and conditionally in the send() method?
-        $this->connector->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
+        $this->connector->putEvent(new Metadata($this->sharedContext, $this->config, $this->agentMetadata()));
 
         $this->logger = new NullLogger();
     }
@@ -288,9 +288,8 @@ class Agent implements ApmAgent
         }
 
         // Put the preceding Metadata
-        // TODO -- add context ?
         if ($this->connector->isPayloadSet() === false) {
-            $this->putEvent(new Metadata([], $this->config, $this->agentMetadata()));
+            $this->putEvent(new Metadata($this->sharedContext, $this->config, $this->agentMetadata()));
             $this->logger->debug('Payload is empty, added metadata');
         }
 
