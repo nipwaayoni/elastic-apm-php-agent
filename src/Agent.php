@@ -306,4 +306,12 @@ class Agent implements ApmAgent
 
         $this->logger->debug('Sent data to Elastic APM host');
     }
+
+    /**
+     * Get sharedContext
+     */
+    public function getSharedContext(): array
+    {
+        return $this->sharedContext;
+    }
 }
