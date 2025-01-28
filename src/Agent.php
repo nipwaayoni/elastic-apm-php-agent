@@ -310,7 +310,7 @@ class Agent implements ApmAgent
     /**
      * Get sharedContext
      */
-    public function getSharedContext(): array
+    public function getSharedContext(): array | ContextCollection
     {
         return $this->sharedContext;
     }
