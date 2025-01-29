@@ -1,5 +1,5 @@
 {
-    "name" : "davidmanassa/elastic-apm-php-agent",
+    "name" : "nipwaayoni/elastic-apm-php-agent",
     "description": "A php agent for Elastic APM v2 Intake API",
     "license": "MIT",
     "require" : {
