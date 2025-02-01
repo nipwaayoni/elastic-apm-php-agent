@@ -55,13 +55,9 @@ class Agent implements ApmAgent
     /**
      * Common/Shared Contexts for Errors and Transactions
      *
-     * @var array | \Nipwaayoni\Contexts\ContextCollection
+     * @var ContextCollection
      */
-    private $sharedContext = [
-        'user'   => [],
-        'custom' => [],
-        'tags'   => []
-    ];
+    private $sharedContext;
 
     /**
      * @var EventFactoryInterface
@@ -310,7 +306,7 @@ class Agent implements ApmAgent
     /**
      * Get sharedContext
      */
-    public function getSharedContext(): array | ContextCollection
+    public function getSharedContext(): ContextCollection
     {
         return $this->sharedContext;
     }
