@@ -431,6 +431,15 @@ class EventBean implements Samplable
         return $context;
     }
 
+    public function getSubContext(string $type): ?array
+    {
+        if (array_key_exists($type, $this->contexts) === false) {
+            return null;
+        }
+
+        return $this->contexts[$type];
+    }
+
     // TODO move sample strategy to Transaction
     public function sampleStrategy(SampleStrategy $strategy): void
     {

@@ -5,9 +5,9 @@ namespace Nipwaayoni\Tests;
 use Nipwaayoni\Agent;
 use Nipwaayoni\Config;
 use Nipwaayoni\Events\EventBean;
+use Nipwaayoni\Events\Metadata;
 use Nipwaayoni\Factory\ConnectorFactory;
 use Nipwaayoni\Middleware\Connector;
-use Nipwaayoni\Stores\TransactionsStore;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**
@@ -161,5 +161,71 @@ final class AgentTest extends TestCase
         $agent = $this->makeAgent(['config' => new Config([ 'serviceName' => 'phpunit_1' ])], $connectorFactory);
 
         $agent->putEvent($event);
+    }
+
+    public function testReturnsSharedContext(): void
+    {
+        $agent = $this->makeAgent([
+            'config' => new Config([ 'serviceName' => 'phpunit_1' ]),
+            'user' => ['username' => 'doej'],
+            'custom' => ['module' => 'Introduction'],
+        ]);
+
+        $sharedContext = $agent->getSharedContext();
+
+        $this->assertEquals(['username' => 'doej'], $sharedContext->user());
+        $this->assertEquals(['module' => 'Introduction'], $sharedContext->custom());
+    }
+
+    public function testAddsSharedContextOnConnectorSetup(): void
+    {
+        /** @var Connector|MockObject $connector */
+        $connector = $this->createMock(Connector::class);
+        $connector->expects($this->once())->method('putEvent')
+            ->with($this->callback(function (Metadata $metadata) {
+                $this->assertEquals(['username' => 'doej'], $metadata->getSubContext('user'));
+                $this->assertEquals(['module' => 'Introduction'], $metadata->getSubContext('custom'));
+                return true;
+            }));
+
+        /** @var ConnectorFactory|MockObject $connectorFactory */
+        $connectorFactory = $this->createMock(ConnectorFactory::class);
+        $connectorFactory->expects($this->once())->method('makeConnector')
+            ->willreturn($connector);
+
+        $agent = $this->makeAgent([
+            'config' => new Config([ 'serviceName' => 'phpunit_1' ]),
+            'user' => ['username' => 'doej'],
+            'custom' => ['module' => 'Introduction'],
+        ], $connectorFactory);
+
+    }
+
+    public function testAddsSharedContextToConnectorIfNotSet(): void
+    {
+        /** @var Connector|MockObject $connector */
+        $connector = $this->createMock(Connector::class);
+        $connector->expects($this->exactly(2))->method('putEvent')
+            ->with($this->callback(function (Metadata $metadata) {
+                $this->assertEquals(['username' => 'doej'], $metadata->getSubContext('user'));
+                $this->assertEquals(['module' => 'Introduction'], $metadata->getSubContext('custom'));
+                return true;
+            }));
+
+        // Cause connector to want payload data
+        $connector->expects($this->once())->method('isPayloadSet')->willReturn(false);
+
+        /** @var ConnectorFactory|MockObject $connectorFactory */
+        $connectorFactory = $this->createMock(ConnectorFactory::class);
+        $connectorFactory->expects($this->once())->method('makeConnector')
+            ->willreturn($connector);
+
+        $agent = $this->makeAgent([
+            'config' => new Config([ 'serviceName' => 'phpunit_1' ]),
+            'user' => ['username' => 'doej'],
+            'custom' => ['module' => 'Introduction'],
+        ], $connectorFactory);
+
+        $agent->send();
     }
 }

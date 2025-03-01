@@ -27,6 +27,14 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         }
         $builder->withConfig($components['config']);
 
+        if (!empty($components['user'])) {
+            $builder->withUserContextData($components['user']);
+        }
+
+        if (!empty($components['custom'])) {
+            $builder->withCustomContextData($components['custom']);
+        }
+
         return $builder->build();
     }
 
