@@ -3,6 +3,7 @@
 
 namespace Nipwaayoni;
 
+use Nipwaayoni\Contexts\ContextCollection;
 use Nipwaayoni\Events\EventBean;
 use Nipwaayoni\Events\EventFactoryInterface;
 use Nipwaayoni\Events\Transaction;
@@ -12,6 +13,7 @@ use Psr\Log\LoggerAwareInterface;
 interface ApmAgent extends LoggerAwareInterface
 {
     public function agentMetadata(): array;
+    public function getSharedContext(): ContextCollection;
     public function httpUserAgent(): string;
     public function factory(): EventFactoryInterface;
     public function info(): ResponseInterface;

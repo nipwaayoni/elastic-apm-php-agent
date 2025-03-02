@@ -17,7 +17,7 @@ class EventBean implements Samplable
      */
     const
         EVENT_ID_BITS  = 64,
-    TRACE_ID_BITS = 128;
+        TRACE_ID_BITS = 128;
 
     /**
      * Event Type
@@ -429,6 +429,15 @@ class EventBean implements Samplable
         }
 
         return $context;
+    }
+
+    public function getSubContext(string $type): ?array
+    {
+        if (array_key_exists($type, $this->contexts) === false) {
+            return null;
+        }
+
+        return $this->contexts[$type];
     }
 
     // TODO move sample strategy to Transaction
